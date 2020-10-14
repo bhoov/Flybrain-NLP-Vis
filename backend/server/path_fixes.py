@@ -7,7 +7,8 @@ ROOT = Path(
 ).parent.parent.parent  # Root directory of the project
 SRC = ROOT / "src"
 CLIENT = ROOT / "client"
-DIST = CLIENT / "dist"
+PUBLIC = CLIENT / "public"
+DIST = PUBLIC
 DATA = ROOT / "data"
 
 PROJECT = ROOT / "biohash_project.yaml"
