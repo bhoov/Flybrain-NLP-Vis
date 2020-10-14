@@ -2,7 +2,7 @@
 
 Visualize the Associative memory trained in a biologically plausible way on word embeddings
 
-## Getting started
+### Setting up the Environment
 
 ```bash
 conda env create -f environment.yml; \
@@ -25,3 +25,7 @@ Luckily, these files have been uploaded to a bucket on the cloud using `dvc`, in
 **STEPS**
 1. Contact Ben for the `.dvc/config` file (should not be published to git). 
 2. `dvc pull`
+
+### Starting the Server
+
+### Running the Client
