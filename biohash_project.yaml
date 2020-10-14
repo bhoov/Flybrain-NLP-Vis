@@ -1,0 +1,3 @@
+synapses: data/synapses/OWT_hid_400_W_11_LR_5e-05_8.npy
+tokenizer: data/tokenizer/gensim1/gensim1_patched.dict
+stop_words: data/tokenizer/gensim1/exceptional_ids_terrier_stop.npy

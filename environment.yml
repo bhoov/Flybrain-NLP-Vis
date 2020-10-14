@@ -1,0 +1,25 @@
+name: flybrain
+channels:
+  - conda-forge
+  - defaults
+  - anaconda
+dependencies:
+  - pip>=20.0.0
+  - python>=3.8
+  - boto3
+  - regex
+  - numpy
+  - cachetools
+  - gunicorn
+  - gensim
+  - scikit-learn
+  - pytest
+  - mypy
+  - black
+  - h5py
+  - dvc
+  - fire
+  - pip:
+    - fastapi[all]==0.54.1
+    - pydantic>=1.2.0,<2.0.0
+    - async-lru
