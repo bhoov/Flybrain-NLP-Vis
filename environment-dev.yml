@@ -1,4 +1,4 @@
-name: fly-brain
+name: flybrain
 channels:
   - conda-forge
   - anaconda

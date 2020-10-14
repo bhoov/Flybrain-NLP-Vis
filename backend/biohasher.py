@@ -6,84 +6,114 @@ from pathlib import Path
 from functools import cached_property
 from cachetools import cached, LRUCache
 from typing import *
+import path_fixes as pf
 
+def softmax(x: np.array, beta=1.0):
+    """Take the softmax of 1-D vector `x` according to inverse temperature `beta`. Returns a vector of the same length as x"""
+    v = np.exp(beta*x)
+    return v / np.sum(v)
+
+def normalize_synapses(syn: np.array, prec=1.0e-32, p=2):
+    """Normalize the synapses
+
+    Args:
+        syn: The matrix of learned synapses
+        prec: ??
+        p: Of the p-norm
+
+    Returns:
+        Normalized array of the given synapses
+    """
+    K, N = syn.shape
+    nc = np.power(np.sum(syn**p,axis=1),1/p).reshape(K,1)
+    return syn / np.tile(nc + prec, (1, N))
 
 class Biohasher:
     """A class wrapper around a tokenizer, stop words, and synapse weights for hashing words"""
 
-    def __init__(self, fname):
-        ref_dir = Path(fname).parent
+    def __init__(self, synapse_file: Union[Path, str], tokenizer_file: Union[Path, str], stopword_file: Optional[Union[Path, str]]=None, phrases_file: Optional[Union[Path, str]]=None, normalize_synapses: bool=True):
+
+        self.synapse_file = str(synapse_file)
+        self.tokenizer_file = str(tokenizer_file)
+        self.stopword_file = str(stopword_file) if stopword_file is not None else None
+        self.phrases_file = str(phrases_file) if phrases_file is not None else None
+        self.normalize_synapses = normalize_synapses
+
+    @classmethod
+    def from_config(cls, fname: Union[Path, str]):
+        fpath = Path(fname)
+        ref_dir = fpath.parent
+
         with open(fname, "r") as fp:
-            self.conf = yaml.load(fp, Loader=yaml.FullLoader)
+            conf = yaml.load(fp, Loader=yaml.FullLoader)
 
-        if "phrases" in self.conf.keys():
-            phrases = ref_dir / self.conf["phrases"]
-        else:
-            phrases = None
+        synapse_file = ref_dir / conf["synapses"]
+        tokenizer_file = ref_dir / conf["tokenizer"]
+        phrases_file = ref_dir / conf["phrases"] if "phrases" in conf.keys() else None
+        stopword_file = ref_dir / conf["stop_words"] if "stop_words" in conf.keys() else None
+        normalize_synapses = conf.get("normalize_synapses", False)
 
-        if "stop_words" in self.conf.keys():
-            stop_words = ref_dir / self.conf["stop_words"]
-        else:
-            stop_words = None
 
-        self.files = {
-            "tokenizer": ref_dir / self.conf["tokenizer"],
-            "phrases": phrases,
-            "synapses": ref_dir / self.conf["synapses"],
-            "stop_words": stop_words,
-        }
+        return cls(synapse_file, tokenizer_file, stopword_file=stopword_file, phrases_file=phrases_file, normalize_synapses=normalize_synapses)
 
     @cached_property
     def synapses(self):
         print("Loading synapses...")
-        syn = np.load(self.files["synapses"])
+        syn = np.load(self.synapse_file)
 
-        # Don't Normalize -- make it consistent with how the corpus was processed
-        # K, N = syn.shape
-        # prec = 1.0e-16
-        # nc = np.sqrt(np.sum(syn ** 2, axis=1)).reshape(K, 1)
-        # syn = syn / np.tile(nc + prec, (1, N))
+        if self.normalize_synapses:
+            return normalize_synapses(syn)
         return syn
 
     @cached_property
     def tokenizer(self):
         print("Loading Tokenizer...")
-        return GensimTokenizer.from_file(self.files["tokenizer"], self.files["phrases"])
+        return GensimTokenizer.from_file(self.tokenizer_file, self.phrases_file)
 
     @cached_property
     def stop_words(self):
         """Words that are intentionally not learned by the model"""
         print("Loading stop words...")
-        return set(np.load(self.files["stop_words"]))
+        return set(np.load(self.stopword_file))
 
     @cached_property
     def n_vocab(self):
         return self.tokenizer.n_vocab()
 
-    def make_sentence_vector(self, token_ids, targ_idx=None, targ_coef=50, return_n_context=False, norm_by_context=False):
+    def make_sentence_vector(self, token_ids: Iterable[int], targ_idx=None, targ_coef=1, targ_coef_is_n_context=False, normalize_vector=True, return_n_context=False, ignore_unknown=True):
         """Create the input for the synapses given the token ids
         
         Args:
             token_ids: Tokenized input
             targ_idx: Which index to treat as the target index. Must be [0, len(token_ids))
             targ_coef: Force the target index to have this value
+            targ_coef_is_n_context: Set target value to number of context. If true, overrides targ_coef.
+            normalize_vector: If provided, normalize each element by the total number of tokens
             return_n_context: Get information about the number of context tokens 
-            norm_by_context: Set target value to number of context. Overrides other settings.
+            ignore_unknown: If the token is not in the vocabulary, do not add it to the sentence vector as "unknown"
+
+        Returns:
+            Sentence vector (np.array of shape (N_vocab,))
         """
         H, N = self.synapses.shape
         sentence = np.zeros((N,), dtype=np.int8)
         vocab = self.tokenizer.dictionary.keys()
 
+        def valid_token(t): 
+            print("Checking t: ", t)
+            is_unknown = ignore_unknown and t != self.tokenizer.patch_dict["<UNK>"]
+            return t in vocab and t not in self.stop_words and is_unknown
+
         # Assign context
         n_context = 0
         for i, t in enumerate(token_ids):
             if i != targ_idx:
-                if t in vocab and t not in self.stop_words:
+                if valid_token(t):
                     n_context += 1
                     sentence[t] += 1
 
         # Assign target
-        if norm_by_context: 
+        if targ_coef_is_n_context: 
             target_value = n_context
         else:
             target_value = targ_coef
@@ -93,6 +123,9 @@ class Biohasher:
             if target not in self.stop_words:
                 sentence[self.n_vocab + target] = target_value
 
+        if normalize_vector:
+            sentence = sentence / np.sqrt(np.sum(sentence * sentence)) # Could be optimized as vector is very sparse
+
         if return_n_context:
             out = (sentence, n_context)
         else:
@@ -100,6 +133,10 @@ class Biohasher:
 
         return out
 
+    def phrase2sentence_vector(self, phrase: str, normalize_vector=True, ignore_unknown=True):
+        """Encode a sentence, then create a context only vector out of a phrase"""
+        ids = self.tokenizer.encode(phrase)
+        return self.make_sentence_vector(ids, normalize_vector=normalize_vector, ignore_unknown=ignore_unknown)
 
     def get_hash_from_token_ids(self, token_ids: List[int], idx: Union[int, None], hash_length: int):
         """Get hashcode from a set of encoded tokens, selecting the index to use as the target word
@@ -161,7 +198,6 @@ class Biohasher:
 
         return self.get_hash_from_token_ids(token_ids, idx, hash_length)
 
-
     def get_hash_from_string(self, string, targ_word, hash_length):
         """Hash the target word from the string
         
@@ -179,7 +215,6 @@ class Biohasher:
 
         return self.get_hash_from_token_ids(tokens, idx, hash_length)
 
-
     def get_k_neighbors(self, query: np.ndarray, k: int, hash_length: int) -> np.ndarray:
         """Get k nearest context independent codes from query
         
@@ -195,6 +230,24 @@ class Biohasher:
         orig_vocabulary = np.dot(query, embed)
         ind_sort = np.argsort(-orig_vocabulary)
         return self.tokenizer.ids2tokens(ind_sort[:k])
+
+    def get_mem_concepts(self, h: int, n_show: int=20, beta: float=800.0):
+        """Retrieve a ranked list of `n` concepts that head `h` learns, weighting them according to inverse temperature `beta`
+        
+        Right now, only supports target compartment retrievals
+        """
+        # context = softmax(self.synapses[h][:self.n_vocab], beta)
+        target = softmax(self.synapses[h][self.n_vocab:], beta)
+        return [
+            {
+            "token": self.tokenizer.id2token(ID),
+            "contribution": float(target[ID])
+            } for ID in np.argsort(-target)[:n_show]]
+
+        # return {
+        #     "context": [{ "token": self.tokenizer.id2token(ID), "contribution": context[ID]} for ID in np.argsort(-context)[:n_show]],
+        #     "target": [{ "token": self.tokenizer.id2token(ID), "contribution": target[ID]} for ID in np.argsort(-target)[:n_show]]
+        # }
 
     @cached(cache=LRUCache(maxsize=8))
     def get_embeddings(self, hash_length: int):
@@ -213,4 +266,4 @@ class Biohasher:
 
 @cached(cache={})
 def get_project(fname):
-    return Biohasher(fname)
+    return Biohasher.from_config(fname)

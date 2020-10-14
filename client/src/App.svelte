@@ -1,11 +1,25 @@
 <script lang="ts">
-	export let name: string;
-</script>
+	import type {Concept} from "./types"
+	import {API} from "./api"
 
-<main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
-</main>
+	export let name: string;
+
+	const api = new API()
+
+	let headIndex: number = 1;
+	let conceptList: Concept[] | null = null
+
+	function clicky() {
+		api.getMemoryConcepts(headIndex).then(r => {
+			conceptList = r
+		})
+	}
+
+	function inputty(e) {
+		headIndex = +e.target.value;
+		console.log("INPUTTED: ", headIndex);
+	}
+</script>
 
 <style>
 	main {
@@ -28,3 +42,20 @@
 		}
 	}
 </style>
+
+<main>
+	<h1>Hello {name}!</h1>
+	<p>
+		Visit the
+		<a href="https://svelte.dev/tutorial">Svelte tutorial</a>
+		to learn how to build Svelte apps.
+	</p>
+	<div><input type="range" min="0" max="399" on:input={inputty} /></div>
+	<button on:click={clicky}>What concepts for memory {headIndex}?</button>
+
+	{#if conceptList != null}
+		<pre>
+			{JSON.stringify(conceptList)}
+		</pre>
+	{/if}
+</main>

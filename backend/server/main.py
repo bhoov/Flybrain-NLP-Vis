@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import server.api as api
-import server.path_fixes as pf
+import path_fixes as pf
 from server.utils import round_2d_nested_list, round_1d_list
 from biohasher import get_project
 from indexer import BiohashIndexer
@@ -78,44 +78,50 @@ async def attentions_from_tokens(payload: api.AttentionFromTokenPayload):
         "hashcode": output['hash'].tolist()
     }
 
-@app.post("/api/get-k-nearest-context-independent")
-async def get_k_nearest_context_independent(payload: api.KNearestPayload):
-    hash_query = payload["hash_query"]
-    k = payload["k"]
-    hash_length = payload["hash_length"]
-
+@app.get("/api/get-memory-concepts")
+def get_memory_concepts(head_index: int, n_show:int=20, beta:float=800):
+    """Fetch the target concepts for a particular memory"""
     project = get_project(pf.PROJECT)
-    k_nearest_tokens = project.get_k_neighbors(hash_query, k, hash_length)
+    return project.get_mem_concepts(head_index, n_show=n_show, beta=beta)
 
-    return {
-        "tokens": k_nearest_tokens,
-    }
+# @app.post("/api/get-k-nearest-context-independent")
+# async def get_k_nearest_context_independent(payload: api.KNearestPayload):
+#     hash_query = payload["hash_query"]
+#     k = payload["k"]
+#     hash_length = payload["hash_length"]
 
-@app.post("/api/get-k-nearest-context-dependent")
-async def get_k_nearest_context_dependent(payload: api.KNearestPayload):
-    hash_query = payload["hash_query"]
-    k = payload["k"]
-    hash_length = payload["hash_length"]
+#     project = get_project(pf.PROJECT)
+#     k_nearest_tokens = project.get_k_neighbors(hash_query, k, hash_length)
 
-    indexer = get_indexer()
+#     return {
+#         "tokens": k_nearest_tokens,
+#     }
 
-    project = get_project(pf.PROJECT)
+# @app.post("/api/get-k-nearest-context-dependent")
+# async def get_k_nearest_context_dependent(payload: api.KNearestPayload):
+#     hash_query = payload["hash_query"]
+#     k = payload["k"]
+#     hash_length = payload["hash_length"]
 
-    start = datetime.now()
-    res = indexer.get_k_nearest(np.array(hash_query), k)
-    print(f"Indexing took {datetime.now() - start} seconds")
+#     indexer = get_indexer()
 
-    def parse_nearest(sim, toks, wgram_ind, target_ind, wgram):
-        return {
-            "sentence_tokens": project.tokenizer.ids2tokens(toks),
-            "sim_score": sim,
-            "wgram_start": wgram_ind,
-            "wgram": project.tokenizer.ids2tokens(wgram),
-            "target_start": target_ind,
-        }
+#     project = get_project(pf.PROJECT)
 
-    json_output = [parse_nearest(sim, toks, wg, ti, gram) for sim, toks, wg, ti, gram in zip(res['sims'], res['sentence_tokens'], res['wgram_inds'], res['target_inds'], res['wgrams'])]
-    return json_output
+#     start = datetime.now()
+#     res = indexer.get_k_nearest(np.array(hash_query), k)
+#     print(f"Indexing took {datetime.now() - start} seconds")
+
+#     def parse_nearest(sim, toks, wgram_ind, target_ind, wgram):
+#         return {
+#             "sentence_tokens": project.tokenizer.ids2tokens(toks),
+#             "sim_score": sim,
+#             "wgram_start": wgram_ind,
+#             "wgram": project.tokenizer.ids2tokens(wgram),
+#             "target_start": target_ind,
+#         }
+
+#     json_output = [parse_nearest(sim, toks, wg, ti, gram) for sim, toks, wg, ti, gram in zip(res['sims'], res['sentence_tokens'], res['wgram_inds'], res['target_inds'], res['wgrams'])]
+#     return json_output
 
 if __name__ == "__main__":
     # This file is not run as __main__ in the uvicorn environment
