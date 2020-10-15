@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 import server.api as api
 import path_fixes as pf
-from biohasher import get_project
+from biohasher import get_project, softmax
 
 from cachetools import cached
 
@@ -52,16 +52,34 @@ async def sentence_to_tokens(sentence: str):
     return tokens
 
 @app.get("/api/memory-grid")
-def get_memory_grid():
+async def get_memory_grid():
     """Fetch the target concepts for a particular memory"""
     project = get_project(pf.PROJECT)
     return project.memory_grid
 
 @app.get("/api/memory-concepts")
-def get_memory_concepts(head_index: int, n_show:int=20, beta:float=800):
+async def get_memory_concepts(head_index: int, n_show:int=20, beta:float=800):
     """Fetch the target concepts for a particular memory"""
     project = get_project(pf.PROJECT)
     return project.get_mem_concepts(head_index, n_show=n_show, beta=beta)
+
+@app.get("/api/n-heads")
+async def get_n_heads():
+    return get_project(pf.PROJECT).n_heads
+
+@app.get("/api/query-top-mems-by-phrase")
+async def query_top_mems_by_phrase(phrase: str, beta:float=10.0):
+
+    project = get_project(pf.PROJECT)
+    ids = project.tokenizer.encode(phrase)
+    v = project.make_sentence_vector(ids)
+    activations = softmax(project.synapses @ v, beta)
+    ordered_mems = np.argsort(-activations)
+
+    return {
+        "head_info": [{"head": int(m), "activation": float(activations[m])} for m in ordered_mems],
+        "tokenized_phrase": project.tokenizer.decode(ids)
+    }
 
 if __name__ == "__main__":
     # This file is not run as __main__ in the uvicorn environment

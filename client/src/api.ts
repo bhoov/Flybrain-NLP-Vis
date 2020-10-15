@@ -21,6 +21,13 @@ export class API {
         return d3.json(url)
     }
 
+    getNHeads(): Promise<number> {
+        const route = "/n-heads"
+        const url = makeUrl(this.baseURL + route, {})
+        console.log("--- GET " + url)
+        return d3.json(url)
+    }
+
     // Don't let user choose beta
     // getMemoryConcepts(head_index: number, n_show: number, beta:number): Promise<tp.Concept[]> {
     getMemoryConcepts(head_index: number, n_show: number=20): Promise<tp.Concept[]> {
@@ -34,6 +41,14 @@ export class API {
     getMemoryGrid(): Promise<number[][]> {
         const route = "/memory-grid"
         let toSend = { }
+        const url = makeUrl(this.baseURL + route, toSend)
+        console.log("--- GET " + url);
+        return d3.json(url)
+    }
+
+    queryTopMemsByPhrase(phrase: string, beta:number=10.0): Promise<tp.TopMemResponse> {
+        const route = "/query-top-mems-by-phrase"
+        let toSend = { phrase, beta }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
         return d3.json(url)

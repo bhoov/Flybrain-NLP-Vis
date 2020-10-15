@@ -119,7 +119,6 @@ class Biohasher:
         vocab = self.tokenizer.dictionary.keys()
 
         def valid_token(t): 
-            print("Checking t: ", t)
             is_unknown = ignore_unknown and t != self.tokenizer.patch_dict["<UNK>"]
             return t in vocab and t not in self.stop_words and is_unknown
 

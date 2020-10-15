@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import type { Concept } from "./types";
+	import type * as tp from "./types";
 	import WordCloud from "./components/WordCloud.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import { API } from "./api";
@@ -9,8 +9,10 @@
 	const api = new API();
 
 	let headIndex: number = undefined;
-	let conceptList: Concept[] | null = null;
-	let memoryGrid: number[][] = undefined;
+	let conceptList: tp.Concept[] | null = null;
+	let memoryGrid: tp.MemActivation[] = undefined;
+	let MemoryGridSel: MemoryGrid = undefined;
+	let queryPhrase: string = "";
 
 	function newConcepts(mem: number) {
 		// TODO: Debounce this api call
@@ -19,10 +21,25 @@
 		});
 	}
 
-	onMount(() => {
-		api.getMemoryGrid().then((r) => {
-			memoryGrid = r;
+	function submitPhraseQuery() {
+		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
+			memoryGrid = r.head_info
+			headIndex = memoryGrid[0].head
+			api.getMemoryConcepts(headIndex).then((r) => {
+				conceptList = r;
+			});
 		});
+	}
+
+	onMount(() => {
+		api.getNHeads().then(r => {
+			memoryGrid = _.range(r).map(v => {
+				return {
+					head: v,
+					activation: 1
+				}
+			})
+		})
 	});
 </script>
 
@@ -68,11 +85,18 @@
 			bind:value={headIndex} />
 	</div>
 
+	<h4>Or, search for concepts by typing in a phrase below:</h4>
+
+	<div>
+		<input type="text" bind:value={queryPhrase} />
+		<button on:click={submitPhraseQuery}>Query</button>
+	</div>
 	{#if memoryGrid != undefined}
 		<MemoryGrid
+			bind:this={MemoryGridSel}
 			cells={memoryGrid}
 			on:cellClick={_.debounce((e) => {
-				newConcepts(e.detail.cell);
+				newConcepts(e.detail.head);
 			}, 150)}
 			bind:selectedCell={headIndex} />
 	{/if}
