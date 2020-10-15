@@ -3,7 +3,7 @@ import { makeUrl, toPayload } from './etc/apiHelpers'
 import { URLHandler } from './etc/URLHandler';
 import * as tp from "./types"
 
-const baseurl = "http://localhost:8000"
+const baseurl = URLHandler.basicURL()
 
 export class API {
 
