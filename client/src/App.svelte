@@ -1,23 +1,29 @@
 <script lang="ts">
-	import type {Concept} from "./types"
-	import WordCloud from "./components/WordCloud.svelte"
-	import {API} from "./api"
-	import * as _ from "lodash"
+	import { onMount } from "svelte";
+	import type { Concept } from "./types";
+	import WordCloud from "./components/WordCloud.svelte";
+	import MemoryGrid from "./components/MemoryGrid.svelte";
+	import { API } from "./api";
+	import * as _ from "lodash";
 
-	const api = new API()
+	const api = new API();
 
 	let headIndex: number = undefined;
-	let conceptList: Concept[] | null = null
+	let conceptList: Concept[] | null = null;
+	let memoryGrid: number[][] = undefined;
 
-	function inputty(e) {
-		let mem = +e.target.value;
-
+	function newConcepts(mem: number) {
 		// TODO: Debounce this api call
-		api.getMemoryConcepts(mem).then(r => {
-			headIndex = mem
-			conceptList = r
-		})
+		api.getMemoryConcepts(mem).then((r) => {
+			conceptList = r;
+		});
 	}
+
+	onMount(() => {
+		api.getMemoryGrid().then((r) => {
+			memoryGrid = r;
+		});
+	});
 </script>
 
 <style>
@@ -42,16 +48,36 @@
 	}
 </style>
 
+<svelte:head>
+	<title>FlyBrain Explorer</title>
+</svelte:head>
+
 <main>
 	<h1>FlyBrain Explorer</h1>
 	{#if headIndex != undefined}
 		<h3>Showing Concepts for Head {headIndex + 1}</h3>
 	{:else}
-		<h5>Move the slider to show concepts!</h5>
+		<h4>Move the slider or click a cell to show concepts!</h4>
 	{/if}
-	<div><input type="range" min="0" max="399" on:input={_.debounce(inputty, 150)} /></div>
+	<div>
+		<input
+			type="range"
+			min="0"
+			max="399"
+			on:input={_.debounce((e) => newConcepts(+e.target.value), 150)}
+			bind:value={headIndex} />
+	</div>
+
+	{#if memoryGrid != undefined}
+		<MemoryGrid
+			cells={memoryGrid}
+			on:cellClick={_.debounce((e) => {
+				newConcepts(e.detail.cell);
+			}, 150)}
+			bind:selectedCell={headIndex} />
+	{/if}
 
 	{#if conceptList != null}
-		<WordCloud concepts={conceptList}></WordCloud>
+		<WordCloud concepts={conceptList} />
 	{/if}
 </main>

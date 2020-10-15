@@ -51,7 +51,13 @@ async def sentence_to_tokens(sentence: str):
     tokens = project.tokenizer.tokenize(sentence)
     return tokens
 
-@app.get("/api/get-memory-concepts")
+@app.get("/api/memory-grid")
+def get_memory_grid():
+    """Fetch the target concepts for a particular memory"""
+    project = get_project(pf.PROJECT)
+    return project.memory_grid
+
+@app.get("/api/memory-concepts")
 def get_memory_concepts(head_index: int, n_show:int=20, beta:float=800):
     """Fetch the target concepts for a particular memory"""
     project = get_project(pf.PROJECT)

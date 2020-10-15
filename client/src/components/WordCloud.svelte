@@ -7,7 +7,6 @@
 
     export let concepts: tp.Concept[] = [];
     let isMounted: boolean = false;
-    $: console.log("MY CONCEPTS: ", concepts);
     $: contributions = concepts.map((d) => d.contribution);
 
     $: sizeScale = d3
@@ -26,8 +25,6 @@
     let displayWords: Word[] | null = null;
 
     function redefineWords(newWords: Word[]) {
-        console.log("OG words: ", words);
-        console.log("New words: ", newWords);
         displayWords = newWords;
     }
 
@@ -40,7 +37,6 @@
         })
         .font("Impact")
         .fontSize(function (d) {
-            console.log("RUNNING D: ", d);
             return d.size;
         })
         .on("end", redefineWords)
@@ -54,7 +50,8 @@
                 transform={`translate(${layout.size()[0] / 2},${layout.size()[1] / 2})`}>
                 {#each displayWords as word (word.text)}
                     <text
-                        in:fly="{{ y: 200, duration: 500 }}" out:fade
+                        in:fly={{ y: 200, duration: 500 }}
+                        out:fade
                         font-size={word.size + 'px'}
                         font-family={word.font}
                         text-anchor="middle"

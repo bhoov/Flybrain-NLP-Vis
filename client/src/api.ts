@@ -24,8 +24,16 @@ export class API {
     // Don't let user choose beta
     // getMemoryConcepts(head_index: number, n_show: number, beta:number): Promise<tp.Concept[]> {
     getMemoryConcepts(head_index: number, n_show: number=20): Promise<tp.Concept[]> {
-        const route = "/get-memory-concepts"
+        const route = "/memory-concepts"
         let toSend = { head_index, n_show }
+        const url = makeUrl(this.baseURL + route, toSend)
+        console.log("--- GET " + url);
+        return d3.json(url)
+    }
+
+    getMemoryGrid(): Promise<number[][]> {
+        const route = "/memory-grid"
+        let toSend = { }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
         return d3.json(url)
@@ -49,35 +57,4 @@ export class API {
     //     // return checkDemoAPI(key, url, payload)
     // }
 
-    // getKNearestContextIndependent(hash_query: number[], k: number=10, hash_length:number=32): Promise<{tokens: string[]}> {
-    //     const route = "/get-k-nearest-context-independent"
-    //     let toSend = { hash_query, k, hash_length }
-    //     // let toSend = { tokens, hashLength }
-    //     const key = hash({ route, ...toSend })
-    //     if (this.makeDemoHashes) {
-    //         toSend['request_hash'] = key
-    //     }
-
-    //     const payload = toPayload(toSend)
-    //     const url = makeUrl(this.baseURL + route)
-    //     console.log("--- POST " + url);
-
-    //     return d3.json(url, payload)
-    // }
-
-    // getKNearestContextDependent(hash_query: number[], k: number=10, hash_length:number=32): Promise<tp.CorpusSentenceMatch[]> {
-    //     const route = "/get-k-nearest-context-dependent"
-    //     let toSend = { hash_query, k, hash_length }
-
-    //     const key = hash({ route, ...toSend })
-    //     if (this.makeDemoHashes) {
-    //         toSend['request_hash'] = key
-    //     }
-
-    //     const payload = toPayload(toSend)
-    //     const url = makeUrl(this.baseURL + route)
-    //     console.log("--- POST " + url);
-
-    //     return d3.json(url, payload)
-    // }
 };

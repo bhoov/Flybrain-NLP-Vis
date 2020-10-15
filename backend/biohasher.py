@@ -57,6 +57,11 @@ class Biohasher:
         return cls(synapse_file, tokenizer_file, stopword_file=stopword_file, phrases_file=phrases_file, normalize_synapses=normalize_synapses)
 
     @cached_property
+    def n_heads(self):
+        H, _ = self.synapses.shape
+        return H
+
+    @cached_property
     def synapses(self):
         print("Loading synapses...")
         syn = np.load(self.synapse_file)
@@ -79,6 +84,20 @@ class Biohasher:
     @cached_property
     def n_vocab(self):
         return self.tokenizer.n_vocab()
+
+    @cached_property
+    def memory_grid(self):
+        """Return the indices of all the heads as a grid ordered by a Kohonen map"""
+        # Naive ordering 0->H
+        H = self.n_heads
+        idx = 0
+        row_len = int(np.ceil(np.sqrt(H)))
+        out = []
+        arr = list(range(H))
+        while idx < H:
+            out.append(arr[idx: idx + row_len])
+            idx = idx + row_len
+        return out
 
     def make_sentence_vector(self, token_ids: Iterable[int], targ_idx=None, targ_coef=1, targ_coef_is_n_context=False, normalize_vector=True, return_n_context=False, ignore_unknown=True):
         """Create the input for the synapses given the token ids
