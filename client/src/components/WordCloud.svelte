@@ -5,7 +5,9 @@
     import type * as tp from "../types";
 
     export let concepts: tp.Concept[] = [];
-    let isMounted: boolean = false;
+    export let width: number = 500;
+    export let height: number = 500;
+
     $: contributions = concepts.map((d) => d.contribution);
 
     $: sizeScale = d3
@@ -28,7 +30,7 @@
     }
 
     $: layout = cloud()
-        .size([500, 500])
+        .size([width, height])
         .words(words)
         .padding(5)
         .rotate(function () {

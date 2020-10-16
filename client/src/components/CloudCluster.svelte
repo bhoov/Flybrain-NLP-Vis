@@ -3,17 +3,15 @@
     import { api } from "../api";
     import type * as tp from "../types";
 
-    export let heads: number[] [];
+    export let heads: number[] = [];
+    export let cloudWidth: number = 300
+    export let cloudHeight: number = 300
 
     function heads2concepts(heads): Promise<tp.Concept[][]> {
         return Promise.all(heads.map(h => api.getMemoryConcepts(h)))
     }
 
     $: conceptsPromise = heads2concepts(heads)
-
-    $: console.log("HEADS: ", heads)
-    $: console.log("CONEPTS: ", conceptsPromise)
-
 </script>
 
 <style>
@@ -21,6 +19,10 @@
         margin: auto;
         color: red;
         vertical-align: middle
+    }
+
+    h3 {
+        color: cyan;
     }
 </style>
 
@@ -34,8 +36,8 @@
 {:then conceptList}
     {#each conceptList as concept, i (heads[i])}
         <div>
-            <h2>Head {heads[i]}</h2>
-            <WordCloud concepts={concept}/>
+            <h3>Head {heads[i]}</h3>
+            <WordCloud concepts={concept} width={cloudWidth} height={cloudHeight}/>
         </div>
     {/each}
 {:catch error}
