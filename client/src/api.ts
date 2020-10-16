@@ -7,7 +7,7 @@ const baseurl = URLHandler.basicURL()
 
 export class API {
 
-    constructor(private baseURL: string = null, private makeDemoHashes: boolean = false) {
+    constructor(private baseURL: string = null) {
         if (this.baseURL == null) {
             this.baseURL = baseurl + '/api';
         }
@@ -73,3 +73,5 @@ export class API {
     // }
 
 };
+
+export const api = new API()

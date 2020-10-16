@@ -28,4 +28,9 @@ Luckily, these files have been uploaded to a bucket on the cloud using `dvc`, in
 
 ### Starting the Server
 
-### Running the Client
+`uvicorn backend.server:app --reload`
+
+### Running the Client 
+
+(development)
+`cd client; npm run dev`

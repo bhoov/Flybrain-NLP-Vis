@@ -3,7 +3,6 @@
     import cloud from "d3-cloud";
     import type { Word } from "d3-cloud";
     import type * as tp from "../types";
-    import { fly, fade } from "svelte/transition";
 
     export let concepts: tp.Concept[] = [];
     let isMounted: boolean = false;
@@ -50,8 +49,6 @@
                 transform={`translate(${layout.size()[0] / 2},${layout.size()[1] / 2})`}>
                 {#each displayWords as word (word.text)}
                     <text
-                        in:fly={{ y: 200, duration: 500 }}
-                        out:fade
                         font-size={word.size + 'px'}
                         font-family={word.font}
                         text-anchor="middle"

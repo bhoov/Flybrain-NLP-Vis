@@ -3,16 +3,16 @@
 	import type * as tp from "./types";
 	import WordCloud from "./components/WordCloud.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
-	import { API } from "./api";
+	import CloudCluster from "./components/CloudCluster.svelte";
+	import { api } from "./api";
 	import * as _ from "lodash";
-
-	const api = new API();
 
 	let headIndex: number = undefined;
 	let conceptList: tp.Concept[] | null = null;
 	let memoryGrid: tp.MemActivation[] = undefined;
 	let MemoryGridSel: MemoryGrid = undefined;
 	let queryPhrase: string = "";
+	let clusterHeads: number[] | null = null;
 
 	function newConcepts(mem: number) {
 		// TODO: Debounce this api call
@@ -23,23 +23,21 @@
 
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
-			memoryGrid = r.head_info
-			headIndex = memoryGrid[0].head
-			api.getMemoryConcepts(headIndex).then((r) => {
-				conceptList = r;
-			});
+			memoryGrid = r.head_info;
+			headIndex = memoryGrid[0].head;
+			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
 		});
 	}
 
 	onMount(() => {
-		api.getNHeads().then(r => {
-			memoryGrid = _.range(r).map(v => {
+		api.getNHeads().then((r) => {
+			memoryGrid = _.range(r).map((v) => {
 				return {
 					head: v,
-					activation: 1
-				}
-			})
-		})
+					activation: 1,
+				};
+			});
+		});
 	});
 </script>
 
@@ -49,6 +47,8 @@
 		padding: 1em;
 		max-width: 240px;
 		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr;
 	}
 
 	h1 {
@@ -58,9 +58,11 @@
 		font-weight: 100;
 	}
 
-	@media (min-width: 640px) {
+	@media (min-width: 768px) {
 		main {
-			max-width: none;
+			display: grid;
+			grid-template-columns: 0.6fr 0.4fr;
+			margin: 3rem 0;
 		}
 	}
 </style>
@@ -70,38 +72,50 @@
 </svelte:head>
 
 <main>
-	<h1>FlyBrain Explorer</h1>
-	{#if headIndex != undefined}
-		<h3>Showing Concepts for Head {headIndex + 1}</h3>
-	{:else}
-		<h4>Move the slider or click a cell to show concepts!</h4>
-	{/if}
-	<div>
-		<input
-			type="range"
-			min="0"
-			max="399"
-			on:input={_.debounce((e) => newConcepts(+e.target.value), 150)}
-			bind:value={headIndex} />
+	<div class="left-half">
+		<div class="center">
+			<h1>FlyBrain Explorer</h1>
+			{#if headIndex != undefined}
+				<h3>Showing Concepts for Head {headIndex + 1}</h3>
+			{:else}
+				<h4>Move the slider or click a cell to show concepts!</h4>
+			{/if}
+			<div>
+				<input
+					type="range"
+					min="0"
+					max="399"
+					on:input={_.debounce((e) => newConcepts(+e.target.value), 150)}
+					bind:value={headIndex} />
+			</div>
+
+			<h4>Or, search for concepts by typing in a phrase below:</h4>
+
+			<div>
+				<input type="text" bind:value={queryPhrase} />
+				<button
+					on:click={submitPhraseQuery}
+					disabled={queryPhrase.length < 1}>Query</button>
+			</div>
+			{#if memoryGrid != undefined}
+				<MemoryGrid
+					bind:this={MemoryGridSel}
+					cells={memoryGrid}
+					on:cellClick={_.debounce((e) => {
+						newConcepts(e.detail.head);
+					}, 150)}
+					bind:selectedCell={headIndex} />
+			{/if}
+		</div>
+
+		{#if conceptList != null}
+			<WordCloud concepts={conceptList} />
+		{/if}
 	</div>
 
-	<h4>Or, search for concepts by typing in a phrase below:</h4>
-
-	<div>
-		<input type="text" bind:value={queryPhrase} />
-		<button on:click={submitPhraseQuery}>Query</button>
+	<div class="right">
+		{#if clusterHeads != null}
+			<CloudCluster heads={clusterHeads} />
+		{/if}
 	</div>
-	{#if memoryGrid != undefined}
-		<MemoryGrid
-			bind:this={MemoryGridSel}
-			cells={memoryGrid}
-			on:cellClick={_.debounce((e) => {
-				newConcepts(e.detail.head);
-			}, 150)}
-			bind:selectedCell={headIndex} />
-	{/if}
-
-	{#if conceptList != null}
-		<WordCloud concepts={conceptList} />
-	{/if}
 </main>
