@@ -5,6 +5,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "bin/serve.js public /api http://localhost:8000 --single",
+    "prod": "sirv public --host",
     "validate": "svelte-check"
   },
   "devDependencies": {
