@@ -4,7 +4,7 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "start": "bin/serve.js public /api http://localhost:8000 --single",
+    "start": "bin/serve.js public /api http://localhost:8081 --single",
     "prod": "sirv public --host",
     "validate": "svelte-check"
   },
