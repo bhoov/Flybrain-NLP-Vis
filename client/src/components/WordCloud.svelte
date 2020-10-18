@@ -13,8 +13,6 @@
 
     $: contributions = concepts.map((d) => d.contribution);
 
-    $: console.log("Max cont: ", d3.max(contributions))
-
     $: sizeScale = d3
         //@ts-ignore
         .scaleLinear()

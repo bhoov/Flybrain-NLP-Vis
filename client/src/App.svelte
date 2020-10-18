@@ -20,6 +20,8 @@
 		});
 	}
 
+	$: newConcepts(headIndex)
+
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
 			memoryGrid = r.head_info;
@@ -96,7 +98,9 @@
 				type="range"
 				min="0"
 				max="399"
-				on:input={_.debounce((e) => newConcepts(+e.target.value), 150)}
+				on:input={_.debounce(e => {
+					headIndex = +e.target.value
+				}, 150)}
 				bind:value={headIndex} />
 		</div>
 
@@ -113,7 +117,9 @@
 				bind:this={MemoryGridSel}
 				cells={memoryGrid}
 				on:cellClick={_.debounce((e) => {
-					if (!e.detail.deselect) newConcepts(e.detail.head);
+					if (!e.detail.deselect) {
+						headIndex = e.detail.head
+					};
 				}, 150)}
 				bind:selectedCell={headIndex} />
 		{/if}
