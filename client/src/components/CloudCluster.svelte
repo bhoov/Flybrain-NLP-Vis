@@ -8,7 +8,9 @@
     export let cloudHeight: number = 300
 
     function heads2concepts(heads): Promise<tp.Concept[][]> {
-        return Promise.all(heads.map(h => api.getMemoryConcepts(h)))
+        return Promise.all(heads.map(h => {
+            return api.getMemoryConcepts(h)
+        }))
     }
 
     $: conceptsPromise = heads2concepts(heads)
@@ -34,9 +36,9 @@
     </div>
     {/if}
 {:then conceptList}
-    {#each conceptList as concept, i (heads[i])}
+    {#each conceptList as concept, i}
         <div>
-            <h3>Head {heads[i]}</h3>
+            <h3>Head {heads[i] + 1}</h3>
             <WordCloud concepts={concept} width={cloudWidth} height={cloudHeight}/>
         </div>
     {/each}

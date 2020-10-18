@@ -8,13 +8,18 @@
     export let width: number = 500;
     export let height: number = 500;
 
+    $: maxPxSize = d3.min([width, height]) / 4;
+    $: minPxSize = maxPxSize / 4
+
     $: contributions = concepts.map((d) => d.contribution);
+
+    $: console.log("Max cont: ", d3.max(contributions))
 
     $: sizeScale = d3
         //@ts-ignore
         .scaleLinear()
         .domain([0, d3.max(contributions)])
-        .range([10, 100]);
+        .range([minPxSize, maxPxSize]);
 
     $: words = concepts.map((c) => {
         return {

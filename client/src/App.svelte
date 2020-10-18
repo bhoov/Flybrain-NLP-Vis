@@ -15,7 +15,6 @@
 	let clusterHeads: number[] | null = null;
 
 	function newConcepts(mem: number) {
-		// TODO: Debounce this api call
 		api.getMemoryConcepts(mem).then((r) => {
 			conceptList = r;
 		});
@@ -114,7 +113,7 @@
 				bind:this={MemoryGridSel}
 				cells={memoryGrid}
 				on:cellClick={_.debounce((e) => {
-					newConcepts(e.detail.head);
+					if (!e.detail.deselect) newConcepts(e.detail.head);
 				}, 150)}
 				bind:selectedCell={headIndex} />
 		{/if}

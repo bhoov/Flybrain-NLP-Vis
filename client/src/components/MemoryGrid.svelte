@@ -50,13 +50,16 @@
                 width={cellWidth}
                 height={cellHeight}
                 on:click={() => {
+                    let deselect = false
                     if (selectedCell == cell.head) {
-                        selectedCell = null;
+                        selectedCell = null; 
+                        deselect = true
                     }
                     else {
                         selectedCell = cell.head;
+                        deselect = false
                     }
-                    dispatch('cellClick', cell);
+                    dispatch('cellClick', {...cell, deselect});
                 }}
                 on:mouseover={() => {
                     hoveredCell = cell.head;
