@@ -6,11 +6,13 @@
 	import CloudCluster from "./components/CloudCluster.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
+import { interpolateCubehelixLong } from "d3";
 
 	let headIndex: number = undefined;
 	let conceptList: tp.Concept[] | null = null;
-	let memoryGrid: tp.MemActivation[] = undefined;
-	let MemoryGridSel: MemoryGrid = undefined;
+	let activations: number[] = undefined;
+	let orderedHeads: number[] = undefined;
+	let memGridOrdering: number[] = undefined;
 	let queryPhrase: string = "";
 	let clusterHeads: number[] | null = null;
 
@@ -24,20 +26,22 @@
 
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
-			memoryGrid = r.head_info;
-			headIndex = memoryGrid[0].head;
+			activations = r.activations
+			console.log("Activations: ", activations);
+			orderedHeads = r.ordered_heads
+			headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
 		});
 	}
 
 	onMount(() => {
 		api.getNHeads().then((r) => {
-			memoryGrid = _.range(r).map((v) => {
-				return {
-					head: v,
-					activation: 1,
-				};
-			});
+			activations = _.range(r).map(v => 1)
+
+			api.getMemoryOrder().then(r => {
+				memGridOrdering = r
+				console.log("Mem grid ordering: ", memGridOrdering);
+			})
 		});
 	});
 </script>
@@ -112,10 +116,10 @@
 				on:click={submitPhraseQuery}
 				disabled={queryPhrase.length < 1}>Query</button>
 		</div>
-		{#if memoryGrid != undefined}
+		{#if memGridOrdering != undefined && activations != undefined }
 			<MemoryGrid
-				bind:this={MemoryGridSel}
-				cells={memoryGrid}
+				activations={activations}
+				headOrdering={memGridOrdering}
 				on:cellClick={_.debounce((e) => {
 					if (!e.detail.deselect) {
 						headIndex = e.detail.head

@@ -37,7 +37,8 @@
         .words(words)
         .padding(5)
         .rotate(function () {
-            return ~~(Math.random() * 2) * 90;
+            return 0;
+            // return ~~(Math.random() * 2) * 90;
         })
         .font("Impact")
         .fontSize(function (d) {

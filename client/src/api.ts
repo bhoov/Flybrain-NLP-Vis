@@ -38,10 +38,9 @@ export class API {
         return d3.json(url)
     }
 
-    getMemoryGrid(): Promise<number[][]> {
-        const route = "/memory-grid"
-        let toSend = { }
-        const url = makeUrl(this.baseURL + route, toSend)
+    getMemoryOrder(): Promise<number[]> {
+        const route = "/mem-order"
+        const url = makeUrl(this.baseURL + route, {})
         console.log("--- GET " + url);
         return d3.json(url)
     }

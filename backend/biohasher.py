@@ -88,16 +88,7 @@ class Biohasher:
     @cached_property
     def memory_grid(self):
         """Return the indices of all the heads as a grid ordered by a Kohonen map"""
-        # Naive ordering 0->H
-        H = self.n_heads
-        idx = 0
-        row_len = int(np.ceil(np.sqrt(H)))
-        out = []
-        arr = list(range(H))
-        while idx < H:
-            out.append(arr[idx: idx + row_len])
-            idx = idx + row_len
-        return out
+        return np.load(pf.MEM_ORDER)
 
     def make_sentence_vector(self, token_ids: Iterable[int], targ_idx=None, targ_coef=1, targ_coef_is_n_context=False, normalize_vector=True, return_n_context=False, ignore_unknown=True):
         """Create the input for the synapses given the token ids

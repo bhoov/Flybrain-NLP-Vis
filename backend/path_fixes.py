@@ -10,4 +10,5 @@ CLIENT = ROOT / "client"
 PUBLIC = CLIENT / "public"
 DIST = PUBLIC
 DATA = ROOT / "data"
+MEM_ORDER = DATA / "indices_of_memories.npy"
 PROJECT = ROOT / "biohash_project.yaml"

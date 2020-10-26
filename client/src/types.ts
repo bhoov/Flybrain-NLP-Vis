@@ -11,4 +11,6 @@ export interface MemActivation {
 export interface TopMemResponse {
     tokenized_phrase: string[]
     head_info: MemActivation[]
+    activations: number[]
+    ordered_heads: number[]
 }

@@ -5,7 +5,8 @@
     const dispatch = createEventDispatcher();
 
     // I need additional information about kohonen layout and opacity of each cell
-    export let cells: tp.MemActivation[];
+    export let activations: number[];
+    export let headOrdering: number[];
     export let cellWidth: number = 10;
     export let cellHeight: number = null;
     export let selectedCell: number = null;
@@ -13,13 +14,12 @@
 
     if (cellHeight == null) cellHeight = cellWidth;
 
-    $: nCols = Math.floor(Math.sqrt(cells.length));
+    $: nHeads = headOrdering.length
+    $: nCols = Math.floor(Math.sqrt(nHeads));
     $: svgWidth = cellWidth * nCols;
-    $: svgHeight = cellHeight * Math.ceil(cells.length / nCols);
+    $: svgHeight = cellHeight * Math.ceil(nHeads / nCols);
 
-    // Why is scale not being detected by d3 types?
-    //@ts-ignore
-    $: opacityScale = d3.scaleLinear().domain([0, d3.max(cells.map(c => c.activation))]).range([0.1, 1])
+    $: opacityScale = d3.scaleLinear().domain([0, d3.max(activations)]).range([0.1, 1])
 </script>
 
 <style>
@@ -42,32 +42,32 @@
 
 <svg width={svgWidth} height={svgHeight}>
     <g>
-        {#each cells as cell, i}
+        {#each headOrdering as head, i}
             <rect
-                transform={`translate(${cellWidth * (cell.head % nCols)}, ${cellHeight * (Math.floor(cell.head / nCols))})`}
-                class:hovered={cell.head == hoveredCell}
-                class:selected={cell.head == selectedCell}
+                transform={`translate(${cellWidth * (i % nCols)}, ${cellHeight * (Math.floor(i / nCols))})`}
+                class:hovered={head == hoveredCell}
+                class:selected={head == selectedCell}
                 width={cellWidth}
                 height={cellHeight}
                 on:click={() => {
                     let deselect = false
-                    if (selectedCell == cell.head) {
+                    if (selectedCell == head) {
                         selectedCell = null; 
                         deselect = true
                     }
                     else {
-                        selectedCell = cell.head;
+                        selectedCell = head;
                         deselect = false
                     }
-                    dispatch('cellClick', {...cell, deselect});
+                    dispatch('cellClick', {head, activation: activations[i], deselect});
                 }}
                 on:mouseover={() => {
-                    hoveredCell = cell.head;
+                    hoveredCell = head;
                 }}
                 on:mouseout={() => {
                     hoveredCell = null;
                 }} 
-                style={`opacity: ${opacityScale(cell.activation)}`}
+                style={`opacity: ${opacityScale(activations[head])}`}
                 />
         {/each}
     </g>
