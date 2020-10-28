@@ -5,6 +5,7 @@
 	import WordCloud from "./components/WordCloud.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import CloudCluster from "./components/CloudCluster.svelte";
+	import SentenceTokens from "./components/SentenceTokens.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
 
@@ -18,6 +19,7 @@
 		"Today I am craving some fried chicken",
 	];
 	let nHeads: number;
+	let tokens: string[] = []
 
 	function newConcepts(mem: number) {
 		api.getMemoryConcepts(mem).then((r) => {
@@ -26,6 +28,10 @@
 	}
 
 	$: newConcepts($headIndex);
+
+	async function tokenizeSentence() {
+		tokens = await api.sentenceToTokens($queryPhrase)
+	}
 
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase($queryPhrase).then((r) => {
@@ -47,6 +53,8 @@
 				console.log("Mem grid ordering: ", memGridOrdering);
 			});
 		});
+
+		tokenizeSentence()
 	});
 </script>
 
@@ -96,7 +104,10 @@
 			<div id="concept-exploration" class="">
 				{#if conceptList != null}
 					<h2>Individual Head Exploration</h2>
-					<WordCloud concepts={conceptList} width={400} height={400} />
+					<WordCloud
+						concepts={conceptList}
+						width={400}
+						height={400} />
 				{/if}
 			</div>
 		</div>
@@ -113,10 +124,8 @@
 							value={$headIndex + 1}
 							on:input={(e) => {
 								//@ts-ignore
-								const val = e.target.value - 1
-								$headIndex = val > (nHeads - 1) ? nHeads - 1
-									: val < 0 ? 0
-									: val
+								const val = e.target.value - 1;
+								$headIndex = val > nHeads - 1 ? nHeads - 1 : val < 0 ? 0 : val;
 							}} />
 					</h3>
 				{/if}
@@ -149,6 +158,11 @@
 						on:click|preventDefault={submitPhraseQuery}
 						disabled={$queryPhrase.length < 1}>Query</button>
 				</div>
+
+				<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
+					<span class="mr-2 font-bold">Tokens: </span>
+					<SentenceTokens {tokens} />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -163,6 +177,8 @@
 			<CloudCluster heads={clusterHeads} />
 		</div>
 	{:else}
-		<h2 class="text-gray-600 font-thin">Query by a keyword phrase above to see what memories fire the most</h2>
+		<h2 class="text-gray-600 font-thin">
+			Query by a keyword phrase above to see what memories fire the most
+		</h2>
 	{/if}
 </main>
