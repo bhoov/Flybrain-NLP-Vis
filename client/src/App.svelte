@@ -6,9 +6,8 @@
 	import CloudCluster from "./components/CloudCluster.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
-import { interpolateCubehelixLong } from "d3";
 
-	let headIndex: number = undefined;
+	let headIndex: number = 0;
 	let conceptList: tp.Concept[] | null = null;
 	let activations: number[] = undefined;
 	let orderedHeads: number[] = undefined;
@@ -22,13 +21,13 @@ import { interpolateCubehelixLong } from "d3";
 		});
 	}
 
-	$: newConcepts(headIndex)
+	$: newConcepts(headIndex);
 
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
-			activations = r.activations
+			activations = r.activations;
 			console.log("Activations: ", activations);
-			orderedHeads = r.ordered_heads
+			orderedHeads = r.ordered_heads;
 			headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
 		});
@@ -36,12 +35,12 @@ import { interpolateCubehelixLong } from "d3";
 
 	onMount(() => {
 		api.getNHeads().then((r) => {
-			activations = _.range(r).map(v => 1)
+			activations = _.range(r).map((v) => 1);
 
-			api.getMemoryOrder().then(r => {
-				memGridOrdering = r
+			api.getMemoryOrder().then((r) => {
+				memGridOrdering = r;
 				console.log("Mem grid ordering: ", memGridOrdering);
-			})
+			});
 		});
 	});
 </script>
@@ -76,7 +75,6 @@ import { interpolateCubehelixLong } from "d3";
 			margin: 0, auto;
 		}
 	}
-
 </style>
 
 <svelte:head>
@@ -87,7 +85,7 @@ import { interpolateCubehelixLong } from "d3";
 	<div class="left">
 		{#if conceptList != null}
 			<h2>Individual Head Exploration</h2>
-			<WordCloud concepts={conceptList} width={400} height={400}/>
+			<WordCloud concepts={conceptList} width={400} height={400} />
 		{/if}
 	</div>
 	<div class="center">
@@ -102,9 +100,6 @@ import { interpolateCubehelixLong } from "d3";
 				type="range"
 				min="0"
 				max="399"
-				on:input={_.debounce(e => {
-					headIndex = +e.target.value
-				}, 150)}
 				bind:value={headIndex} />
 		</div>
 
@@ -116,15 +111,10 @@ import { interpolateCubehelixLong } from "d3";
 				on:click={submitPhraseQuery}
 				disabled={queryPhrase.length < 1}>Query</button>
 		</div>
-		{#if memGridOrdering != undefined && activations != undefined }
+		{#if memGridOrdering != undefined && activations != undefined}
 			<MemoryGrid
-				activations={activations}
+				{activations}
 				headOrdering={memGridOrdering}
-				on:cellClick={_.debounce((e) => {
-					if (!e.detail.deselect) {
-						headIndex = e.detail.head
-					};
-				}, 150)}
 				bind:selectedCell={headIndex} />
 		{/if}
 	</div>

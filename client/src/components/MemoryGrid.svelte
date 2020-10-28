@@ -7,23 +7,20 @@
     // I need additional information about kohonen layout and opacity of each cell
     export let activations: number[];
     export let headOrdering: number[];
-    export let cellWidth: number = 10;
-    export let cellHeight: number = null;
+    export let cellRadius: number = 7;
     export let selectedCell: number = null;
     let hoveredCell: number = null;
 
-    if (cellHeight == null) cellHeight = cellWidth;
-
     $: nHeads = headOrdering.length
     $: nCols = Math.floor(Math.sqrt(nHeads));
-    $: svgWidth = cellWidth * nCols;
-    $: svgHeight = cellHeight * Math.ceil(nHeads / nCols);
+    $: svgWidth = cellRadius * 2 * nCols;
+    $: svgHeight = cellRadius * 2 * Math.ceil(nHeads / nCols);
 
     $: opacityScale = d3.scaleLinear().domain([0, d3.max(activations)]).range([0.1, 1])
 </script>
 
 <style>
-    rect {
+    circle {
         fill: black;
         stroke-width: 2;
         stroke: white;
@@ -43,12 +40,12 @@
 <svg width={svgWidth} height={svgHeight}>
     <g>
         {#each headOrdering as head, i}
-            <rect
-                transform={`translate(${cellWidth * (i % nCols)}, ${cellHeight * (Math.floor(i / nCols))})`}
+            <circle
                 class:hovered={head == hoveredCell}
                 class:selected={head == selectedCell}
-                width={cellWidth}
-                height={cellHeight}
+                cx={cellRadius * 2 * (i % nCols) + cellRadius}
+                cy={cellRadius * 2 * (Math.floor(i / nCols)) + cellRadius}
+                r={cellRadius}
                 on:click={() => {
                     let deselect = false
                     if (selectedCell == head) {
