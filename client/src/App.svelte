@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import {headIndex, queryPhrase} from "./urlStore"
+	import { headIndex, queryPhrase } from "./urlStore";
 	import type * as tp from "./types";
 	import WordCloud from "./components/WordCloud.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
@@ -13,6 +13,10 @@
 	let orderedHeads: number[] = undefined;
 	let memGridOrdering: number[] = undefined;
 	let clusterHeads: number[] | null = null;
+	let interestingExamples: string[] = [
+		"Israel pakestine conflict",
+		"Today I am craving some fried chicken",
+	];
 
 	function newConcepts(mem: number) {
 		api.getMemoryConcepts(mem).then((r) => {
@@ -95,14 +99,26 @@
 			<h4>Move the slider or click a cell to show concepts!</h4>
 		{/if}
 		<div>
-			<input
-				type="range"
-				min="0"
-				max="399"
-				bind:value={$headIndex} />
+			<input type="range" min="0" max="399" bind:value={$headIndex} />
 		</div>
 
-		<h4>Or, search for concepts by typing in a phrase below:</h4>
+		<h4>
+			Or, search for concepts by typing in a phrase below or selecting
+			from the dropdown:
+		</h4>
+
+		<form
+			on:submit|preventDefault={() => {
+				console.log('SUBMITTED FORM');
+			}}>
+			<select
+				name="example-dropdown"
+				bind:value={$queryPhrase}>
+				{#each interestingExamples as ex}
+					<option value={ex}>{ex}</option>
+				{/each}
+			</select>
+		</form>
 
 		<div>
 			<input type="text" bind:value={$queryPhrase} />
