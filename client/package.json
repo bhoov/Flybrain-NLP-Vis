@@ -9,6 +9,7 @@
     "validate": "svelte-check"
   },
   "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^3.0.0",
     "@rollup/plugin-commonjs": "^14.0.0",
     "@rollup/plugin-node-resolve": "^8.0.0",
     "@rollup/plugin-typescript": "^6.0.0",
@@ -25,6 +26,7 @@
     "svelte": "^3.0.0",
     "svelte-check": "^1.0.0",
     "svelte-preprocess": "^4.0.0",
+    "tailwindcss": "^1.9.6",
     "tslib": "^2.0.0",
     "typescript": "^3.9.3"
   },

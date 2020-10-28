@@ -9,6 +9,12 @@ import typescript from '@rollup/plugin-typescript';
 
 const production = !process.env.ROLLUP_WATCH;
 
+const purgecss = require('@fullhuman/postcss-purgecss')({
+  content: ['./src/**/*.svelte'],
+  whitelistPatterns: [/svelte-/],
+  defaultExtractor: (content) => content.match(/[A-Za-z0-9-_:/]+/g) || [],
+});
+
 /** Default serve function */
 function serve() {
 	let server;
@@ -48,7 +54,15 @@ export default {
 			css: css => {
 				css.write('bundle.css');
 			},
-			preprocess: sveltePreprocess(),
+			preprocess: sveltePreprocess({
+				postcss: {
+					plugins: [
+						require('tailwindcss'),
+						require('autoprefixer'),
+						...(production ? [purgecss] : [])
+					]
+				}
+			}),
 		}),
 
 		// If you have external dependencies installed from
