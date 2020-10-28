@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
+	import {headIndex, queryPhrase} from "./urlStore"
 	import type * as tp from "./types";
 	import WordCloud from "./components/WordCloud.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
@@ -7,12 +8,10 @@
 	import { api } from "./api";
 	import * as _ from "lodash";
 
-	let headIndex: number = 0;
 	let conceptList: tp.Concept[] | null = null;
 	let activations: number[] = undefined;
 	let orderedHeads: number[] = undefined;
 	let memGridOrdering: number[] = undefined;
-	let queryPhrase: string = "";
 	let clusterHeads: number[] | null = null;
 
 	function newConcepts(mem: number) {
@@ -21,14 +20,14 @@
 		});
 	}
 
-	$: newConcepts(headIndex);
+	$: newConcepts($headIndex);
 
 	function submitPhraseQuery() {
-		api.queryTopMemsByPhrase(queryPhrase).then((r) => {
+		api.queryTopMemsByPhrase($queryPhrase).then((r) => {
 			activations = r.activations;
 			console.log("Activations: ", activations);
 			orderedHeads = r.ordered_heads;
-			headIndex = orderedHeads[0];
+			$headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
 		});
 	}
@@ -90,8 +89,8 @@
 	</div>
 	<div class="center">
 		<h1>FlyBrain Explorer</h1>
-		{#if headIndex != undefined}
-			<h3>Showing Concepts for Head {headIndex + 1}</h3>
+		{#if $headIndex != undefined}
+			<h3>Showing Concepts for Head {$headIndex + 1}</h3>
 		{:else}
 			<h4>Move the slider or click a cell to show concepts!</h4>
 		{/if}
@@ -100,22 +99,22 @@
 				type="range"
 				min="0"
 				max="399"
-				bind:value={headIndex} />
+				bind:value={$headIndex} />
 		</div>
 
 		<h4>Or, search for concepts by typing in a phrase below:</h4>
 
 		<div>
-			<input type="text" bind:value={queryPhrase} />
+			<input type="text" bind:value={$queryPhrase} />
 			<button
 				on:click={submitPhraseQuery}
-				disabled={queryPhrase.length < 1}>Query</button>
+				disabled={$queryPhrase.length < 1}>Query</button>
 		</div>
 		{#if memGridOrdering != undefined && activations != undefined}
 			<MemoryGrid
 				{activations}
 				headOrdering={memGridOrdering}
-				bind:selectedCell={headIndex} />
+				bind:selectedCell={$headIndex} />
 		{/if}
 	</div>
 

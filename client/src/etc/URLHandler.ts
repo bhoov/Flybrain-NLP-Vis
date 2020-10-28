@@ -126,7 +126,7 @@ export class URLHandler {
         }
     }
 
-    static updateURLParam(key: string, value: string | any[], addToBrowserHistory = true) {
+    static updateURLParam(key: string, value: any | any[], addToBrowserHistory = true) {
         const currentParams = URLHandler.parameters;
         currentParams[key] = value;
         URLHandler.updateUrl(currentParams, addToBrowserHistory);
