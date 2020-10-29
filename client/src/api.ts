@@ -13,6 +13,14 @@ export class API {
         }
     }
 
+    sentenceToKeywords(sentence: string): Promise<string[]> {
+        const route = "/sentence-to-keywords"
+        let toSend = { sentence }
+        const url = makeUrl(this.baseURL + route, toSend)
+        console.log("--- GET " + url);
+        return d3.json(url)
+    }
+
     sentenceToTokens(sentence: string): Promise<string[]> {
         const route = "/sentence-to-tokens"
         let toSend = { sentence }

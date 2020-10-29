@@ -45,6 +45,14 @@ def send_static_client(file_path:str):
 ## MAIN API ##
 # ======================================================================
 
+@app.get("/api/sentence-to-keywords")
+async def sentence_to_keywords(sentence: str):
+    project = get_project(pf.PROJECT)
+    ids = project.tokenizer.encode(sentence)
+    print("IDS: ", ids)
+    good_tokens = [project.tokenizer.id2token(id) for id in ids if id not in project.stop_words]
+    return good_tokens
+
 @app.get("/api/sentence-to-tokens")
 async def sentence_to_tokens(sentence: str):
     project = get_project(pf.PROJECT)

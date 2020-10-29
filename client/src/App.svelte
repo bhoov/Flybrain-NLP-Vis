@@ -8,6 +8,9 @@
 	import SentenceTokens from "./components/SentenceTokens.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
+	// import { tipz } from './etc/tipper';
+	// import tippy from 'sveltejs-tippy';
+
 
 	let conceptList: tp.Concept[] | null = null;
 	let activations: number[] = undefined;
@@ -19,7 +22,7 @@
 		"Today I am craving some fried chicken",
 	];
 	let nHeads: number;
-	let tokens: string[] = []
+	let keywords: string[] = []
 
 	function newConcepts(mem: number) {
 		api.getMemoryConcepts(mem).then((r) => {
@@ -29,8 +32,9 @@
 
 	$: newConcepts($headIndex);
 
-	async function tokenizeSentence() {
-		tokens = await api.sentenceToTokens($queryPhrase)
+	async function keywordifySentence() {
+		keywords = await api.sentenceToKeywords($queryPhrase)
+		return true
 	}
 
 	function submitPhraseQuery() {
@@ -40,7 +44,9 @@
 			orderedHeads = r.ordered_heads;
 			$headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
+			keywordifySentence()
 		});
+		return true
 	}
 
 	onMount(() => {
@@ -54,7 +60,7 @@
 			});
 		});
 
-		tokenizeSentence()
+		keywordifySentence()
 	});
 </script>
 
@@ -153,6 +159,7 @@
 						bind:value={$queryPhrase}
 						on:keydown={(e) => {
 							e.key == 'Enter' && submitPhraseQuery();
+							e.code == "Space" && keywordifySentence()
 						}} />
 					<button
 						on:click|preventDefault={submitPhraseQuery}
@@ -160,8 +167,8 @@
 				</div>
 
 				<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
-					<span class="mr-2 font-bold">Tokens: </span>
-					<SentenceTokens {tokens} />
+					<span class="mr-2 font-bold border-b-dashed">Detected Keywords: </span>
+					<SentenceTokens tokens={keywords} />
 				</div>
 			</div>
 		</div>

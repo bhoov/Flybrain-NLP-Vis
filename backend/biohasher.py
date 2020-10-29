@@ -133,7 +133,9 @@ class Biohasher:
                 sentence[self.n_vocab + target] = target_value
 
         if normalize_vector:
-            sentence = sentence / np.sqrt(np.sum(sentence * sentence)) # Could be optimized as vector is very sparse
+            divisor = np.sqrt(np.sum(sentence * sentence))
+            if divisor > 0:
+                sentence = sentence / divisor # Could be optimized as vector is very sparse
 
         if return_n_context:
             out = (sentence, n_context)
