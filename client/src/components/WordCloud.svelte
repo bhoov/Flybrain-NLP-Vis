@@ -8,8 +8,8 @@
     export let width: number = 500;
     export let height: number = 500;
 
-    $: maxPxSize = d3.min([width, height]) / 4;
-    $: minPxSize = maxPxSize / 4
+    $: maxPxSize = d3.min([width, height]) / 5;
+    $: minPxSize = maxPxSize / 6
 
     $: contributions = concepts.map((d) => d.contribution);
 

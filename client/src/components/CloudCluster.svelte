@@ -6,6 +6,7 @@
     export let heads: number[] = [];
     export let cloudWidth: number = 300
     export let cloudHeight: number = 300
+    export let hoveredHead: number
 
     function heads2concepts(heads): Promise<tp.Concept[][]> {
         return Promise.all(heads.map(h => {
@@ -16,16 +17,19 @@
     $: conceptsPromise = heads2concepts(heads)
 </script>
 
-<style>
+<style lang="postcss">
     .status {
         margin: auto;
         color: red;
         vertical-align: middle
     }
 
-    h3 {
+    .hovered {
+        @apply text-2xl;
         color: cyan;
+        transition: font-size 0.1s;
     }
+
 </style>
 
 
@@ -38,7 +42,7 @@
 {:then conceptList}
     {#each conceptList as concept, i}
         <div>
-            <h3>Head {heads[i] + 1}</h3>
+            <h2 class:hovered={heads[i] == hoveredHead}>Head {heads[i] + 1}</h2>
             <WordCloud concepts={concept} width={cloudWidth} height={cloudHeight}/>
         </div>
     {/each}

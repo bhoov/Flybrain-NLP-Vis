@@ -8,8 +8,8 @@
     export let activations: number[];
     export let headOrdering: number[];
     export let cellRadius: number = 7;
-    export let selectedCell: number = null;
-    let hoveredCell: number = null;
+    export let selectedCell: number;
+    export let hoveredCell: number;
 
     $: nHeads = headOrdering.length
     $: nCols = Math.floor(Math.sqrt(nHeads));
@@ -26,15 +26,16 @@
         stroke: white;
     }
 
+    .selected {
+        fill: coral;
+        opacity: 1 !important;
+    }
+
     .hovered {
         fill: cyan;
         opacity: 1 !important;
     }
 
-    .selected {
-        fill: coral;
-        opacity: 1 !important;
-    }
 </style>
 
 <svg width={svgWidth} height={svgHeight}>

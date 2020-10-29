@@ -2,27 +2,29 @@
 	import { onMount } from "svelte";
 	import { headIndex, queryPhrase } from "./urlStore";
 	import type * as tp from "./types";
-	import WordCloud from "./components/WordCloud.svelte";
+	// import WordCloud from "./components/WordCloud.svelte";
+	// import WordCloud from "./components/WordRanking.svelte";
+	import BarChart from "./components/HorizontalBarChart.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import CloudCluster from "./components/CloudCluster.svelte";
 	import SentenceTokens from "./components/SentenceTokens.svelte";
+	import MemoryBars from "./components/MemoryBars.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
-	// import { tipz } from './etc/tipper';
-	// import tippy from 'sveltejs-tippy';
-
 
 	let conceptList: tp.Concept[] | null = null;
 	let activations: number[] = undefined;
 	let orderedHeads: number[] = undefined;
 	let memGridOrdering: number[] = undefined;
 	let clusterHeads: number[] | null = null;
+	let barInfo: tp.MemActivation[];
 	let interestingExamples: string[] = [
 		"Israel pakestine conflict",
 		"Today I am craving some fried chicken",
 	];
 	let nHeads: number;
-	let keywords: string[] = []
+	let keywords: string[] = [];
+	let hoveredHead: number;
 
 	function newConcepts(mem: number) {
 		api.getMemoryConcepts(mem).then((r) => {
@@ -33,20 +35,20 @@
 	$: newConcepts($headIndex);
 
 	async function keywordifySentence() {
-		keywords = await api.sentenceToKeywords($queryPhrase)
-		return true
+		keywords = await api.sentenceToKeywords($queryPhrase);
+		return true;
 	}
 
 	function submitPhraseQuery() {
 		api.queryTopMemsByPhrase($queryPhrase).then((r) => {
 			activations = r.activations;
-			console.log("Activations: ", activations);
 			orderedHeads = r.ordered_heads;
+			barInfo = r.head_info;
 			$headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
-			keywordifySentence()
+			keywordifySentence();
 		});
-		return true
+		return true;
 	}
 
 	onMount(() => {
@@ -60,7 +62,7 @@
 			});
 		});
 
-		keywordifySentence()
+		keywordifySentence();
 	});
 </script>
 
@@ -104,20 +106,23 @@
 					<MemoryGrid
 						{activations}
 						headOrdering={memGridOrdering}
-						bind:selectedCell={$headIndex} />
+						bind:selectedCell={$headIndex}
+						bind:hoveredCell={hoveredHead} />
 				{/if}
 			</div>
 			<div id="concept-exploration" class="">
 				{#if conceptList != null}
-					<h2>Individual Head Exploration</h2>
-					<WordCloud
+					<h1>Individual Head Exploration</h1>
+					<!-- <WordCloud
 						concepts={conceptList}
-						width={400}
-						height={400} />
+						width={500}
+						height={500} /> -->
+					<BarChart
+						data={conceptList.map(c => {return {name: c.token, value: c.contribution}})}/>
 				{/if}
 			</div>
 		</div>
-		<div id="controls" class="w-full lg:w-1/3">
+		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg">
 			<h1>FlyBrain Explorer</h1>
 			<div class="">
 				{#if $headIndex != undefined}
@@ -154,12 +159,13 @@
 				</form>
 
 				<div>
-					<input
-						type="text"
+					<textarea
+						class="w-full"
+						rows="2"
 						bind:value={$queryPhrase}
 						on:keydown={(e) => {
 							e.key == 'Enter' && submitPhraseQuery();
-							e.code == "Space" && keywordifySentence()
+							e.code == 'Space' && keywordifySentence();
 						}} />
 					<button
 						on:click|preventDefault={submitPhraseQuery}
@@ -167,7 +173,9 @@
 				</div>
 
 				<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
-					<span class="mr-2 font-bold border-b-dashed">Detected Keywords: </span>
+					<span class="mr-2 font-bold border-b-dashed">Detected
+						Keywords:
+					</span>
 					<SentenceTokens tokens={keywords} />
 				</div>
 			</div>
@@ -178,10 +186,12 @@
 	{#if clusterHeads != null}
 		<h2>Query Search Results</h2>
 
+		<MemoryBars barInfo={barInfo.slice(0, 10)} bind:hoveredHead />
+
 		<div
 			id="query-results"
 			class="grid md:grid-flow-row md:grid-cols-3 overflow-y-auto">
-			<CloudCluster heads={clusterHeads} />
+			<CloudCluster heads={clusterHeads} bind:hoveredHead />
 		</div>
 	{:else}
 		<h2 class="text-gray-600 font-thin">
