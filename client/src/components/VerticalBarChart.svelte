@@ -3,7 +3,7 @@
     import * as d3 from "d3";
     import * as tp from "../types";
 
-    export let barInfo: tp.MemActivation[] = [];
+    export let data: tp.MemActivation[] = [];
     export let maxWidth = 350;
     export let maxHeight = 150;
     export let padding = 0.2;
@@ -20,13 +20,13 @@
 
     $: xScale = d3
         .scaleBand()
-        .domain(barInfo.map((d, i) => `${d.head + 1}`))
+        .domain(data.map((d, i) => `${d.head + 1}`))
         .range([0, width])
         .padding(padding);
 
     $: yScale = d3
         .scaleLinear()
-        .domain([0, d3.max(barInfo, (b) => b.activation)])
+        .domain([0, d3.max(data, (b) => b.activation)])
         .range([height, 0]);
 
     //make y axis to show bar names
@@ -48,7 +48,7 @@
 <svg width={maxWidth} height={maxHeight}>
     <g transform={`translate(${margin.left}, ${margin.top})`}>
         <g bind:this={bottomAxis} class="axis" transform={`translate(0, ${height})`}/>
-        {#each barInfo as bar, i}
+        {#each data as bar, i}
             <rect
                 class:hovered={hoveredHead == bar.head}
                 x={xScale(`${bar.head + 1}`)}

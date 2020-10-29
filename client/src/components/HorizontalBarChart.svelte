@@ -9,6 +9,7 @@
         bottom: 15,
         left: 100,
     };
+
     interface Data {
         name: string
         value: number
@@ -17,6 +18,7 @@
 
     $: width = maxWidth - margin.left - margin.right;
     $: height = maxHeight - margin.top - margin.bottom;
+
     $: xScale = d3
         .scaleLinear()
         .range([0, width])
@@ -39,7 +41,6 @@
     $: leftAxis != undefined && yAxis(d3.select(leftAxis));
 
     onMount(() => {
-        console.log("MOUNTING");
         yAxis(d3.select(leftAxis));
     });
 </script>
@@ -59,14 +60,11 @@
         display: none;
     }
 
-    .label {
-        font-size: 13px;
-    }
 </style>
 
 <svg width={maxWidth} height={maxHeight}>
     <g transform={`translate(${margin.left}, ${margin.top})`}>
-        <g bind:this={leftAxis} />
+        <g bind:this={leftAxis} class="axis"/>
         {#each data as d, i (d.name)}
             <rect
                 class="bar"
