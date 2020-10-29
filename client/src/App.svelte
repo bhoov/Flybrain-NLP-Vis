@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { headIndex, queryPhrase } from "./urlStore";
+	import { headIndex, queryPhrase, showQueryResults } from "./urlStore";
 	import type * as tp from "./types";
 	// import WordCloud from "./components/WordCloud.svelte";
 	// import WordCloud from "./components/WordRanking.svelte";
@@ -46,11 +46,17 @@
 			barInfo = r.head_info;
 			$headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
+			$showQueryResults = true
 			keywordifySentence();
 		});
 		return true;
 	}
 
+
+	if ($showQueryResults) {
+		submitPhraseQuery()
+	}
+	
 	onMount(() => {
 		api.getNHeads().then((H) => {
 			nHeads = H;
@@ -60,6 +66,7 @@
 				memGridOrdering = r;
 				console.log("Mem grid ordering: ", memGridOrdering);
 			});
+
 		});
 
 		keywordifySentence();
@@ -183,7 +190,7 @@
 	</div>
 
 	<hr />
-	{#if clusterHeads != null}
+	{#if showQueryResults && clusterHeads != null}
 		<h2>Query Search Results</h2>
 
 		<MemoryBars barInfo={barInfo.slice(0, 10)} bind:hoveredHead />
