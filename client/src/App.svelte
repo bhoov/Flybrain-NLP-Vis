@@ -19,8 +19,21 @@
 	let clusterHeads: number[] | null = null;
 	let barInfo: tp.MemActivation[];
 	let interestingExamples: string[] = [
-		"Israel pakestine conflict",
-		"Today I am craving some fried chicken",
+		'Senate majority leader discussed the issue with the members of the committee',
+		'Entertainment industry shares rise following the premiere of the mass destruction weapon documentary',
+		'European Court of Human Rights most compelling cases',
+		'White supremacist protest in Washington DC' ,
+		'Apple latest IPhone has an improved apps connectivity',
+		'Representative Harris accused Facebook of bias and promoting hate speech',
+		'President Trump held campaign rally in Virginia',
+		'Stock market plunged on Tuesday following analysts reports',
+		'IBM corporation to acquire open-source software startup',
+		'Local government officials responded promptly to protests',
+		'Influenza vaccine prevented virus outbreak and reduced stress on hospitals',
+		'Israeli Palestine confrontation in Gaza',
+		'Supreme Court dismissed the criminal charges ',
+		'Hillary Clinton declined to comment on the allegations of financial contributions',
+		'Research laboratories are working on designing diagnostic tools to assess water contamination using modern AI technologies',
 	];
 	let nHeads: number;
 	let keywords: string[] = [];
@@ -99,6 +112,7 @@
 	#query-results {
 		max-height: 350px;
 	}
+
 </style>
 
 <svelte:head>
@@ -157,6 +171,8 @@
 				<form>
 					<select
 						name="example-dropdown"
+						class="w-full"
+						id="example-dropdown"
 						bind:value={$queryPhrase}
 						on:input={submitPhraseQuery}>
 						{#each interestingExamples as ex}
@@ -170,6 +186,8 @@
 						class="w-full"
 						rows="2"
 						bind:value={$queryPhrase}
+						maxlength="175"
+						placeholder="Enter keyword phrase (Limit 175 characters)"
 						on:keydown={(e) => {
 							e.key == 'Enter' && submitPhraseQuery();
 							e.code == 'Space' && keywordifySentence();
