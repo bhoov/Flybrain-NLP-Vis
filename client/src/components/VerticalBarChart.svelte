@@ -14,6 +14,7 @@
         bottom: 50,
         left: 10,
     };
+    export let showTickLabels = false;
 
     $: width = maxWidth - margin.left - margin.right;
     $: height = maxHeight - margin.top - margin.bottom;
@@ -35,7 +36,13 @@
     $: bottomAxis != undefined && xAxis(d3.select(bottomAxis));
 
     onMount(() => {
-        xAxis(d3.select(bottomAxis));
+        //@ts-ignore
+        const myAxis = d3.select(bottomAxis)
+        if (showTickLabels) {
+            //@ts-ignore
+            myAxis.tickFormat('')
+        }
+        xAxis(myAxis);
     });
 </script>
 

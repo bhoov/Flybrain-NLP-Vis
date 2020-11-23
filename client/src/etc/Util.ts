@@ -59,3 +59,10 @@ export function copyToClipboard(text:string) {
     document.execCommand("copy");
     document.body.removeChild(dummy);
 }
+
+export function toggle(currVal, newVal) {
+    if (currVal == newVal) {
+        return null
+    }
+    return newVal
+}

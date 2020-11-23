@@ -59,7 +59,6 @@
         fill: none;
         display: none;
     }
-
 </style>
 
 <svg width={maxWidth} height={maxHeight}>

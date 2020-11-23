@@ -2,6 +2,8 @@
     import { createEventDispatcher } from "svelte";
     import type * as tp from "../types";
     import * as d3 from "d3"
+    import { toggle } from "../etc/Util";
+
     const dispatch = createEventDispatcher();
 
     // I need additional information about kohonen layout and opacity of each cell
@@ -27,13 +29,13 @@
     }
 
     .selected {
-        fill: coral;
+        fill: coral !important;
         opacity: 1 !important;
     }
 
     .hovered {
         fill: cyan;
-        opacity: 1 !important;
+        opacity: 1;
     }
 
 </style>

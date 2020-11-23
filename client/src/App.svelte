@@ -65,6 +65,8 @@
 		return true;
 	}
 
+	$: $queryPhrase && submitPhraseQuery()
+
 
 	if ($showQueryResults) {
 		submitPhraseQuery()
@@ -112,6 +114,9 @@
 	#query-results {
 		max-height: 350px;
 	}
+	.example-options {
+		white-space: pre-wrap;
+	}
 
 </style>
 
@@ -134,10 +139,6 @@
 			<div id="concept-exploration" class="">
 				{#if conceptList != null}
 					<h1>Individual Head Exploration</h1>
-					<!-- <WordCloud
-						concepts={conceptList}
-						width={500}
-						height={500} /> -->
 					<BarChart
 						data={conceptList.map(c => {return {name: c.token, value: c.contribution}})}/>
 				{/if}
@@ -146,35 +147,19 @@
 		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg">
 			<h1>FlyBrain Explorer</h1>
 			<div class="">
-				{#if $headIndex != undefined}
-					<h3>
-						Showing Concepts for Head
-						<input
-							type="number"
-							min="1"
-							max={nHeads}
-							value={$headIndex + 1}
-							on:input={(e) => {
-								//@ts-ignore
-								const val = e.target.value - 1;
-								$headIndex = val > nHeads - 1 ? nHeads - 1 : val < 0 ? 0 : val;
-							}} />
-					</h3>
-				{/if}
-
 				<h4>
-					Or,
-					<span class="text-red-700">search for concepts</span>
-					by typing in a phrase below or selecting from the dropdown:
+					<span class="text-red-700">Search for concepts</span>
+					by selecting a phrase dropdown.
 				</h4>
 
 				<form>
 					<select
 						name="example-dropdown"
-						class="w-full"
+						class="w-full example-dropdown"
 						id="example-dropdown"
 						bind:value={$queryPhrase}
-						on:input={submitPhraseQuery}>
+					>
+						<!-- on:blur={submitPhraseQuery}> -->
 						{#each interestingExamples as ex}
 							<option value={ex}>{ex}</option>
 						{/each}
@@ -183,18 +168,19 @@
 
 				<div>
 					<textarea
-						class="w-full"
+						class="w-full h-24"
 						rows="2"
 						bind:value={$queryPhrase}
 						maxlength="175"
-						placeholder="Enter keyword phrase (Limit 175 characters)"
+						placeholder="Select a text from the dropdown"
+						readonly
 						on:keydown={(e) => {
 							e.key == 'Enter' && submitPhraseQuery();
 							e.code == 'Space' && keywordifySentence();
 						}} />
-					<button
+					<!-- <button
 						on:click|preventDefault={submitPhraseQuery}
-						disabled={$queryPhrase.length < 1}>Query</button>
+						disabled={$queryPhrase.length < 1}>Query</button> -->
 				</div>
 
 				<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
@@ -211,12 +197,12 @@
 	{#if showQueryResults && clusterHeads != null}
 		<h2>Query Search Results</h2>
 
-		<MemoryBars barInfo={barInfo.slice(0, 10)} bind:hoveredHead />
+		<MemoryBars barInfo={barInfo.slice(0, 10)} bind:hoveredHead bind:selectedHead={$headIndex}/>
 
 		<div
 			id="query-results"
 			class="grid md:grid-flow-row md:grid-cols-3 overflow-y-auto">
-			<CloudCluster heads={clusterHeads} bind:hoveredHead />
+			<CloudCluster heads={clusterHeads} bind:hoveredHead bind:selectedHead={$headIndex}/>
 		</div>
 	{:else}
 		<h2 class="text-gray-600 font-thin">
