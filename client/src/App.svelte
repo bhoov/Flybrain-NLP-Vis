@@ -58,7 +58,7 @@
 			orderedHeads = r.ordered_heads;
 			barInfo = r.head_info;
 			$headIndex = orderedHeads[0];
-			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
+			clusterHeads = r.head_info.slice(0, 3).map((c) => c.head);
 			$showQueryResults = true;
 			keywordifySentence();
 		});
@@ -82,7 +82,7 @@
 			});
 		});
 
-		$queryPhrase = interestingExamples[0]
+		$queryPhrase = interestingExamples[0];
 
 		keywordifySentence();
 	});
@@ -138,12 +138,11 @@
 			<div id="the-brain" class="self-center">
 				{#if memGridOrdering != undefined && activations != undefined}
 					<div class="muted mb-2 mx-2">
-						All 400 memories are represented as a circle in the
+						All 400
 						<a
-							href="https://en.wikipedia.org/wiki/Self-organizing_map">
-							Kohonen Map
-						</a>
-						grid below.
+							href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon
+							Cells (KCs)</a>
+						are represented as a circle in the grid below.
 						<strong>Click</strong>
 						through each of them to view what concepts each head has
 						learned.
@@ -157,7 +156,12 @@
 			</div>
 			<div id="concept-exploration" class="my-4">
 				{#if conceptList != null}
-					<div class="muted">Concepts learned by <span class="font-bold unmuted" style="color: coral;">selected memory</span></div>
+					<div class="muted">
+						Concepts learned by
+						<span
+							class="font-bold unmuted"
+							style="color: coral;">selected KC</span>
+					</div>
 					<BarChart
 						data={conceptList.map((c) => {
 							return { name: c.token, value: c.contribution };
@@ -166,7 +170,7 @@
 			</div>
 		</div>
 		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg px-0">
-			<h1>FlyBrain Explorer</h1>
+			<h1>Fruit Fly Word Embeddings</h1>
 			<div class="">
 				<h4>
 					<span class="text-red-700">Search for concepts</span>
@@ -214,11 +218,11 @@
 
 	<hr />
 	{#if showQueryResults && clusterHeads != null}
-		<h1>Top Memories</h1>
+		<h1>Top Activated Cells</h1>
 		<div class="muted">
-			The highest activated memories from the query phrase. Each memory is
+			The highest activated KCs from the query phrase. Each KC is
 			shown as a bar on the histogram, the height indicating how much the
-			selected phrase triggered that particular memory. 
+			selected phrase triggered that particular cell.
 		</div>
 
 		<MemoryBars
@@ -226,9 +230,7 @@
 			bind:hoveredHead
 			bind:selectedHead={$headIndex} />
 
-		<div
-			id="query-results"
-			class="grid md:grid-flow-row md:grid-cols-3 overflow-y-auto">
+		<div id="query-results" class="grid md:grid-flow-row md:grid-cols-3">
 			<CloudCluster
 				heads={clusterHeads}
 				bind:hoveredHead
@@ -236,7 +238,7 @@
 		</div>
 	{:else}
 		<h2 class="text-gray-600 font-thin">
-			Query by a keyword phrase above to see what memories fire the most
+			Query by a keyword phrase above to see what KCs fire the most
 		</h2>
 	{/if}
 </main>
