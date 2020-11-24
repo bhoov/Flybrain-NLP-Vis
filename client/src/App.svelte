@@ -82,6 +82,8 @@
 			});
 		});
 
+		$queryPhrase = interestingExamples[0]
+
 		keywordifySentence();
 	});
 </script>
