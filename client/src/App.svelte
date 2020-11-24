@@ -142,9 +142,9 @@
 						<a
 							href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon
 							Cells (KCs)</a>
-						are represented as a circle in the grid below.
+						are represented as circles in the 20x20 grid below.
 						<strong>Click</strong>
-						through each of them to view what concepts each head has
+						through each of them to view what concepts each KC has
 						learned.
 					</div>
 					<MemoryGrid
