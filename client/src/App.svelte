@@ -19,21 +19,21 @@
 	let clusterHeads: number[] | null = null;
 	let barInfo: tp.MemActivation[];
 	let interestingExamples: string[] = [
-		'Senate majority leader discussed the issue with the members of the committee',
-		'Entertainment industry shares rise following the premiere of the mass destruction weapon documentary',
-		'European Court of Human Rights most compelling cases',
-		'White supremacist protest in Washington DC' ,
-		'Apple latest IPhone has an improved apps connectivity',
-		'Representative Harris accused Facebook of bias and promoting hate speech',
-		'President Trump held campaign rally in Virginia',
-		'Stock market plunged on Tuesday following analysts reports',
-		'IBM corporation to acquire open-source software startup',
-		'Local government officials responded promptly to protests',
-		'Influenza vaccine prevented virus outbreak and reduced stress on hospitals',
-		'Israeli Palestine confrontation in Gaza',
-		'Supreme Court dismissed the criminal charges ',
-		'Hillary Clinton declined to comment on the allegations of financial contributions',
-		'Research laboratories are working on designing diagnostic tools to assess water contamination using modern AI technologies',
+		"Senate majority leader discussed the issue with the members of the committee",
+		"Entertainment industry shares rise following the premiere of the mass destruction weapon documentary",
+		"European Court of Human Rights most compelling cases",
+		"White supremacist protest in Washington DC",
+		"Apple latest IPhone has an improved apps connectivity",
+		"Representative Harris accused Facebook of bias and promoting hate speech",
+		"President Trump held campaign rally in Virginia",
+		"Stock market plunged on Tuesday following analysts reports",
+		"IBM corporation to acquire open-source software startup",
+		"Local government officials responded promptly to protests",
+		"Influenza vaccine prevented virus outbreak and reduced stress on hospitals",
+		"Israeli Palestine confrontation in Gaza",
+		"Supreme Court dismissed the criminal charges ",
+		"Hillary Clinton declined to comment on the allegations of financial contributions",
+		"Research laboratories are working on designing diagnostic tools to assess water contamination using modern AI technologies",
 	];
 	let nHeads: number;
 	let keywords: string[] = [];
@@ -59,19 +59,18 @@
 			barInfo = r.head_info;
 			$headIndex = orderedHeads[0];
 			clusterHeads = r.head_info.slice(0, 4).map((c) => c.head);
-			$showQueryResults = true
+			$showQueryResults = true;
 			keywordifySentence();
 		});
 		return true;
 	}
 
-	$: $queryPhrase && submitPhraseQuery()
-
+	$: $queryPhrase && submitPhraseQuery();
 
 	if ($showQueryResults) {
-		submitPhraseQuery()
+		submitPhraseQuery();
 	}
-	
+
 	onMount(() => {
 		api.getNHeads().then((H) => {
 			nHeads = H;
@@ -81,7 +80,6 @@
 				memGridOrdering = r;
 				console.log("Mem grid ordering: ", memGridOrdering);
 			});
-
 		});
 
 		keywordifySentence();
@@ -118,10 +116,18 @@
 		white-space: pre-wrap;
 	}
 
+	.muted {
+		@apply text-gray-700;
+		opacity: 0.7;
+	}
+
+	unmuted {
+		opacity: 1 !important;
+	}
 </style>
 
 <svelte:head>
-	<title>FlyBrain Explorer</title>
+	<title>Explore Fruit Fly Word Embeddings</title>
 </svelte:head>
 
 <main>
@@ -129,6 +135,17 @@
 		<div class="w-full lg:w-2/3 grid grid-cols-2">
 			<div id="the-brain" class="self-center">
 				{#if memGridOrdering != undefined && activations != undefined}
+					<div class="muted mb-2 mx-2">
+						All 400 memories are represented as a circle in the
+						<a
+							href="https://en.wikipedia.org/wiki/Self-organizing_map">
+							Kohonen Map
+						</a>
+						grid below.
+						<strong>Click</strong>
+						through each of them to view what concepts each head has
+						learned.
+					</div>
 					<MemoryGrid
 						{activations}
 						headOrdering={memGridOrdering}
@@ -136,15 +153,17 @@
 						bind:hoveredCell={hoveredHead} />
 				{/if}
 			</div>
-			<div id="concept-exploration" class="">
+			<div id="concept-exploration" class="my-4">
 				{#if conceptList != null}
-					<h1>Individual Head Exploration</h1>
+					<div class="muted">Concepts learned by <span class="font-bold unmuted" style="color: coral;">selected memory</span></div>
 					<BarChart
-						data={conceptList.map(c => {return {name: c.token, value: c.contribution}})}/>
+						data={conceptList.map((c) => {
+							return { name: c.token, value: c.contribution };
+						})} />
 				{/if}
 			</div>
 		</div>
-		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg">
+		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg px-0">
 			<h1>FlyBrain Explorer</h1>
 			<div class="">
 				<h4>
@@ -157,8 +176,7 @@
 						name="example-dropdown"
 						class="w-full example-dropdown"
 						id="example-dropdown"
-						bind:value={$queryPhrase}
-					>
+						bind:value={$queryPhrase}>
 						<!-- on:blur={submitPhraseQuery}> -->
 						{#each interestingExamples as ex}
 							<option value={ex}>{ex}</option>
@@ -168,8 +186,7 @@
 
 				<div>
 					<textarea
-						class="w-full h-24"
-						rows="2"
+						class="w-full h-24 bg-gray-300 cursor-default"
 						bind:value={$queryPhrase}
 						maxlength="175"
 						placeholder="Select a text from the dropdown"
@@ -195,14 +212,25 @@
 
 	<hr />
 	{#if showQueryResults && clusterHeads != null}
-		<h2>Query Search Results</h2>
+		<h1>Top Memories</h1>
+		<div class="muted">
+			The highest activated memories from the query phrase. Each memory is
+			shown as a bar on the histogram, the height indicating how much the
+			selected phrase triggered that particular memory. 
+		</div>
 
-		<MemoryBars barInfo={barInfo.slice(0, 10)} bind:hoveredHead bind:selectedHead={$headIndex}/>
+		<MemoryBars
+			barInfo={barInfo.slice(0, 10)}
+			bind:hoveredHead
+			bind:selectedHead={$headIndex} />
 
 		<div
 			id="query-results"
 			class="grid md:grid-flow-row md:grid-cols-3 overflow-y-auto">
-			<CloudCluster heads={clusterHeads} bind:hoveredHead bind:selectedHead={$headIndex}/>
+			<CloudCluster
+				heads={clusterHeads}
+				bind:hoveredHead
+				bind:selectedHead={$headIndex} />
 		</div>
 	{:else}
 		<h2 class="text-gray-600 font-thin">

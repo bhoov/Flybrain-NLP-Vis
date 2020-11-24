@@ -1,8 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import * as d3 from "d3";
-    export let maxWidth: number = 400;
-    export let maxHeight: number = 300;
+    export let maxWidth: number = 350;
+    export let maxHeight: number = 350;
     export let margin = {
         top: 15,
         right: 50,
@@ -51,7 +51,7 @@
     }
 
     .axis {
-        font-size: 13px;
+        font-size: 16px;
     }
 
     .axis path,

@@ -28,6 +28,10 @@
         vertical-align: middle;
     }
 
+    .cloud {
+        border: 1px;
+    }
+
     .hovered {
         @apply text-2xl border-2 border-gray-100;
         transition: font-size 0.1s;
@@ -36,7 +40,7 @@
     }
 
     .selected {
-        box-shadow: 5px 5px 5px 5px orange;
+        box-shadow: 5px 5px 5px 5px coral;
     }
 </style>
 
@@ -51,7 +55,7 @@
         <div
             class:hovered={heads[i] == hoveredHead}
             class:selected={heads[i] == selectedHead}
-            class="p-4 my-2 mx-4"
+            class="cloud p-4 my-2 mx-4"
             on:mouseover={() => (hoveredHead = heads[i])}
             on:mouseout={() => (hoveredHead = undefined)}
             on:click={() => (selectedHead = toggle(selectedHead, heads[i]))}

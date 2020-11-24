@@ -48,7 +48,7 @@
     }
 
     .selected {
-        fill: orange !important;
+        fill: coral !important;
     }
 </style>
 
