@@ -25,22 +25,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Main routes
-@app.get("/")
-def index(): return RedirectResponse(url="client/index.html")
-
-# the `file_path:path` says to accept any path as a string here. Otherwise, `file_paths` containing `/` will not be served properly
-@app.get("/client/{file_path:path}")
-def send_static_client(file_path:str):
-    """ Serves (makes accessible) all files from ./client/ to ``/client/{path}``
-
-    Args:
-        path: Name of file in the client directory
-    """
-    f = str(pf.DIST / file_path)
-    print("Finding file: ", f)
-    return FileResponse(f)
-
 # ======================================================================
 ## MAIN API ##
 # ======================================================================

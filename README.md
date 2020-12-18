@@ -22,7 +22,7 @@ The paths to these are defined in a `biohash_project.yaml`
 Luckily, these files have been uploaded to a bucket on the cloud using `dvc`, installed in the conda environment.
 
 **STEPS**
-1. Contact Ben for the `.dvc/config` file (should not be published to git). 
+1. Contact author for the `.dvc/config` file containing information on how to get large data files (should not be published to git). 
 2. `dvc pull`
 
 Start the server with
@@ -34,11 +34,13 @@ Start the server with
 (Make sure your `npm` is up to date: `npm install -g npm@latest`)
 
 ```
-
 cd client
 npm install
 npm run build
+```
 
+For development:
+`npm run dev`
 
-(development)
-`cd client; npm run dev`
+For production:
+`npm run start`

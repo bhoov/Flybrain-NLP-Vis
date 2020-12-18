@@ -57,6 +57,10 @@ function run(serveDir, proxyPath, proxyUrl, opts) {
     next();
   }
 
+  function server() {
+    return sirv(serveDir, { dev: opts.dev, single: opts.single })
+  }
+
   polka()
     .use(
       logger,
@@ -64,7 +68,7 @@ function run(serveDir, proxyPath, proxyUrl, opts) {
         target: proxyUrl,
         changeOrigin: true,
       }),
-      sirv(serveDir, { dev: opts.dev, single: opts.single })
+      server()
     )
     .listen(opts.port, (error) => {
       if (error) throw error;
