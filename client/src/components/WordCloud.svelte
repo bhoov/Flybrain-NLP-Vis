@@ -7,45 +7,62 @@
     export let concepts: tp.Concept[] = [];
     export let width: number = 500;
     export let height: number = 500;
+    export let minFontSize = 20; // Let font get no smaller than this
+    export let maxFontSize = null; // Maximum size of font. If not provided, default to 1/5 of min(width, height)
 
-    $: maxPxSize = d3.min([width, height]) / 5;
-    $: minPxSize = maxPxSize / 6;
-
+    // Sometimes not all words display. Iteratively shrink size difference until all words fit
     $: contributions = concepts.map((d) => d.contribution);
 
+    $: maxPxSize = maxFontSize == null ? d3.min([width, height]) : maxFontSize
     $: sizeScale = d3
         //@ts-ignore
         .scaleLinear()
-        .domain([0, d3.max(contributions)])
-        .range([minPxSize, maxPxSize]);
-
-    $: words = concepts.map((c) => {
-        return {
-            text: c.token,
-            size: sizeScale(c.contribution),
-        } as Word;
-    });
-
-    let displayWords: Word[] | null = null;
-
-    function redefineWords(newWords: Word[]) {
-        displayWords = newWords;
-    }
+        .domain([0, d3.max(contributions)]);
 
     $: layout = cloud()
         .size([width, height])
-        .words(words)
         .padding(5)
-        .rotate(function () {
-            return 0;
-            // return ~~(Math.random() * 2) * 90;
-        })
+        .rotate(() => 0)
         .font("Impact")
-        .fontSize(function (d) {
-            return d.size;
-        })
-        .on("end", redefineWords)
-        .start();
+        .fontSize((d) => d.size);
+
+    let displayWords: Word[] | null = null;
+
+    let runningLayout = null;
+
+    /**
+     * Function that takes concepts, a size, and re-renders until everything fits
+     */
+    $: startLayout = (concepts, sizeScale, scalePxBy: number = 1) => {
+        const fontScale = sizeScale.range([
+            scalePxBy * minFontSize,
+            scalePxBy * maxPxSize,
+        ]);
+
+        const words = concepts.map((c) => {
+            return {
+                text: c.token,
+                size: fontScale(c.contribution),
+            } as Word;
+        });
+
+        const redefineWords = (newWords: Word[]) => {
+            if (newWords.length == words.length) {
+                displayWords = newWords;
+            } else {
+                console.log("Number of cloud words did not align with desired. Rerunning", scalePxBy);
+                runningLayout && runningLayout.stop();
+                startLayout(concepts, sizeScale, 0.9 * scalePxBy);
+            }
+        };
+
+        runningLayout = layout
+            .words(words)
+            .on("end", redefineWords)
+            .start();
+    };
+
+    $: startLayout(concepts, sizeScale);
 </script>
 
 <div class="cloud">
