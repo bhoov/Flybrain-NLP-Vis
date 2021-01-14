@@ -44,7 +44,8 @@
 
 <style lang="postcss">
     .hovered {
-        fill: cyan;
+        stroke: cyan;
+        stroke-width: 4px;
     }
 
     .selected {

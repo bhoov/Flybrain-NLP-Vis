@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import tippy from "../etc/mytippy";
     import type * as tp from "../types";
     import * as d3 from "d3";
     import { toggle } from "../etc/Util";
@@ -12,6 +13,25 @@
     export let cellRadius: number = 7;
     export let selectedCell: number;
     export let hoveredCell: number;
+
+    function tippyProps(unit: number) {
+        const width = 150, height=150;
+
+        return {
+            content: `<img data-src="wordclouds/cloud_unit_${unit}.png" alt="Concepts for unit ${unit}" width="${width}px" height="${height}px"/>`,
+            placement: "bottom",
+            delay: [20, 20], // show, hide in ms
+            duration: [100, 0], // show, hide in ms
+            allowHTML: true,
+            hideOnClick: false,
+            arrow: true,
+            distance: 1,
+            onShow: function(instance) {
+                var img = instance.popper.querySelector('img');
+                img.setAttribute('src', img.getAttribute('data-src'))
+            }
+        }
+    }
 
     $: nHeads = headOrdering.length;
     $: nCols = Math.floor(Math.sqrt(nHeads));
@@ -32,8 +52,10 @@
     }
 
     .hovered {
-        fill: cyan !important;
-        opacity: 1 !important;
+        stroke: rgba(0, 255, 255);
+        stroke-opacity: 1 !important;
+        stroke-width: 2;
+        /* opacity: 1 !important; */
     }
     .selected {
         fill: coral !important;
@@ -47,6 +69,7 @@
             <circle
                 class:hovered={head == hoveredCell}
                 class:selected={head == selectedCell}
+                use:tippy={tippyProps(head)}
                 cx={cellRadius * 2 * (i % nCols) + cellRadius}
                 cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
                 r={cellRadius}

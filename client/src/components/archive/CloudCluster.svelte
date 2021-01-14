@@ -1,8 +1,8 @@
 <script lang="ts">
-    import WordCloud from "./WordCloud.svelte";
-    import { api } from "../api";
-    import type * as tp from "../types";
-    import { toggle } from "../etc/Util";
+    import WordCloud from "./archive/WordCloud.svelte";
+    import { api } from "../../api";
+    import type * as tp from "../../types";
+    import { toggle } from "../../etc/Util";
 
     export let heads: number[] = [];
     export let cloudWidth: number = 300;

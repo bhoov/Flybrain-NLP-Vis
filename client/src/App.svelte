@@ -2,11 +2,10 @@
 	import { onMount } from "svelte";
 	import { headIndex, queryPhrase, showQueryResults } from "./urlStore";
 	import type * as tp from "./types";
-	// import WordCloud from "./components/WordCloud.svelte";
-	// import WordCloud from "./components/WordRanking.svelte";
+	import ImportanceContext from "./components/ImportanceContext.svelte";
 	import BarChart from "./components/HorizontalBarChart.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
-	import CloudCluster from "./components/CloudCluster.svelte";
+	import FetchCloudCluster from "./components/FetchCloudCluster.svelte";
 	import SentenceTokens from "./components/SentenceTokens.svelte";
 	import MemoryBars from "./components/MemoryBars.svelte";
 	import { api } from "./api";
@@ -17,7 +16,10 @@
 	let orderedHeads: number[] = undefined;
 	let memGridOrdering: number[] = undefined;
 	let clusterHeads: number[] | null = null;
+	let clusterImportance: number[] | null = null;
+	let showTextArea: boolean = false;
 	let barInfo: tp.MemActivation[];
+	let kNearest = 4; // Number of nearest cluster clouds to show
 	let interestingExamples: string[] = [
 		"Senate majority leader discussed the issue with the members of the committee",
 		"Entertainment industry shares rise following the premiere of the mass destruction weapon documentary",
@@ -58,7 +60,8 @@
 			orderedHeads = r.ordered_heads;
 			barInfo = r.head_info;
 			$headIndex = orderedHeads[0];
-			clusterHeads = r.head_info.slice(0, 3).map((c) => c.head);
+			clusterHeads = r.head_info.slice(0, kNearest).map((c) => c.head);
+			clusterImportance = r.head_info.slice(0, kNearest).map((c) => c.activation);
 			$showQueryResults = true;
 			keywordifySentence();
 		});
@@ -133,8 +136,58 @@
 </svelte:head>
 
 <main>
-	<div class="flex lg:flex-row-reverse flex-wrap">
-		<div class="w-full lg:w-2/3 grid grid-cols-2">
+
+	<ImportanceContext importances={[4,3,2]} domain={[0,5]}/>
+	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0">
+		<h1>Fruit Fly Word Embeddings</h1>
+		<div class="">
+			<h4>
+				<span class="text-red-700">Search for concepts</span>
+				by selecting a phrase dropdown.
+			</h4>
+
+			<form>
+				<select
+					name="example-dropdown"
+					class="w-full example-dropdown"
+					id="example-dropdown"
+					bind:value={$queryPhrase}>
+					<!-- on:blur={submitPhraseQuery}> -->
+					{#each interestingExamples as ex}
+							<option value={ex}>{ex}</option>
+						{/each}
+				</select>
+			</form>
+
+			<div>
+				{#if showTextArea}
+					<textarea
+						class="w-full bg-gray-300 cursor-default"
+						bind:value={$queryPhrase}
+						maxlength="175"
+						placeholder="Select a text from the dropdown"
+						readonly
+						on:keydown={(e) => {
+							e.key == 'Enter' && submitPhraseQuery();
+							e.code == 'Space' && keywordifySentence();
+						}} />
+					<button
+						on:click|preventDefault={submitPhraseQuery}
+						disabled={$queryPhrase.length < 1}>Query
+					</button>
+				{/if}
+			</div>
+
+			<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
+				<span class="mr-2 font-bold border-b-dashed">Detected Keywords:
+				</span>
+				<SentenceTokens tokens={keywords} />
+			</div>
+		</div>
+	</div>
+	<div class="">
+		<!-- <div class="w-full lg:w-2/3 grid grid-cols-2"> -->
+		<div class="">
 			<div id="the-brain" class="self-center">
 				{#if memGridOrdering != undefined && activations != undefined}
 					<div class="muted mb-2 mx-2">
@@ -169,60 +222,14 @@
 				{/if}
 			</div>
 		</div>
-		<div id="controls" class="w-full lg:w-1/3 bg-gray-100 rounded-lg px-0">
-			<h1>Fruit Fly Word Embeddings</h1>
-			<div class="">
-				<h4>
-					<span class="text-red-700">Search for concepts</span>
-					by selecting a phrase dropdown.
-				</h4>
-
-				<form>
-					<select
-						name="example-dropdown"
-						class="w-full example-dropdown"
-						id="example-dropdown"
-						bind:value={$queryPhrase}>
-						<!-- on:blur={submitPhraseQuery}> -->
-						{#each interestingExamples as ex}
-							<option value={ex}>{ex}</option>
-						{/each}
-					</select>
-				</form>
-
-				<div>
-					<textarea
-						class="w-full h-24 bg-gray-300 cursor-default"
-						bind:value={$queryPhrase}
-						maxlength="175"
-						placeholder="Select a text from the dropdown"
-						readonly
-						on:keydown={(e) => {
-							e.key == 'Enter' && submitPhraseQuery();
-							e.code == 'Space' && keywordifySentence();
-						}} />
-					<!-- <button
-						on:click|preventDefault={submitPhraseQuery}
-						disabled={$queryPhrase.length < 1}>Query</button> -->
-				</div>
-
-				<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
-					<span class="mr-2 font-bold border-b-dashed">Detected
-						Keywords:
-					</span>
-					<SentenceTokens tokens={keywords} />
-				</div>
-			</div>
-		</div>
-	</div>
 
 	<hr />
 	{#if showQueryResults && clusterHeads != null}
 		<h1>Top Activated Cells</h1>
 		<div class="muted">
-			The highest activated KCs from the query phrase. Each KC is
-			shown as a bar on the histogram, the height indicating how much the
-			selected phrase triggered that particular cell.
+			The highest activated KCs from the query phrase. Each KC is shown as
+			a bar on the histogram, the height indicating how much the selected
+			phrase triggered that particular cell.
 		</div>
 
 		<MemoryBars
@@ -230,9 +237,10 @@
 			bind:hoveredHead
 			bind:selectedHead={$headIndex} />
 
-		<div id="query-results" class="grid md:grid-flow-row md:grid-cols-3">
-			<CloudCluster
+		<div id="query-results" class="grid md:grid-flow-row md:grid-cols-4 gap-x-0.5">
+			<FetchCloudCluster
 				heads={clusterHeads}
+				importances={clusterImportance}
 				bind:hoveredHead
 				bind:selectedHead={$headIndex} />
 		</div>

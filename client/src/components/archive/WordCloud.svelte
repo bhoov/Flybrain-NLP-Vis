@@ -2,7 +2,7 @@
     import * as d3 from "d3";
     import cloud from "d3-cloud";
     import type { Word } from "d3-cloud";
-    import type * as tp from "../types";
+    import type * as tp from "../../types";
 
     export let concepts: tp.Concept[] = [];
     export let width: number = 500;
@@ -50,7 +50,7 @@
             if (newWords.length == words.length) {
                 displayWords = newWords;
             } else {
-                console.log("Number of cloud words did not align with desired. Rerunning", scalePxBy);
+                // console.log("Number of cloud words did not align with desired. Rerunning", scalePxBy);
                 runningLayout && runningLayout.stop();
                 startLayout(concepts, sizeScale, 0.9 * scalePxBy);
             }
