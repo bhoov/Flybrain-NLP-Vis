@@ -68,3 +68,5 @@ Temporary Items
 .apdisk
 
 data
+client/public/wordclouds
+# TODO add wordclouds to DVC? Git?
