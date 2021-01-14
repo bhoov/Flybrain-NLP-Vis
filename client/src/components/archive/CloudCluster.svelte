@@ -13,7 +13,7 @@
     function heads2concepts(heads): Promise<tp.Concept[][]> {
         return Promise.all(
             heads.map((h) => {
-                return api.getMemoryConcepts(h);
+                return api.getNeuronConcepts(h);
             })
         );
     }

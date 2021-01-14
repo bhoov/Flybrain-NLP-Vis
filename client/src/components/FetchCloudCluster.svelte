@@ -19,7 +19,7 @@
 
     .cloud {
         border: 4px solid #3c3c3c3c;
-        border-radius: 3px;
+        border-radius: 1rem;
         margin: 0 1rem;
     }
 
@@ -29,7 +29,7 @@
     }
 
     .selected {
-        box-shadow: 5px 5px 5px 5px coral;
+        box-shadow: 0px 0px 1rem 5px coral;
     }
 </style>
 
@@ -47,6 +47,7 @@
                 {importances}
                 currIdx={i}
                 width={cloudWidth}
-                height={cloudHeight} />
+                height={cloudHeight}
+                selected={head == selectedHead} />
         </div>
 {/each}

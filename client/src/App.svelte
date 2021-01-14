@@ -1,26 +1,28 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { headIndex, queryPhrase, showQueryResults } from "./urlStore";
+	import { neuronIndex, queryPhrase, showQueryResults } from "./urlStore";
 	import type * as tp from "./types";
-	import ImportanceContext from "./components/ImportanceContext.svelte";
 	import BarChart from "./components/HorizontalBarChart.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import FetchCloudCluster from "./components/FetchCloudCluster.svelte";
+	import FetchWordCloud from "./components/FetchWordCloud.svelte";
 	import SentenceTokens from "./components/SentenceTokens.svelte";
-	import MemoryBars from "./components/MemoryBars.svelte";
 	import { api } from "./api";
 	import * as _ from "lodash";
 
-	let conceptList: tp.Concept[] | null = null;
-	let activations: number[] = undefined;
-	let orderedHeads: number[] = undefined;
-	let memGridOrdering: number[] = undefined;
-	let clusterHeads: number[] | null = null;
-	let clusterImportance: number[] | null = null;
-	let showTextArea: boolean = false;
-	let barInfo: tp.MemActivation[];
+	let conceptList: tp.Concept[] | null = null; // Tokens and contributions for the selected neuron
+	let activations: number[] = undefined; // How much each neuron was activated by the query
+	let loadingActivations: boolean = false; // Are we waiting for real activations?
+	let orderedNeurons: number[] = undefined; // Activated neurons sorted greatest -> least
+	let neuronGridOrdering: number[] = undefined; // What order to display the neurons on the grid
+	let topNeuronClusters: number[] | null = null; // Cloud clusters to show
+	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
+	let showTextArea: boolean = true; // Set true to allow users to input their own text
+	let searchResultHeight = 250; // How high to make the search result grid
+	let barInfo: tp.MemActivation[]; //  ??
 	let kNearest = 4; // Number of nearest cluster clouds to show
 	let interestingExamples: string[] = [
+		// Default examples for selection
 		"Senate majority leader discussed the issue with the members of the committee",
 		"Entertainment industry shares rise following the premiere of the mass destruction weapon documentary",
 		"European Court of Human Rights most compelling cases",
@@ -37,37 +39,52 @@
 		"Hillary Clinton declined to comment on the allegations of financial contributions",
 		"Research laboratories are working on designing diagnostic tools to assess water contamination using modern AI technologies",
 	];
-	let nHeads: number;
-	let keywords: string[] = [];
-	let hoveredHead: number;
+	let keywords: string[] = []; // Extracted keywords from the query
+	let hoveredNeuronIdx: number;
+	let nNeurons;
 
-	function newConcepts(mem: number) {
-		api.getMemoryConcepts(mem).then((r) => {
+	/**
+	 * Convert a neuron to its learned concepts
+	 * @param neuron -- Neuron index to search for
+	 */
+	function newConcepts(neuron: number) {
+		api.getNeuronConcepts(neuron).then((r) => {
 			conceptList = r;
 		});
 	}
 
-	$: newConcepts($headIndex);
+	$: newConcepts($neuronIndex);
 
+	/**
+	 * Extract keywords from a provided sentence
+	 */
 	async function keywordifySentence() {
 		keywords = await api.sentenceToKeywords($queryPhrase);
-		return true;
+		return keywords.length > 0;
 	}
 
+	/**
+	 * Submit the phrase as a query
+	 */
 	function submitPhraseQuery() {
-		api.queryTopMemsByPhrase($queryPhrase).then((r) => {
+		api.queryTopNeuronsByPhrase($queryPhrase).then((r) => {
 			activations = r.activations;
-			orderedHeads = r.ordered_heads;
+			loadingActivations = false;
+			orderedNeurons = r.ordered_heads;
 			barInfo = r.head_info;
-			$headIndex = orderedHeads[0];
-			clusterHeads = r.head_info.slice(0, kNearest).map((c) => c.head);
-			clusterImportance = r.head_info.slice(0, kNearest).map((c) => c.activation);
+			topNeuronClusters = r.head_info
+				.slice(0, kNearest)
+				.map((c) => c.head);
+			clusterImportance = r.head_info
+				.slice(0, kNearest)
+				.map((c) => c.activation);
 			$showQueryResults = true;
 			keywordifySentence();
 		});
 		return true;
 	}
 
+	// Whenever the query phrase changes, resubmit query
 	$: $queryPhrase && submitPhraseQuery();
 
 	if ($showQueryResults) {
@@ -75,13 +92,16 @@
 	}
 
 	onMount(() => {
-		api.getNHeads().then((H) => {
-			nHeads = H;
-			activations = _.range(H).map((v) => 1);
+		api.getNNeurons().then((H) => {
+			nNeurons = H;
 
-			api.getMemoryOrder().then((r) => {
-				memGridOrdering = r;
-				console.log("Mem grid ordering: ", memGridOrdering);
+			// Give all activations a default coloring
+			activations = _.range(H).map((v) => 0.5);
+			loadingActivations = true;
+			submitPhraseQuery();
+
+			api.getNeuronOrdering().then((r) => {
+				neuronGridOrdering = r;
 			});
 		});
 
@@ -108,15 +128,15 @@
 	@tailwind components;
 	@tailwind utilities;
 	main {
-		text-align: center;
-		padding: 1em;
+		/* text-align: center; */
+		padding: 0.5em;
 		margin: auto;
 		max-width: 1200px;
 	}
 
-	#query-results {
+	/* #query-results {
 		max-height: 350px;
-	}
+	} */
 	.example-options {
 		white-space: pre-wrap;
 	}
@@ -133,15 +153,16 @@
 
 <svelte:head>
 	<title>Explore Fruit Fly Word Embeddings</title>
+	<link rel="stylesheet" href="https://unpkg.com/tippy.js/dist/tippy.css" />
 </svelte:head>
 
 <main>
-
-	<ImportanceContext importances={[4,3,2]} domain={[0,5]}/>
 	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0">
-		<h1>Fruit Fly Word Embeddings</h1>
-		<div class="">
-			<h4>
+		<div class="w-full text-center text-4xl font-bold">
+			Fruit Fly Word Embeddings
+		</div>
+		<div>
+			<h4 class="muted">
 				<span class="text-red-700">Search for concepts</span>
 				by selecting a phrase dropdown.
 			</h4>
@@ -166,7 +187,6 @@
 						bind:value={$queryPhrase}
 						maxlength="175"
 						placeholder="Select a text from the dropdown"
-						readonly
 						on:keydown={(e) => {
 							e.key == 'Enter' && submitPhraseQuery();
 							e.code == 'Space' && keywordifySentence();
@@ -178,18 +198,48 @@
 				{/if}
 			</div>
 
-			<div class="flex flex-wrap mb-3 my-4 place-self-start pl-5">
-				<span class="mr-2 font-bold border-b-dashed">Detected Keywords:
-				</span>
+			<div
+				class="flex flex-wrap mb-3 my-2 place-self-start pl-5 content-center">
+				<div class="mr-2 font-bold border-b-dashed align-middle">
+					Detected Keywords:
+				</div>
 				<SentenceTokens tokens={keywords} />
 			</div>
 		</div>
 	</div>
-	<div class="">
-		<!-- <div class="w-full lg:w-2/3 grid grid-cols-2"> -->
-		<div class="">
-			<div id="the-brain" class="self-center">
-				{#if memGridOrdering != undefined && activations != undefined}
+
+	<div class="top-results">
+		<h2>Most Activated Neurons</h2>
+		{#if showQueryResults && topNeuronClusters != null}
+			<!-- <div class="muted">
+						The highest activated KCs from the query phrase. Each KC is
+						shown as a bar on the histogram, the height indicating how much
+						the selected phrase triggered that particular cell.
+					</div> -->
+			<div id="query-results"
+					class="md:grid md:grid-flow-row md:grid-cols-4 gap-x-0.5">
+					<FetchCloudCluster
+						heads={topNeuronClusters}
+						importances={clusterImportance}
+						cloudHeight={searchResultHeight}
+						bind:hoveredNeuronIdx
+						bind:selectedHead={$neuronIndex} />
+				</div>
+		{:else}
+			<h2
+				class="text-gray-600 font-thin align-middle"
+				style={`height: ${searchResultHeight}`}>
+				Query by a keyword phrase above to see what KCs fire the most
+			</h2>
+		{/if}
+	</div>
+
+	<hr class="my-6" />
+
+	<div class="explorer md:grid md:grid-cols-3 gap-6">
+
+		<div id="the-brain" class="self-center justify-self-center">
+				{#if neuronGridOrdering != undefined && activations != undefined}
 					<div class="muted mb-2 mx-2">
 						All 400
 						<a
@@ -200,53 +250,32 @@
 						through each of them to view what concepts each KC has
 						learned.
 					</div>
-					<MemoryGrid
-						{activations}
-						headOrdering={memGridOrdering}
-						bind:selectedCell={$headIndex}
-						bind:hoveredCell={hoveredHead} />
-				{/if}
-			</div>
-			<div id="concept-exploration" class="my-4">
-				{#if conceptList != null}
-					<div class="muted">
-						Concepts learned by
-						<span
-							class="font-bold unmuted"
-							style="color: coral;">selected KC</span>
+					<div class="w-full text-center">
+						<MemoryGrid
+							{activations}
+							loading={loadingActivations}
+							headOrdering={neuronGridOrdering}
+							bind:selectedCell={$neuronIndex}
+							bind:hoveredCell={hoveredNeuronIdx} />
 					</div>
-					<BarChart
-						data={conceptList.map((c) => {
-							return { name: c.token, value: c.contribution };
-						})} />
 				{/if}
 			</div>
+		<div id="concept-exploration" class="my-4 justify-self-center">
+			{#if conceptList != null}
+				<div class="muted">
+					Concepts learned by
+					<span
+						class="font-bold unmuted"
+						style="color: coral;">selected KC</span>
+				</div>
+				<BarChart
+					data={conceptList.map((c) => {
+						return { name: c.token, value: c.contribution };
+					})} />
+			{/if}
 		</div>
-
-	<hr />
-	{#if showQueryResults && clusterHeads != null}
-		<h1>Top Activated Cells</h1>
-		<div class="muted">
-			The highest activated KCs from the query phrase. Each KC is shown as
-			a bar on the histogram, the height indicating how much the selected
-			phrase triggered that particular cell.
+		<div class="md:place-self-center w-full">
+			<FetchWordCloud unit={$neuronIndex} selected={true} />
 		</div>
-
-		<MemoryBars
-			barInfo={barInfo.slice(0, 10)}
-			bind:hoveredHead
-			bind:selectedHead={$headIndex} />
-
-		<div id="query-results" class="grid md:grid-flow-row md:grid-cols-4 gap-x-0.5">
-			<FetchCloudCluster
-				heads={clusterHeads}
-				importances={clusterImportance}
-				bind:hoveredHead
-				bind:selectedHead={$headIndex} />
-		</div>
-	{:else}
-		<h2 class="text-gray-600 font-thin">
-			Query by a keyword phrase above to see what KCs fire the most
-		</h2>
-	{/if}
+	</div>
 </main>

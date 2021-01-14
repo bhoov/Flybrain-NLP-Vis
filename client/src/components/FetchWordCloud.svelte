@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte";
     import ImportanceContext from "./ImportanceContext.svelte";
 
     export let unit: number;
     export let importances: number[];
     export let currIdx: number;
+    export let selected: boolean;
     export let width = 400;
     export let height = 300;
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
@@ -24,17 +24,28 @@
         padding: 0px 5px;
         /* margin: 2px;  */
     }
+
+    .unit-title {
+        @apply w-full text-center m-0 p-0 text-2xl font-bold underline;
+    }
+
+    .selected {
+        text-decoration-color: coral;
+    }
 </style>
 
 <div class="relative">
-    <img src={filename} alt={`Word Cloud for Unit ${unit}`} {width} {height} />
-    {#if importances}
-        <div class="float-icon">
-            <ImportanceContext
-                {importances}
-                {currIdx}
-                height={importanceIconHeight}
-                width={importanceIconWidth} />
-        </div>
-    {/if}
+    <div>
+        <div class="unit-title" class:selected={selected}>Neuron {unit}</div>
+        {#if importances}
+            <div class="float-icon">
+                <ImportanceContext
+                    {importances}
+                    {currIdx}
+                    height={importanceIconHeight}
+                    width={importanceIconWidth} />
+            </div>
+        {/if}
+    </div>
+    <img src={filename} alt={`Word Cloud for Unit ${unit}`} {width} {height} class="overflow-hidden"/>
 </div>

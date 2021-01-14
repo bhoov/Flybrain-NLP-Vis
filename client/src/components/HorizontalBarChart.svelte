@@ -7,7 +7,7 @@
         top: 15,
         right: 50,
         bottom: 15,
-        left: 100,
+        left: 150,
     };
 
     interface Data {
@@ -61,7 +61,7 @@
     }
 </style>
 
-<svg width={maxWidth} height={maxHeight}>
+<svg width="100%" height="100%" viewBox={`0 0 ${maxWidth} ${maxHeight}`}>
     <g transform={`translate(${margin.left}, ${margin.top})`}>
         <g bind:this={leftAxis} class="axis"/>
         {#each data as d, i (d.name)}

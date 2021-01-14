@@ -29,7 +29,7 @@ export class API {
         return d3.json(url)
     }
 
-    getNHeads(): Promise<number> {
+    getNNeurons(): Promise<number> {
         const route = "/n-heads"
         const url = makeUrl(this.baseURL + route, {})
         console.log("--- GET " + url)
@@ -37,48 +37,29 @@ export class API {
     }
 
     // Don't let user choose beta
-    // getMemoryConcepts(head_index: number, n_show: number, beta:number): Promise<tp.Concept[]> {
-    getMemoryConcepts(head_index: number, n_show: number=20): Promise<tp.Concept[]> {
+    // getNeuronConcepts(head_index: number, n_show: number, beta:number): Promise<tp.Concept[]> {
+    getNeuronConcepts(neuron_idx: number, n_show: number=20): Promise<tp.Concept[]> {
         const route = "/memory-concepts"
-        let toSend = { head_index, n_show }
+        let toSend = { head_index:neuron_idx, n_show }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
         return d3.json(url)
     }
 
-    getMemoryOrder(): Promise<number[]> {
+    getNeuronOrdering(): Promise<number[]> {
         const route = "/mem-order"
         const url = makeUrl(this.baseURL + route, {})
         console.log("--- GET " + url);
         return d3.json(url)
     }
 
-    queryTopMemsByPhrase(phrase: string, beta:number=10.0): Promise<tp.TopMemResponse> {
+    queryTopNeuronsByPhrase(phrase: string, beta:number=10.0): Promise<tp.TopMemResponse> {
         const route = "/query-top-mems-by-phrase"
         let toSend = { phrase, beta }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
         return d3.json(url)
     }
-
-    // attentionsFromTokens(tokens: string[], target_idx?: number, hash_length: number = 32): Promise<tp.AttentionResponse> {
-    //     const route = "/attentions-from-tokens"
-    //     let toSend = { tokens, target_idx, hash_length }
-    //     // let toSend = { tokens, hashLength }
-    //     const key = hash({ route, ...toSend })
-    //     if (this.makeDemoHashes) {
-    //         toSend['request_hash'] = key
-    //     }
-
-    //     const payload = toPayload(toSend)
-    //     const url = makeUrl(this.baseURL + route)
-    //     console.log("--- POST " + url);
-
-    //     return d3.json(url, payload)
-    //     //@ts-ignore
-    //     // return checkDemoAPI(key, url, payload)
-    // }
-
 };
 
 export const api = new API()
