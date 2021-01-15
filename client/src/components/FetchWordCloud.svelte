@@ -5,47 +5,55 @@
     export let importances: number[];
     export let currIdx: number;
     export let selected: boolean;
-    export let width = 400;
-    export let height = 300;
+    export let width: number | string = "100%";
+    export let height: number | string = "100%";
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
     $: filename = `wordclouds/cloud_unit_${unit}.png`;
 </script>
 
 <style lang="postcss">
-    .float-icon {
-        position: absolute;
-        left: 10px;
-        top: 10px;
-        z-index: 10;
-        /* background-color: #5552; */
-        border-radius: 4px;
-        border: 1px solid rgba(60, 60, 60, 0.3);
-        padding: 0px 5px;
-        /* margin: 2px;  */
-    }
-
     .unit-title {
-        @apply w-full text-center m-0 p-0 text-2xl font-bold underline;
+        @apply m-0 p-2 text-2xl font-bold underline;
     }
 
     .selected {
         text-decoration-color: coral;
+        color: coral;
     }
 </style>
 
 <div class="relative">
     <div>
-        <div class="unit-title" class:selected={selected}>Neuron {unit}</div>
-        {#if importances}
-            <div class="float-icon">
-                <ImportanceContext
-                    {importances}
-                    {currIdx}
-                    height={importanceIconHeight}
-                    width={importanceIconWidth} />
-            </div>
-        {/if}
+        <div class="grid grid-cols-6">
+            {#if importances}
+                <div class="unit-title col-start-1 col-end-6" class:selected>
+                    Neuron
+                    {unit}
+                </div>
+                <div class="col-start-6 col-end-7">
+                    <div class="">
+                        <ImportanceContext
+                            {importances}
+                            {currIdx}
+                            height={importanceIconHeight}
+                            width={importanceIconWidth} />
+                    </div>
+                </div>
+            {:else}
+                <div
+                    class="unit-title col-start-1 col-end-7 text-center"
+                    class:selected>
+                    Neuron
+                    {unit}
+                </div>
+            {/if}
+        </div>
     </div>
-    <img src={filename} alt={`Word Cloud for Unit ${unit}`} {width} {height} class="overflow-hidden"/>
+    <img
+        src={filename}
+        alt={`Word Cloud for Unit ${unit}`}
+        {width}
+        {height}
+        class="overflow-hidden" />
 </div>

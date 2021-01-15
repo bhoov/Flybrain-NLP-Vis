@@ -55,23 +55,30 @@
 </script>
 
 <style>
-    circle {
+    .primary {
         fill: black;
         stroke-width: 2;
         stroke: white;
     }
 
-    .hovered {
-        stroke: rgba(0, 255, 255);
-        stroke-opacity: 1 !important;
-        stroke-width: 2;
-        /* opacity: 1 !important; */
-    }
-    .selected {
-        fill: coral !important;
-        opacity: 1 !important;
+    *:focus {
+        outline: 0;
     }
 
+    .overlay {
+        fill: none;
+    }
+    .selected {
+        stroke: coral;
+        stroke-width: 2;
+        opacity: 1;
+    }
+
+    .hovered {
+        stroke: cyan;
+        stroke-width: 2;
+        opacity: 1;
+    }
     .loading {
         transform: scale(1);
         animation: pulse 1s infinite;
@@ -99,28 +106,14 @@
     <svg width={svgWidth} height={svgHeight}>
         <g>
             {#each headOrdering as head, i}
+                <!-- Main circle -->
                 <circle
-                    class:hovered={head == hoveredCell}
-                    class:selected={head == selectedCell}
                     use:tippy={tippyProps(head)}
+                    class="primary"
                     cx={cellRadius * 2 * (i % nCols) + cellRadius}
                     cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
                     r={cellRadius}
-                    on:click={() => {
-                        let deselect = false;
-                        if (selectedCell == head) {
-                            selectedCell = null;
-                            deselect = true;
-                        } else {
-                            selectedCell = head;
-                            deselect = false;
-                        }
-                        dispatch('cellClick', {
-                            head,
-                            activation: activations[i],
-                            deselect,
-                        });
-                    }}
+                    on:click={() => (selectedCell = head)}
                     on:mouseover={() => {
                         hoveredCell = head;
                     }}
@@ -128,6 +121,15 @@
                         hoveredCell = null;
                     }}
                     style={`opacity: ${opacityScale(activations[head])}`} />
+
+                <!-- Overlay circle -->
+                <circle
+                    class:hovered={head == hoveredCell}
+                    class:selected={head == selectedCell}
+                    class="overlay"
+                    cx={cellRadius * 2 * (i % nCols) + cellRadius}
+                    cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
+                    r={cellRadius}/>
             {/each}
         </g>
     </svg>

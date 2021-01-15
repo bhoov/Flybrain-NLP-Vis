@@ -20,7 +20,8 @@
     .cloud {
         border: 4px solid #3c3c3c3c;
         border-radius: 1rem;
-        margin: 0 1rem;
+        margin: 0 0.25rem;
+        height: 300px;
     }
 
     .hovered {
@@ -40,14 +41,12 @@
             class="cloud border-2 border-gray-800"
             on:mouseover={() => (hoveredHead = head)}
             on:mouseout={() => (hoveredHead = undefined)}
-            on:click={() => (selectedHead = toggle(selectedHead, head))}
+            on:click={() => (selectedHead = head)}
             >
             <FetchWordCloud
                 unit={head}
                 {importances}
                 currIdx={i}
-                width={cloudWidth}
-                height={cloudHeight}
                 selected={head == selectedHead} />
         </div>
 {/each}

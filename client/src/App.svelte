@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
 	import { neuronIndex, queryPhrase, showQueryResults } from "./urlStore";
 	import type * as tp from "./types";
+	import Select from "svelte-select";
+	import Navbar from "./components/Navbar.svelte";
 	import BarChart from "./components/HorizontalBarChart.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import FetchCloudCluster from "./components/FetchCloudCluster.svelte";
@@ -39,6 +41,12 @@
 		"Hillary Clinton declined to comment on the allegations of financial contributions",
 		"Research laboratories are working on designing diagnostic tools to assess water contamination using modern AI technologies",
 	];
+	$: selectExamples = interestingExamples.map((s) => {
+		return {
+			value: s,
+			label: s,
+		};
+	});
 	let keywords: string[] = []; // Extracted keywords from the query
 	let hoveredNeuronIdx: number;
 	let nNeurons;
@@ -82,6 +90,14 @@
 			keywordifySentence();
 		});
 		return true;
+	}
+
+	/**
+	 * Get phrase query from event
+	*/
+	function handleQuery(event) {
+		console.log("EVENT ", event)
+		$queryPhrase = event.detail.value
 	}
 
 	// Whenever the query phrase changes, resubmit query
@@ -129,9 +145,21 @@
 	@tailwind utilities;
 	main {
 		/* text-align: center; */
-		padding: 0.5em;
 		margin: auto;
-		max-width: 1200px;
+		max-width: 1560px;
+	}
+
+	/* Main column */
+	.main {
+		@apply col-start-3 col-end-11;
+	}
+
+	.left-comment {
+		@apply col-start-1 col-end-3 align-middle place-self-center muted font-semibold;
+	}
+
+	.right-comment {
+		@apply col-start-11 col-end-13;
 	}
 
 	/* #query-results {
@@ -146,6 +174,18 @@
 		opacity: 0.7;
 	}
 
+	.em {
+		@apply text-red-700;
+	}
+
+	.action {
+		@apply font-extrabold;
+	}
+
+	datalist {
+		@apply w-full;
+	}
+
 	unmuted {
 		opacity: 1 !important;
 	}
@@ -156,17 +196,18 @@
 	<link rel="stylesheet" href="https://unpkg.com/tippy.js/dist/tippy.css" />
 </svelte:head>
 
-<main>
-	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0">
-		<div class="w-full text-center text-4xl font-bold">
+<Navbar />
+
+<main class="md:grid md:grid-cols-12 md:gap-4">
+	<div class="left-comment">
+		<span class="em">Search for concepts</span>
+		by selecting a phrase dropdown or typing in your own sentence.
+	</div>
+	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0 main">
+		<div class="w-full text-center text-4xl font-bold my-4">
 			Fruit Fly Word Embeddings
 		</div>
 		<div>
-			<h4 class="muted">
-				<span class="text-red-700">Search for concepts</span>
-				by selecting a phrase dropdown.
-			</h4>
-
 			<form>
 				<select
 					name="example-dropdown"
@@ -175,26 +216,24 @@
 					bind:value={$queryPhrase}>
 					<!-- on:blur={submitPhraseQuery}> -->
 					{#each interestingExamples as ex}
-							<option value={ex}>{ex}</option>
-						{/each}
+								<option value={ex}>{ex}</option>
+							{/each}
 				</select>
 			</form>
 
 			<div>
 				{#if showTextArea}
-					<textarea
-						class="w-full bg-gray-300 cursor-default"
-						bind:value={$queryPhrase}
-						maxlength="175"
-						placeholder="Select a text from the dropdown"
-						on:keydown={(e) => {
-							e.key == 'Enter' && submitPhraseQuery();
-							e.code == 'Space' && keywordifySentence();
-						}} />
-					<button
-						on:click|preventDefault={submitPhraseQuery}
-						disabled={$queryPhrase.length < 1}>Query
-					</button>
+					<Select 
+						items={selectExamples} 
+						selectedValue={selectExamples[0]} 
+						hideEmptyState={true} 
+						isCreatable={true} 
+						placeholder={"Select from the suggested OR type your own short phrase"}
+						getOptionLabel={(option, filterText) => {
+							return option.isCreator ? filterText : option.label
+						}}
+						on:select={handleQuery}
+						/>
 				{/if}
 			</div>
 
@@ -208,8 +247,12 @@
 		</div>
 	</div>
 
-	<div class="top-results">
-		<h2>Most Activated Neurons</h2>
+	<div class="left-comment">
+		The
+		<span class="em">most activated neurons</span>
+		from the keywords above are shown as the concepts they learned.
+	</div>
+	<div class="top-results main">
 		{#if showQueryResults && topNeuronClusters != null}
 			<!-- <div class="muted">
 						The highest activated KCs from the query phrase. Each KC is
@@ -232,34 +275,34 @@
 				Query by a keyword phrase above to see what KCs fire the most
 			</h2>
 		{/if}
+		<hr />
 	</div>
 
-	<hr class="my-6" />
-
-	<div class="explorer md:grid md:grid-cols-3 gap-6">
-
+	<div class="left-comment">
+		<span class="em">Explore every neuron</span>
+		of our model by
+		<span class="action">clicking</span>
+		around the grid.
+	</div>
+	<div class="explorer md:grid md:grid-cols-3 gap-6 main">
 		<div id="the-brain" class="self-center justify-self-center">
-				{#if neuronGridOrdering != undefined && activations != undefined}
-					<div class="muted mb-2 mx-2">
-						All 400
-						<a
-							href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon
-							Cells (KCs)</a>
-						are represented as circles in the 20x20 grid below.
-						<strong>Click</strong>
-						through each of them to view what concepts each KC has
-						learned.
-					</div>
-					<div class="w-full text-center">
-						<MemoryGrid
-							{activations}
-							loading={loadingActivations}
-							headOrdering={neuronGridOrdering}
-							bind:selectedCell={$neuronIndex}
-							bind:hoveredCell={hoveredNeuronIdx} />
-					</div>
-				{/if}
-			</div>
+			{#if neuronGridOrdering != undefined && activations != undefined}
+				<div class="muted mb-2 mx-2">
+					All 400
+					<a href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon
+						Cells (KCs)</a>
+					are represented as circles in the 20x20 grid below.
+				</div>
+				<div class="w-full text-center">
+					<MemoryGrid
+						{activations}
+						loading={loadingActivations}
+						headOrdering={neuronGridOrdering}
+						bind:selectedCell={$neuronIndex}
+						bind:hoveredCell={hoveredNeuronIdx} />
+				</div>
+			{/if}
+		</div>
 		<div id="concept-exploration" class="my-4 justify-self-center">
 			{#if conceptList != null}
 				<div class="muted">
