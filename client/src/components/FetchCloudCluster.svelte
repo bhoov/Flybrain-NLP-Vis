@@ -3,11 +3,14 @@
     import { toggle } from "../etc/Util";
 
     export let heads: number[] = [];
+    export let labels: number[] | string[] | null = null;
     export let importances: number[] = [];
     export let cloudWidth: number = 250;
     export let cloudHeight: number = 250;
     export let hoveredHead: number;
     export let selectedHead: number = null;
+
+    $: displayLabels = labels == null ? heads : labels
 </script>
 
 <style lang="postcss">
@@ -45,6 +48,7 @@
             >
             <FetchWordCloud
                 unit={head}
+                label={displayLabels[i]}
                 {importances}
                 currIdx={i}
                 selected={head == selectedHead} />

@@ -2,6 +2,7 @@
     import ImportanceContext from "./ImportanceContext.svelte";
 
     export let unit: number;
+    export let label: number | string | null = null;
     export let importances: number[];
     export let currIdx: number;
     export let selected: boolean;
@@ -9,7 +10,9 @@
     export let height: number | string = "100%";
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
+
     $: filename = `wordclouds/cloud_unit_${unit}.png`;
+    $: displayLabel = label == null ? unit : label
 </script>
 
 <style lang="postcss">
@@ -29,7 +32,7 @@
             {#if importances}
                 <div class="unit-title col-start-1 col-end-6" class:selected>
                     Neuron
-                    {unit}
+                    {displayLabel}
                 </div>
                 <div class="col-start-6 col-end-7">
                     <div class="">
@@ -45,14 +48,14 @@
                     class="unit-title col-start-1 col-end-7 text-center"
                     class:selected>
                     Neuron
-                    {unit}
+                    {displayLabel}
                 </div>
             {/if}
         </div>
     </div>
     <img
         src={filename}
-        alt={`Word Cloud for Unit ${unit}`}
+        alt={`Word Cloud for Neuron ${displayLabel}`}
         {width}
         {height}
         class="overflow-hidden" />

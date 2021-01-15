@@ -1,6 +1,11 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { neuronIndex, queryPhrase, showQueryResults, allowCustomInput } from "./urlStore";
+	import {
+		neuronIndex,
+		queryPhrase,
+		showQueryResults,
+		allowCustomInput,
+	} from "./urlStore";
 	import type * as tp from "./types";
 	import Select from "svelte-select";
 	import Navbar from "./components/Navbar.svelte";
@@ -17,6 +22,7 @@
 	let loadingActivations: boolean = false; // Are we waiting for real activations?
 	let neuronGridOrdering: number[] = undefined; // What order to display the neurons on the grid
 	let topNeuronClusters: number[] | null = null; // Cloud clusters to show
+	let topNeuronLabels: number[] | null = null; // Names of each cloud cluster
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
 	let searchResultHeight = 250; // How high to make the search result grid
 	let kNearest = 4; // Number of nearest cluster clouds to show
@@ -77,6 +83,11 @@
 			topNeuronClusters = r.head_info
 				.slice(0, kNearest)
 				.map((c) => c.head);
+			topNeuronLabels = topNeuronClusters.map((h) =>
+				neuronGridOrdering
+					? _.findIndex(neuronGridOrdering, (v) => v == +h)
+					: +h
+			);
 			clusterImportance = r.head_info
 				.slice(0, kNearest)
 				.map((c) => c.activation);
@@ -193,7 +204,8 @@
 <main class="md:grid md:grid-cols-12 md:gap-4">
 	<div class="left-comment">
 		<span class="em">Search for concepts</span>
-		by selecting a phrase dropdown {#if $allowCustomInput}<span>or typing in your own sentence</span>{/if}
+		by selecting a phrase dropdown
+		{#if $allowCustomInput}<span>or typing in your own sentence</span>{/if}
 	</div>
 	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0 main">
 		<div class="w-full text-center text-4xl font-bold my-4">
@@ -237,9 +249,10 @@
 					class="md:grid md:grid-flow-row md:grid-cols-4 gap-x-0.5">
 					<FetchCloudCluster
 						heads={topNeuronClusters}
+						labels={topNeuronLabels}
 						importances={clusterImportance}
 						cloudHeight={searchResultHeight}
-						bind:hoveredNeuronIdx
+						bind:hoveredHead={hoveredNeuronIdx}
 						bind:selectedHead={$neuronIndex} />
 				</div>
 		{:else}
@@ -292,7 +305,10 @@
 			{/if}
 		</div>
 		<div class="md:place-self-center w-full">
-			<FetchWordCloud unit={$neuronIndex} selected={true} />
+			<FetchWordCloud
+				unit={$neuronIndex}
+				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : null}
+				selected={true} />
 		</div>
 	</div>
 </main>

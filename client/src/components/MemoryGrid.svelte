@@ -109,7 +109,7 @@
             {#each neuronLabels as neuron, i}
                 <!-- Main circle -->
                 <circle
-                    use:tippy={tippyProps(neuron, neuron)}
+                    use:tippy={tippyProps(neuron, i)}
                     class="primary"
                     cx={cellRadius * 2 * (i % nCols) + cellRadius}
                     cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
