@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-	import { neuronIndex, queryPhrase, showQueryResults } from "./urlStore";
+	import { neuronIndex, queryPhrase, showQueryResults, allowCustomInput } from "./urlStore";
 	import type * as tp from "./types";
 	import Select from "svelte-select";
 	import Navbar from "./components/Navbar.svelte";
@@ -15,13 +15,10 @@
 	let conceptList: tp.Concept[] | null = null; // Tokens and contributions for the selected neuron
 	let activations: number[] = undefined; // How much each neuron was activated by the query
 	let loadingActivations: boolean = false; // Are we waiting for real activations?
-	let orderedNeurons: number[] = undefined; // Activated neurons sorted greatest -> least
 	let neuronGridOrdering: number[] = undefined; // What order to display the neurons on the grid
 	let topNeuronClusters: number[] | null = null; // Cloud clusters to show
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
-	let showTextArea: boolean = true; // Set true to allow users to input their own text
 	let searchResultHeight = 250; // How high to make the search result grid
-	let barInfo: tp.MemActivation[]; //  ??
 	let kNearest = 4; // Number of nearest cluster clouds to show
 	let interestingExamples: string[] = [
 		// Default examples for selection
@@ -49,7 +46,6 @@
 	});
 	let keywords: string[] = []; // Extracted keywords from the query
 	let hoveredNeuronIdx: number;
-	let nNeurons;
 
 	/**
 	 * Convert a neuron to its learned concepts
@@ -78,8 +74,6 @@
 		api.queryTopNeuronsByPhrase($queryPhrase).then((r) => {
 			activations = r.activations;
 			loadingActivations = false;
-			orderedNeurons = r.ordered_heads;
-			barInfo = r.head_info;
 			topNeuronClusters = r.head_info
 				.slice(0, kNearest)
 				.map((c) => c.head);
@@ -94,10 +88,10 @@
 
 	/**
 	 * Get phrase query from event
-	*/
+	 */
 	function handleQuery(event) {
-		console.log("EVENT ", event)
-		$queryPhrase = event.detail.value
+		console.log("EVENT ", event);
+		$queryPhrase = event.detail.value;
 	}
 
 	// Whenever the query phrase changes, resubmit query
@@ -109,8 +103,6 @@
 
 	onMount(() => {
 		api.getNNeurons().then((H) => {
-			nNeurons = H;
-
 			// Give all activations a default coloring
 			activations = _.range(H).map((v) => 0.5);
 			loadingActivations = true;
@@ -201,41 +193,23 @@
 <main class="md:grid md:grid-cols-12 md:gap-4">
 	<div class="left-comment">
 		<span class="em">Search for concepts</span>
-		by selecting a phrase dropdown or typing in your own sentence.
+		by selecting a phrase dropdown {#if $allowCustomInput}<span>or typing in your own sentence</span>{/if}
 	</div>
 	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0 main">
 		<div class="w-full text-center text-4xl font-bold my-4">
 			Fruit Fly Word Embeddings
 		</div>
 		<div>
-			<form>
-				<select
-					name="example-dropdown"
-					class="w-full example-dropdown"
-					id="example-dropdown"
-					bind:value={$queryPhrase}>
-					<!-- on:blur={submitPhraseQuery}> -->
-					{#each interestingExamples as ex}
-								<option value={ex}>{ex}</option>
-							{/each}
-				</select>
-			</form>
-
-			<div>
-				{#if showTextArea}
-					<Select 
-						items={selectExamples} 
-						selectedValue={selectExamples[0]} 
-						hideEmptyState={true} 
-						isCreatable={true} 
-						placeholder={"Select from the suggested OR type your own short phrase"}
-						getOptionLabel={(option, filterText) => {
-							return option.isCreator ? filterText : option.label
-						}}
-						on:select={handleQuery}
-						/>
-				{/if}
-			</div>
+			<Select
+				items={selectExamples}
+				selectedValue={selectExamples[0]}
+				hideEmptyState={$allowCustomInput}
+				isCreatable={$allowCustomInput}
+				placeholder={'Select from the suggested' + ($allowCustomInput ? 'OR type your own short phrase' : '')}
+				getOptionLabel={(option, filterText) => {
+					return option.isCreator ? filterText : option.label;
+				}}
+				on:select={handleQuery} />
 
 			<div
 				class="flex flex-wrap mb-3 my-2 place-self-start pl-5 content-center">
@@ -297,7 +271,7 @@
 					<MemoryGrid
 						{activations}
 						loading={loadingActivations}
-						headOrdering={neuronGridOrdering}
+						neuronLabels={neuronGridOrdering}
 						bind:selectedCell={$neuronIndex}
 						bind:hoveredCell={hoveredNeuronIdx} />
 				</div>

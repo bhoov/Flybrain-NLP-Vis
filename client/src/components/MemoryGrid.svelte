@@ -8,20 +8,21 @@
 
     // I need additional information about kohonen layout and opacity of each cell
     export let activations: number[];
-    export let headOrdering: number[];
+    export let neuronLabels: number[]; // Use as labels for each neuron. If not provided, name neurons based on index of activations
     export let cellRadius: number = 7;
     export let selectedCell: number;
     export let loading = false;
     export let hoveredCell: number;
 
-    function tippyProps(unit: number) {
+
+    function tippyProps(unit: number, label: number) {
         const width = 250,
             height = 250;
 
         const content = `
             <div class="inner-tippy-content" flybrain-unit="${unit}">
-                <div class="w-full text-center m-0 p-0 text-2xl font-bold underline">Neuron ${unit}</div>
-                <img data-src="wordclouds/cloud_unit_${unit}.png" alt="Concepts for unit ${unit}" width="${width}px" height="${height}px"/>
+                <div class="w-full text-center m-0 p-0 text-2xl font-bold underline">Neuron ${label}</div>
+                <img data-src="wordclouds/cloud_unit_${unit}.png" alt="Concepts for neuron ${label}" width="${width}px" height="${height}px"/>
             </div>
         `;
         return {
@@ -43,7 +44,7 @@
         };
     }
 
-    $: nHeads = headOrdering.length;
+    $: nHeads = neuronLabels.length;
     $: nCols = Math.floor(Math.sqrt(nHeads));
     $: svgWidth = cellRadius * 2 * nCols;
     $: svgHeight = cellRadius * 2 * Math.ceil(nHeads / nCols);
@@ -105,27 +106,27 @@
 <div class:loading>
     <svg width={svgWidth} height={svgHeight}>
         <g>
-            {#each headOrdering as head, i}
+            {#each neuronLabels as neuron, i}
                 <!-- Main circle -->
                 <circle
-                    use:tippy={tippyProps(head)}
+                    use:tippy={tippyProps(neuron, neuron)}
                     class="primary"
                     cx={cellRadius * 2 * (i % nCols) + cellRadius}
                     cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
                     r={cellRadius}
-                    on:click={() => (selectedCell = head)}
+                    on:click={() => (selectedCell = neuron)}
                     on:mouseover={() => {
-                        hoveredCell = head;
+                        hoveredCell = neuron;
                     }}
                     on:mouseout={() => {
                         hoveredCell = null;
                     }}
-                    style={`opacity: ${opacityScale(activations[head])}`} />
+                    style={`opacity: ${opacityScale(activations[neuron])}`} />
 
                 <!-- Overlay circle -->
                 <circle
-                    class:hovered={head == hoveredCell}
-                    class:selected={head == selectedCell}
+                    class:hovered={neuron == hoveredCell}
+                    class:selected={neuron == selectedCell}
                     class="overlay"
                     cx={cellRadius * 2 * (i % nCols) + cellRadius}
                     cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
