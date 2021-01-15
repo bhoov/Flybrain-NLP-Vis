@@ -36,11 +36,7 @@ Start the server with
 ```
 cd client
 npm install
-npm run build
+npm run dev
 ```
 
-For development:
-`npm run dev`
-
-For production:
-`npm run start`
+Unfortunately, `npm run build` has a known issue with the `sveltejs-select` component, so use `npm run dev` instead and cancel at anytime.
