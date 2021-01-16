@@ -29,6 +29,10 @@ app.add_middleware(
 ## MAIN API ##
 # ======================================================================
 
+@cached(cache={})
+def load_memory_grid(fname):
+    return np.load(fname)
+
 @app.get("/api/sentence-to-keywords")
 async def sentence_to_keywords(sentence: str):
     project = get_project(pf.PROJECT)
@@ -56,8 +60,8 @@ async def get_n_heads():
 @app.get("/api/mem-order")
 async def get_mem_order():
     """Get index ordering of heads"""
-    project = get_project(pf.PROJECT)
-    return [int(m) for m in project.memory_grid]
+    grid = load_memory_grid(pf.MEM_ORDER)
+    return [int(m) for m in grid]
 
 @app.get("/api/query-top-mems-by-phrase")
 async def query_top_mems_by_phrase(phrase: str, beta:float=10.0):
