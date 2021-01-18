@@ -23,8 +23,9 @@
     .cloud {
         border: 4px solid #3c3c3c3c;
         border-radius: 1rem;
-        margin: 0 0.25rem;
-        height: 300px;
+        margin: 0.4rem 0.25rem;
+        max-height: 300px;
+        max-width: 250px;
     }
 
     .hovered {
@@ -41,7 +42,7 @@
         <div
             class:hovered={head == hoveredHead}
             class:selected={head == selectedHead}
-            class="cloud border-2 border-gray-800"
+            class="cloud border-2 border-gray-800 place-self-center"
             on:mouseover={() => (hoveredHead = head)}
             on:mouseout={() => (hoveredHead = undefined)}
             on:click={() => (selectedHead = head)}
