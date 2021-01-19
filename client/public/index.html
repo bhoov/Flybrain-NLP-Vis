@@ -47,7 +47,7 @@
 				],
 				"katex": {
 					"delimiters": [
-						{"left": "$$", "right": "$$", "display": false}
+						{"left": "$", "right": "$", "display": false}
 					]
 				}
 			}
@@ -101,6 +101,85 @@
 			neurons. The schematic of this architectural motif is shown in Figure <em>ARCHITECTURE</em>. In fruit flies
 			KCs also send their outputs to mushroom body output neurons, but this part of the network is not included in
 			our mathematical model.
+		</p>
+
+		<h2>
+			Training the Network.
+		</h2>
+
+		<p>
+			We decomposed each sentence from the training corpus into a collection of $w$-grams of consecutive words.
+			The input to the network is a vector that has two blocks: context and target. The target block one-hot
+			encodes the middle token in the $w$-gram. The context block encodes the remaining words in the $w$-gram as a
+			bag of tokens. An unsupervised learning algorithm <d-cite key="krotovHopfield2019"></d-cite> is used for
+			learning the weights of the neural network, see also the blog post
+			(https://www.ibm.com/blogs/research/2019/04/biological-algorithm/). Mapping this idea back to the fruit
+			flies that this network is borrowed from, we can think about the context of a word as for example an
+			“olfactory” input to the network of KCs, while the target word as for example a “visual” input.
+		</p>
+
+		<h2>
+			Individual KCs explorer.
+		</h2>
+
+		<p>
+			In this part of the demo the user can select individual neurons from the group of KCs and explore the
+			strengths of synaptic weights connecting the selected KC to PNs, which correspond to tokens from our
+			vocabulary. The larger the synaptic strength is, the stronger that token contributes to the excitation
+			signal to the given KC. For every KC the strengths of incoming synapses from the PNs are passed through a
+			softmax function and displayed as a histogram.
+		</p>
+
+		<p>
+			Consider for example a neuron number (4,16). The top three tokens activating this KC correspond to the
+			words: disease, disorder, patients (see Fig…). It is clear that this neuron has learned a concept associated
+			with medical conditions.
+		</p>
+
+		<p>
+			Another example, the neuron number (18,14), has the top tokens: governments, authorities, state (see Fig…).
+			Thus, it has learned a concept of authorities of various levels. It is clear, however, that this concept is
+			not pure. For example the 5-th strongest token here represents a number-token. Perhaps this is not
+			surprising given that a number token can easily appear in the training corpus quantifying for example a
+			number of law enforcement officers. Another sign of non-purity for this KC is the token news. It is not an
+			authority, but, at the same time, this word can easily appear in the context governmental authorities since
+			they are often discussed in the news.
+		</p>
+
+		<h2>
+			Response to a query sentence.
+		</h2>
+
+
+		<p>
+			In the second part of the demo we explore the activation patterns of neurons in the fruit fly network in
+			response to an input sentence. In our model the query sentence is encoded as a bag of words and presented to
+			the aforementioned network as the activity of PNs. The recurrent network of KCs — APL neurons performs the
+			calculation and outputs a pattern of excitations across KCs so that only a small number of KCs are in the ON
+			state, while the majority of them are in the OFF state. This pattern of excitations is the hash code for the
+			query sentence, which is used for the evaluations of our algorithm, see the paper (arXiv link).
+		</p>
+
+		<p>
+			For a given input sentence our demo returns the word cloud visualizations of words strongly contributing to
+			the excitation of four top activated KCs. The synaptic weights learned by these KCs are used to generate the
+			probability distributions of individual tokens learned by those KCs by passing the weights through a softmax
+			function. These probability distributions are visualized as word clouds.
+		</p>
+
+		<p>
+			Consider for example an input sentence: “Entertainment industry shares rise following the premiere of the
+			mass destruction weapon documentary”. This query sentence activates several KCs. The demo shows the word
+			clouds of tokens learned by the four highest-activated KCs. In the inset of each word cloud one can see the
+			strength of the activation of that specific KC (highlighted in red) compared to the activations of the
+			remaining KCs (shown in gray). The top activated KC has the largest weights for the words “weapon”, “mass”,
+			etc. The second-highest activated KC is sensitive to the words “market”, “stock”, etc. This illustrates how
+			the fruit fly network processes the queries. In this example the query refers to several distinct
+			combinations of concepts: “weapon of mass destruction”, “stock market”, “movie industry”. Each of those
+			concepts has a dedicated KC responsible for it. As one can see the responses are not perfect. For example in
+			this case we would expect to have the KC, which is responsible for the ``movie industry'' concept to have a
+			higher activation than the KC, which is responsible for the types of ``weapons of mass destruction''. But,
+			overall, all the concepts picked by the KCs are meaningful and related to the query.
 		</p>
 
 	</d-article>
