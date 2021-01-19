@@ -200,7 +200,7 @@
 </svelte:head>
 
 <main class="md:grid md:grid-cols-12 md:gap-4 px-4">
-    <div class="w-full text-center text-4xl font-bold my-4">
+    <div class="w-full text-center text-4xl font-bold my-4 main">
         Fruit Fly Word Embeddings
     </div>
 	<div class="left-comment">

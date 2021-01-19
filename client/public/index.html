@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset='utf-8'>
 	<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+	<script src="https://distill.pub/template.v2.js"></script>
 
 	<title>Svelte app</title>
 
@@ -15,5 +18,96 @@
 </head>
 
 <body>
+	<div id="main-demo"></div>
+
+	<d-front-matter>
+		<script id='distill-front-matter' type="text/json">
+			{
+				"title": "Can a Fruit Fly Learn Word Embeddings?",
+				"description": "Creating sparse and binary word vectors, inspired by the fruit fly's olfactory circuit.",
+				"authors": [
+					{
+						"author":"Dmitry Krotov",
+						"authorURL":"https://mitibmwatsonailab.mit.edu/people/dmitry-krotov/",
+						"affiliations": [{"name": "MIT-IBM Watson AI Lab", "url": "https://mitibmwatsonailab.mit.edu/"}]
+					},
+					{
+						"author":"Benjamin Hoover",
+						"authorURL":"https://bhoov.com",
+						"affiliations": [{"name": "IBM Research", "url": "https://www.draco.res.ibm.com/"}]
+					},
+					{
+						"author":"Hendrik Strobelt",
+						"authorURL":"http://hendrik.strobelt.com/",
+						"affiliations": [
+							{"name": "MIT-IBM Watson AI Lab", "url": "https://mitibmwatsonailab.mit.edu/"},
+							{"name": "IBM Research", "url": "https://www.draco.res.ibm.com/"}
+						]
+					}
+				],
+				"katex": {
+					"delimiters": [
+						{"left": "$$", "right": "$$", "display": false}
+					]
+				}
+			}
+		  </script>
+	</d-front-matter>
+
+
+	<d-title>
+		<h1>Can a Fruit Fly Learn Word Embeddings?</h1>
+		<!-- <figure class="l-body" style="margin-top: 2vh; margin-bottom: 2vh;">
+			<img src="./assets/img/teaser.svg" style="width:100%;">
+		</figure> -->
+	</d-title>
+
+	<d-article>
+		<p>
+			In this work (arXiv link), accepted to ICLR 2021, we study a well-established neurobiological network motif
+			from the fruit fly brain and investigate the possibility of reusing its architecture for solving common
+			natural language processing (NLP) tasks. Specifically, we focus on the network of Kenyon cells (KCs) (wiki
+			link) in the mushroom body (wiki link) of the fruit fly brain. This network was trained on a large corpus of
+			text and tested on common NLP tasks. Although biologically this network has evolved to process sensory
+			stimuli from olfaction, visual system, and other modalities and not to ``understand'' language it uses a
+			general purpose algorithm to embed inputs (from different modalities) into a high dimensional space, so that
+			these embeddings are locality sensitive (Dasgupta, Ryali). This means that inputs that are similar to each
+			other are mapped to similar representations, and inputs that are different are mapped to distant
+			representations. Thus, our work illustrates a possibility to reprogram a biological general-purpose network
+			to solve a useful machine learning task that the biological organism does not necessarily naturally engage
+			in.
+		</p>
+
+		<p>
+			In this blogpost we explore the concepts learned by the individual neurons of this network. We also study
+			patterns of neuron’s excitations in response to a query sentence. The pretrained models are available at
+			(link).
+		</p>
+
+		<h2>
+			Biological Network
+		</h2>
+
+		<p>
+			The mushroom body is a major area of the brain responsible for processing of sensory information in fruit
+			flies. It receives inputs from a set of projection neurons (PN) conveying information from several sensory
+			modalities. The major modality is olfaction (link to <d-cite key="bates2020complete"></d-cite>), but there
+			are also inputs from the PNs responsible for sensing temperature and humidity <d-cite
+				key="marin2020connectomics"></d-cite>, as well as visual inputs <d-cite key="vogt2016direct"></d-cite>
+			<d-cite key="caron2020two"></d-cite>. These sensory inputs are forwarded to a population of Kenyon cells
+			through a set of synaptic weights. KCs are reciprocally connected through an anterior paired lateral (APL)
+			neuron, which sends a strong inhibitory signal back to KCs. This recurrent network effectively implements
+			winner-takes-all competition between the KCs, and silences all but a small fraction of top activated
+			neurons. The schematic of this architectural motif is shown in Figure <em>ARCHITECTURE</em>. In fruit flies
+			KCs also send their outputs to mushroom body output neurons, but this part of the network is not included in
+			our mathematical model.
+		</p>
+
+	</d-article>
+
+	<d-appendix>
+		<d-bibliography src="/bibliography.bib"></d-bibliography>
+	</d-appendix>
 </body>
+
 </html>
