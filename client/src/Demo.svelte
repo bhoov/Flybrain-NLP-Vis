@@ -199,7 +199,7 @@
 	<link rel="stylesheet" href="https://unpkg.com/tippy.js/dist/tippy.css" />
 </svelte:head>
 
-<main class="md:grid md:grid-cols-12 md:gap-4 px-4">
+<main class="lg:grid lg:grid-cols-12 lg:gap-4 px-4">
     <div class="w-full text-center text-4xl font-bold my-4 main">
         Fruit Fly Word Embeddings
     </div>
@@ -244,7 +244,7 @@
 						the selected phrase triggered that particular cell.
 					</div> -->
 			<div id="query-results"
-					class="md:grid md:grid-flow-row md:grid-cols-4 gap-x-0.5 place-items-center">
+					class="sm:grid sm:grid-cols-2 lg:grid-flow-row lg:grid-cols-4 gap-x-0.5 place-items-center">
 					<FetchCloudCluster
 						heads={topNeuronClusters}
 						labels={topNeuronLabels}
@@ -269,7 +269,7 @@
 		<span class="action">clicking</span>
 		around the grid.
 	</div>
-	<div class="explorer md:grid md:grid-cols-3 gap-6 main">
+	<div class="explorer lg:grid lg:grid-cols-3 gap-6 main">
 		<div id="the-brain" class="self-center justify-self-center">
 			{#if neuronGridOrdering != undefined && activations != undefined}
 				<div class="muted mb-2 mx-2">
@@ -302,7 +302,7 @@
 					})} />
 			{/if}
 		</div>
-		<div class="hidden md:block place-self-center w-full">
+		<div class="hidden lg:block place-self-center w-full">
 			<FetchWordCloud
 				unit={$neuronIndex}
 				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : null}

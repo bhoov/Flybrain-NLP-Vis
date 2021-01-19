@@ -28,13 +28,13 @@
 
 <div class="relative">
     <div>
-        <div class="grid grid-cols-6">
+        <div class="grid grid-cols-6 gap-0">
             {#if importances}
-                <div class="unit-title col-start-1 col-end-6" class:selected>
+                <div class="unit-title col-start-1 col-end-6 lg:col-end-5" class:selected>
                     Neuron
                     {displayLabel}
                 </div>
-                <div class="col-start-6 col-end-7">
+                <div class="col-start-6 lg:col-start-5 col-end-7">
                     <div class="">
                         <ImportanceContext
                             {importances}
