@@ -113,8 +113,8 @@
 
 		<p>
 			In this blogpost we explore the concepts learned by the individual neurons of this network. We also study
-			patterns of neuron’s excitations in response to a query sentence. The pretrained models are available at
-			(link).
+			patterns of neuron’s excitations in response to a query sentence.
+			<!-- The pretrained models are available at (link). -->
 		</p>
 
 		<h2>
@@ -166,15 +166,16 @@
 			this idea back to the fruit flies that this network is borrowed from, we can think about the context of a
 			word as for example an <q>olfactory</q> input to the network of KCs, while the target word as for
 			example a
-			<q>visual</q> input. An example of encoding is shown in Fig. ENCODING.
+			<q>visual</q> input. An example of encoding is shown below.
 		</p>
 
 		<d-figure>
 			<figure class="l-body">
 				<img src="./img/ENCODING.002.png" style="width: 100%" />
 				<figcaption>
-					An example of a simple trigram embedding for the word <q>stock</q> from it's context
-					<q>Apple</q> and <q>rises</q>.
+					The encoding method. The input vector consists of two blocks separated by the (thick) blue
+					line. Assuming $w = 3$, a center word <q>stock</q> is the target word and the two flanking words form a
+					context. The $w$-gram is highlighted in light blue.
 				</figcaption>
 			</figure>
 		</d-figure>
@@ -192,7 +193,7 @@
 		</p>
 
 		<p>
-			Consider for example a neuron number (4,16). The top three tokens activating this KC correspond to the
+			Consider for example a neuron number 75. The top three tokens activating this KC correspond to the
 			words: disease, disorder, patients. It is clear that this neuron has learned a concept associated
 			with medical conditions.
 		</p>
@@ -204,7 +205,7 @@
 		</d-figure>
 
 		<p>
-			Another example, the neuron number (18,14), has the top tokens: governments, authorities, state (see Fig…).
+			Another example, the neuron number 353 has the top tokens: governments, authorities, state, as shown below.
 			Thus, it has learned a concept of authorities of various levels. It is clear, however, that this concept is
 			not pure. For example, the 5-th strongest token here represents a number-token. Perhaps this is not
 			surprising given that a number token can easily appear in the training corpus quantifying, for example, a
@@ -219,10 +220,10 @@
 			</figure>
 		</d-figure>
 
-		<p>
+		<!-- <p>
 			This demo allows the user to select every individual neuron in this network and inspect the synapses that
 			this neuron has learned.
-		</p>
+		</p> -->
 
 		<h2>
 			Response to a query sentence.
