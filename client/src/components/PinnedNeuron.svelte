@@ -12,24 +12,18 @@
     let conceptList: tp.Concept[]
     let selectedCell
 
-    function getConcepts(cell) {
-        api.getNeuronConcepts(cell).then(r => {
-            conceptList = r;
-        })
-    }
-
     onMount(async () => {
         neuronLabels = await api.getNeuronOrdering()
         selectedCell = neuronLabels[neuron]
         conceptList = await api.getNeuronConcepts(selectedCell)
     })
 
-    $: () => getConcepts(selectedCell)
     $: {
         api.getNeuronConcepts(selectedCell).then(r => {
             conceptList = r
         })
     }
+
     $: barchartData = conceptList?.map(c => {
         return { name: c.token, value: c.contribution };
     })
