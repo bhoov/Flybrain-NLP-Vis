@@ -10,12 +10,29 @@
 
     let neuronLabels: number[]
     let conceptList: tp.Concept[]
+    let selectedCell
+
+    function getConcepts(cell) {
+        api.getNeuronConcepts(cell).then(r => {
+            conceptList = r;
+        })
+    }
 
     onMount(async () => {
         neuronLabels = await api.getNeuronOrdering()
-        conceptList = await api.getNeuronConcepts(neuronLabels[neuron])
+        selectedCell = neuronLabels[neuron]
+        conceptList = await api.getNeuronConcepts(selectedCell)
     })
 
+    $: () => getConcepts(selectedCell)
+    $: {
+        api.getNeuronConcepts(selectedCell).then(r => {
+            conceptList = r
+        })
+    }
+    $: barchartData = conceptList?.map(c => {
+        return { name: c.token, value: c.contribution };
+    })
 
 
 </script>
@@ -31,28 +48,21 @@
 
 <div class="fig">
     <div class="text-center font-bold text-2xl">
-        {#if neuronLabels}
-            Neuron {neuron}
-        {:else}
-            Neuron ...
-        {/if}
+        Neuron {neuron}
     </div>
     
     <div class="grid grid-cols-6">
         <div class="col-start-1 col-end-4 place-self-center">
             {#if neuronLabels}
-                <MemoryGrid selectedCell={neuronLabels[neuron]} activations={neuronLabels.map(x => 1)} neuronLabels={neuronLabels} maxOpacity={0.3}/>
+                <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} neuronLabels={neuronLabels} maxOpacity={0.3}/>
             {:else}
                 <p>Loading...</p>
             {/if}
         </div>
         <div class="col-start-4 col-end-7">
-            {#if conceptList}
+            {#if barchartData}
                 <div class="">
-                    <BarChart
-                        data={conceptList.map((c) => {
-                            return { name: c.token, value: c.contribution };
-                        })} />
+                    <BarChart data={barchartData} />
                 </div>
             {:else}
                 <p>Loading...</p>
