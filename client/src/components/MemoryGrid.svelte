@@ -15,6 +15,7 @@
     export let hoveredCell: number | null = null;
     export let maxOpacity: number = 1;
     export let allowInteraction: boolean = true;
+    export let strokeWidth = 3;
 
 
     function tippyProps(unit: number, label: number) {
@@ -48,19 +49,28 @@
 
     $: nHeads = neuronLabels.length;
     $: nCols = Math.floor(Math.sqrt(nHeads));
-    $: svgWidth = cellRadius * 2 * nCols;
-    $: svgHeight = cellRadius * 2 * Math.ceil(nHeads / nCols);
+    // $: svgWidth = (cellRadius + strokeWidth / 2) * 2 * nCols + (2 * strokeWidth);
+    // $: svgHeight = (cellRadius + strokeWidth / 2) * 2 * Math.ceil(nHeads / nCols) + (2 * strokeWidth);
+    $: svgWidth = (cellRadius) * 2 * nCols + (2 * strokeWidth);
+    $: svgHeight = (cellRadius) * 2 * Math.ceil(nHeads / nCols) + (2 * strokeWidth);
 
     $: opacityScale = d3
         .scaleLinear()
         .domain([0, d3.max(activations)])
         .range([0.1, maxOpacity]);
+
+    // Place the i'th circle in the correct row on the grid
+    // $: placeX = (i: number) => strokeWidth + 2 * (cellRadius + strokeWidth / 2) * (i % nCols) + cellRadius 
+    $: placeX = (i: number) => strokeWidth + 2 * (cellRadius) * (i % nCols) + cellRadius 
+
+    // Place the i'th circle in the correct row on the grid
+    $: placeY = (i: number) => strokeWidth + 2 * (cellRadius) * Math.floor(i / nCols) + cellRadius
 </script>
 
 <style>
     .primary {
         fill: black;
-        stroke-width: 3;
+        z-index: 1;
         stroke: white;
     }
 
@@ -70,17 +80,19 @@
 
     .overlay {
         fill: none;
+        stroke: none;
     }
+
     .selected {
         stroke: coral;
-        stroke-width: 3;
+        z-index: 2;
         opacity: 1;
     }
 
     .hovered {
         stroke: cyan;
-        stroke-width: 3;
         opacity: 1;
+        z-index: 10;
     }
     .loading {
         transform: scale(1);
@@ -113,8 +125,8 @@
                 <circle
                     use:tippy={tippyProps(neuron, i)}
                     class="primary"
-                    cx={cellRadius * 2 * (i % nCols) + cellRadius}
-                    cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
+                    cx={placeX(i)}
+                    cy={placeY(i)}
                     r={cellRadius}
                     on:click={() => (allowInteraction && (selectedCell = neuron))}
                     on:mouseover={() => {
@@ -123,15 +135,16 @@
                     on:mouseout={() => {
                         hoveredCell = null;
                     }}
-                    style={`opacity: ${opacityScale(activations[neuron])}`} />
+                    style={`opacity: ${opacityScale(activations[neuron])}; stroke-width: 2`} />
 
                 <!-- Overlay circle -->
                 <circle
                     class:hovered={neuron == hoveredCell}
                     class:selected={neuron == selectedCell}
                     class="overlay"
-                    cx={cellRadius * 2 * (i % nCols) + cellRadius}
-                    cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
+                    style={`opacity: ${1}; stroke-width: ${strokeWidth}px`}
+                    cx={placeX(i)}
+                    cy={placeY(i)}
                     r={cellRadius}/>
             {/each}
         </g>
