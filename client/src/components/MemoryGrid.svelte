@@ -118,7 +118,7 @@
 </style>
 
 <div class:loading>
-    <svg width={svgWidth} height={svgHeight}>
+    <svg width="100%" height="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         <g>
             {#each neuronLabels as neuron, i}
                 <!-- Main circle -->

@@ -192,6 +192,11 @@
 	.example-options {
 		white-space: pre-wrap;
 	}
+
+	.max-cell {
+		max-width: 300px;
+		max-height: 300px;
+	}
 </style>
 
 <svelte:head>
@@ -269,8 +274,8 @@
 		<span class="action">clicking</span>
 		around the grid.
 	</div>
-	<div class="explorer lg:grid lg:grid-cols-3 gap-6 main">
-		<div id="the-brain" class="self-center justify-self-center">
+	<div class="explorer lg:grid lg:grid-cols-3 gap-6 main place-items-center">
+		<div id="the-brain" class="justify-self-center">
 			{#if neuronGridOrdering != undefined && activations != undefined}
 				<div class="muted mb-2 mx-2">
 					All 400
@@ -278,7 +283,7 @@
 						Cells (KCs)</a>
 					are represented as circles in the 20x20 grid below.
 				</div>
-				<div class="w-full text-center">
+				<div class="w-full text-center max-cell">
 					<MemoryGrid
 						{activations}
 						loading={loadingActivations}
@@ -288,7 +293,7 @@
 				</div>
 			{/if}
 		</div>
-		<div id="concept-exploration" class="my-4 justify-self-center">
+		<div id="concept-exploration" class="my-4 justify-self-center max-cell">
 			{#if conceptList != null}
 				<div class="muted">
 					Concepts learned by
@@ -296,13 +301,15 @@
 						class="font-bold unmuted"
 						style="color: coral;">selected KC</span>
 				</div>
-				<BarChart
-					data={conceptList.map((c) => {
-						return { name: c.token, value: c.contribution };
-					})} />
+				<div class="max-cell">
+					<BarChart
+						data={conceptList.map((c) => {
+							return { name: c.token, value: c.contribution };
+						})} />
+				</div>
 			{/if}
 		</div>
-		<div class="hidden lg:block place-self-center w-full">
+		<div class="hidden lg:block place-self-center w-full max-cell">
 			<FetchWordCloud
 				unit={$neuronIndex}
 				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : null}
