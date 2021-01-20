@@ -95,16 +95,18 @@
 
 	<d-article>
 		<p>
-			In this work (arXiv link), accepted to ICLR 2021, we study a well-established neurobiological network motif
-			from the fruit fly brain and investigate the possibility of reusing its architecture for solving common
-			natural language processing (NLP) tasks. Specifically, we focus on the network of Kenyon cells (KCs) (wiki
-			link) in the mushroom body (wiki link) of the fruit fly brain. This network was trained on a large corpus of
-			text and tested on common NLP tasks. Although biologically this network has evolved to process sensory
-			stimuli from olfaction, visual system, and other modalities and not to ``understand'' language it uses a
-			general purpose algorithm to embed inputs (from different modalities) into a high dimensional space, so that
-			these embeddings are locality sensitive (Dasgupta, Ryali). This means that inputs that are similar to each
-			other are mapped to similar representations, and inputs that are different are mapped to distant
-			representations. Thus, our work illustrates a possibility to reprogram a biological general-purpose network
+			In <a href="https://arxiv.org/abs/2101.06887">this work</a>, accepted to ICLR 2021, we study a
+			well-established neurobiological network motif from the fruit fly brain and investigate the possibility of
+			reusing its architecture for solving common natural language processing (NLP) tasks. Specifically, we focus
+			on the network of <a href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon cells (KCs)</a> in the <a
+				href="https://en.wikipedia.org/wiki/Mushroom_bodies">mushroom body</a> of the fruit fly brain. This
+			network was trained on a large corpus of text and tested on common NLP tasks. Biologically, this network has
+			evolved to process sensory stimuli from olfaction, visual system, and other modalities and not to
+			<q>understand</q> language. It, however, uses a general purpose algorithm to embed inputs (from
+			different modalities) into a high dimensional space, so that these embeddings are locality sensitive <d-cite
+				key="dasgupta_neural_2017, BioHash"></d-cite>. This means that inputs that are similar to each other are
+			mapped to similar representations, and inputs that are different are mapped to distant representations.
+			Thus, our work illustrates a possibility to <strong>reprogram a biological general-purpose network</strong>
 			to solve a useful machine learning task that the biological organism does not necessarily naturally engage
 			in.
 		</p>
@@ -120,34 +122,62 @@
 		</h2>
 
 		<p>
-			The mushroom body is a major area of the brain responsible for processing of sensory information in fruit
+
+			The mushroom body is a major area of the brain responsible for processing sensory information in fruit
 			flies. It receives inputs from a set of projection neurons (PN) conveying information from several sensory
-			modalities. The major modality is olfaction (link to <d-cite key="bates2020complete"></d-cite>), but there
-			are also inputs from the PNs responsible for sensing temperature and humidity <d-cite
-				key="marin2020connectomics"></d-cite>, as well as visual inputs <d-cite key="vogt2016direct"></d-cite>
-			<d-cite key="caron2020two"></d-cite>. These sensory inputs are forwarded to a population of Kenyon cells
-			through a set of synaptic weights. KCs are reciprocally connected through an anterior paired lateral (APL)
-			neuron, which sends a strong inhibitory signal back to KCs. This recurrent network effectively implements
+			modalities. The major modality is olfaction <d-cite key="bates2020complete"></d-cite>, but there are also
+			inputs from the
+			PNs responsible for sensing temperature and humidity <d-cite key="marin2020connectomics"></d-cite>, as well
+			as visual
+			inputs <d-cite key="vogt2016direct, caron2020two"></d-cite>. The sensory signals are forwarded to a
+			population of Kenyon
+			cells through a set of synaptic weights. KCs are reciprocally connected through an anterior paired lateral
+			(APL) neuron, which sends a strong inhibitory signal back to KCs. This recurrent network implements a
 			winner-takes-all competition between the KCs, and silences all but a small fraction of top activated
-			neurons. The schematic of this architectural motif is shown in Figure <em>ARCHITECTURE</em>. In fruit flies
+			neurons. The schematic of this architectural motif is shown in the figure below. In fruit flies,
 			KCs also send their outputs to mushroom body output neurons, but this part of the network is not included in
 			our mathematical model.
+
 		</p>
+
+		<d-figure>
+			<figure class="l-body">
+				<img src="./img/architecture.001.png" style="width: 100%" />
+				<figcaption>
+					Network architecture. Several groups of PNs corresponding to different modalities send
+					their activities to the layer of KCs, which are inhibited through the reciprocal connections to the
+					APL neuron.
+				</figcaption>
+			</figure>
+		</d-figure>
 
 		<h2>
 			Training the Network.
 		</h2>
 
+
 		<p>
 			We decomposed each sentence from the training corpus into a collection of $w$-grams of consecutive words.
-			The input to the network is a vector that has two blocks: context and target. The target block one-hot
-			encodes the middle token in the $w$-gram. The context block encodes the remaining words in the $w$-gram as a
-			bag of tokens. An unsupervised learning algorithm <d-cite key="krotovHopfield2019"></d-cite> is used for
-			learning the weights of the neural network, see also the blog post
-			(https://www.ibm.com/blogs/research/2019/04/biological-algorithm/). Mapping this idea back to the fruit
-			flies that this network is borrowed from, we can think about the context of a word as for example an
-			“olfactory” input to the network of KCs, while the target word as for example a “visual” input.
+			The input to the network is a vector that has two blocks: context and target. The target block is a one-hot
+			encoding of the middle token in the $w$-gram. The context block encodes the remaining words in the $w$-gram
+			as a bag of tokens. An unsupervised learning algorithm <d-cite key="krotovHopfield2019"></d-cite> is used
+			for learning the weights of the neural network (see also <a
+				href="https://www.ibm.com/blogs/research/2019/04/biological-algorithm/">this blog post</a>). Mapping
+			this idea back to the fruit flies that this network is borrowed from, we can think about the context of a
+			word as for example an <q>olfactory</q> input to the network of KCs, while the target word as for
+			example a
+			<q>visual</q> input. An example of encoding is shown in Fig. ENCODING.
 		</p>
+
+		<d-figure>
+			<figure class="l-body">
+				<img src="./img/ENCODING.002.png" style="width: 100%" />
+				<figcaption>
+					An example of a simple trigram embedding for the word <q>stock</q> from it's context
+					<q>Apple</q> and <q>rises</q>.
+				</figcaption>
+			</figure>
+		</d-figure>
 
 		<h2>
 			Individual KCs explorer.
@@ -155,7 +185,7 @@
 
 		<p>
 			In this part of the demo the user can select individual neurons from the group of KCs and explore the
-			strengths of synaptic weights connecting the selected KC to PNs, which correspond to tokens from our
+			strength of synaptic weights connecting the selected KC to PNs. Each PN corresponds to a token from our
 			vocabulary. The larger the synaptic strength is, the stronger that token contributes to the excitation
 			signal to the given KC. For every KC the strengths of incoming synapses from the PNs are passed through a
 			softmax function and displayed as a histogram.
@@ -163,32 +193,49 @@
 
 		<p>
 			Consider for example a neuron number (4,16). The top three tokens activating this KC correspond to the
-			words: disease, disorder, patients (see Fig…). It is clear that this neuron has learned a concept associated
+			words: disease, disorder, patients. It is clear that this neuron has learned a concept associated
 			with medical conditions.
 		</p>
+
+		<d-figure>
+			<figure>
+				<div id="fig-neuron-disease"></div>
+			</figure>
+		</d-figure>
 
 		<p>
 			Another example, the neuron number (18,14), has the top tokens: governments, authorities, state (see Fig…).
 			Thus, it has learned a concept of authorities of various levels. It is clear, however, that this concept is
-			not pure. For example the 5-th strongest token here represents a number-token. Perhaps this is not
-			surprising given that a number token can easily appear in the training corpus quantifying for example a
-			number of law enforcement officers. Another sign of non-purity for this KC is the token news. It is not an
-			authority, but, at the same time, this word can easily appear in the context governmental authorities since
-			they are often discussed in the news.
+			not pure. For example, the 5-th strongest token here represents a number-token. Perhaps this is not
+			surprising given that a number token can easily appear in the training corpus quantifying, for example, a
+			number of law enforcement officers. Another sign of entanglement of concepts for this KC is the token
+			<q>news</q>. It is not an authority, but, at the same time, this word can easily appear in the
+			context of governmental authorities since they are often discussed in the news.
+		</p>
+
+		<d-figure>
+			<figure>
+				<div id="fig-neuron-authority"></div>
+			</figure>
+		</d-figure>
+
+		<p>
+			This demo allows the user to select every individual neuron in this network and inspect the synapses that
+			this neuron has learned.
 		</p>
 
 		<h2>
 			Response to a query sentence.
 		</h2>
 
-
 		<p>
 			In the second part of the demo we explore the activation patterns of neurons in the fruit fly network in
 			response to an input sentence. In our model the query sentence is encoded as a bag of words and presented to
-			the aforementioned network as the activity of PNs. The recurrent network of KCs — APL neurons performs the
-			calculation and outputs a pattern of excitations across KCs so that only a small number of KCs are in the ON
-			state, while the majority of them are in the OFF state. This pattern of excitations is the hash code for the
-			query sentence, which is used for the evaluations of our algorithm, see the paper (arXiv link).
+			the aforementioned network as the activity of PNs. The recurrent network of KCs coupled to the APL neuron
+			performs the calculation and outputs a pattern of excitations across KCs so that only a small number of KCs
+			are in the ON state, while the majority of them are in the OFF state. This pattern of excitations is the
+			hash code for the query sentence, which is used for the evaluations of our algorithm, see the <a
+				href="https://arxiv.org/abs/2101.06887">paper</a>.
 		</p>
 
 		<p>
@@ -199,18 +246,19 @@
 		</p>
 
 		<p>
-			Consider for example an input sentence: “Entertainment industry shares rise following the premiere of the
-			mass destruction weapon documentary”. This query sentence activates several KCs. The demo shows the word
+			Consider the example sentence: <q> Entertainment industry shares rise following the premiere of the mass
+				destruction weapon documentary </q>. This query sentence activates several KCs. The demo shows the word
 			clouds of tokens learned by the four highest-activated KCs. In the inset of each word cloud one can see the
 			strength of the activation of that specific KC (highlighted in red) compared to the activations of the
-			remaining KCs (shown in gray). The top activated KC has the largest weights for the words “weapon”, “mass”,
-			etc. The second-highest activated KC is sensitive to the words “market”, “stock”, etc. This illustrates how
-			the fruit fly network processes the queries. In this example the query refers to several distinct
-			combinations of concepts: “weapon of mass destruction”, “stock market”, “movie industry”. Each of those
-			concepts has a dedicated KC responsible for it. As one can see the responses are not perfect. For example in
-			this case we would expect to have the KC, which is responsible for the ``movie industry'' concept to have a
-			higher activation than the KC, which is responsible for the types of ``weapons of mass destruction''. But,
-			overall, all the concepts picked by the KCs are meaningful and related to the query.
+			remaining KCs (shown in gray). The top activated KC has the largest weights for the words <q>weapon</q>,
+			<q>mass</q>, etc. The second-highest activated KC is sensitive to the words <q>market</q>, <q>stock</q>,
+			etc. This illustrates how the fruit fly network processes the queries. In this example the query refers to
+			several distinct combinations of concepts: <q>weapon of mass destruction</q>, <q>stock market</q>, <q>movie
+				industry</q>. Each of those concepts has a dedicated KC responsible for it. However, the responses are
+			not perfect. In this case, we would expect to have the KC which is responsible for the <q>movie industry</q>
+			concept to have a higher activation than the KC responsible for the types of <q>weapons of mass
+				destruction</q>. But, overall, all the concepts picked by the KCs are meaningful and related to the
+			query.
 		</p>
 
 	</d-article>

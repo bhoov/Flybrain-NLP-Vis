@@ -255,11 +255,6 @@ class Biohasher:
             "contribution": float(target[ID])
             } for ID in np.argsort(-target)[:n_show]]
 
-        # return {
-        #     "context": [{ "token": self.tokenizer.id2token(ID), "contribution": context[ID]} for ID in np.argsort(-context)[:n_show]],
-        #     "target": [{ "token": self.tokenizer.id2token(ID), "contribution": target[ID]} for ID in np.argsort(-target)[:n_show]]
-        # }
-
     @cached(cache=LRUCache(maxsize=8))
     def get_embeddings(self, hash_length: int):
         """Convert all the synapse weights into context independent embeddings. Useful for finding nearest neighbors

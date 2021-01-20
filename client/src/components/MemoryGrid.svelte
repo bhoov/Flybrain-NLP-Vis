@@ -12,7 +12,8 @@
     export let cellRadius: number = 7;
     export let selectedCell: number;
     export let loading = false;
-    export let hoveredCell: number;
+    export let hoveredCell: number | null = null;
+    export let maxOpacity: number = 1;
 
 
     function tippyProps(unit: number, label: number) {
@@ -52,7 +53,7 @@
     $: opacityScale = d3
         .scaleLinear()
         .domain([0, d3.max(activations)])
-        .range([0.1, 1]);
+        .range([0.1, maxOpacity]);
 </script>
 
 <style>
