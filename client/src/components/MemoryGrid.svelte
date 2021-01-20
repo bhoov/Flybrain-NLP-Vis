@@ -14,6 +14,7 @@
     export let loading = false;
     export let hoveredCell: number | null = null;
     export let maxOpacity: number = 1;
+    export let allowInteraction: boolean = true;
 
 
     function tippyProps(unit: number, label: number) {
@@ -59,7 +60,7 @@
 <style>
     .primary {
         fill: black;
-        stroke-width: 2;
+        stroke-width: 3;
         stroke: white;
     }
 
@@ -72,13 +73,13 @@
     }
     .selected {
         stroke: coral;
-        stroke-width: 2;
+        stroke-width: 3;
         opacity: 1;
     }
 
     .hovered {
         stroke: cyan;
-        stroke-width: 2;
+        stroke-width: 3;
         opacity: 1;
     }
     .loading {
@@ -115,7 +116,7 @@
                     cx={cellRadius * 2 * (i % nCols) + cellRadius}
                     cy={cellRadius * 2 * Math.floor(i / nCols) + cellRadius}
                     r={cellRadius}
-                    on:click={() => (selectedCell = neuron)}
+                    on:click={() => (allowInteraction && (selectedCell = neuron))}
                     on:mouseover={() => {
                         hoveredCell = neuron;
                     }}

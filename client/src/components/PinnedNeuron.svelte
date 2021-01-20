@@ -48,7 +48,7 @@
     <div class="grid grid-cols-6">
         <div class="col-start-1 col-end-4 place-self-center">
             {#if neuronLabels}
-                <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} neuronLabels={neuronLabels} maxOpacity={0.3}/>
+                <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} neuronLabels={neuronLabels} maxOpacity={0.3} allowInteraction={false}/>
             {:else}
                 <p>Loading...</p>
             {/if}
