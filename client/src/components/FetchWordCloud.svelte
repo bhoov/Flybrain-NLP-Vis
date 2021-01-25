@@ -8,6 +8,7 @@
     export let selected: boolean;
     export let width: number | string = "100%";
     export let height: number | string = "100%";
+    export let hideContent: boolean = false; // Some neurons learn offensive concepts. Mask these wordclouds
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
 
@@ -53,10 +54,15 @@
             {/if}
         </div>
     </div>
+
+    {#if hideContent}
+    <div class="text-center text-xl muted font-bold m-auto">The concepts learned by this neuron are offensive and were manually masked</div>
+    {:else}
     <img
         src={filename}
         alt={`Word Cloud for Neuron ${displayLabel}`}
         {width}
         {height}
         class="overflow-hidden" />
+    {/if}
 </div>

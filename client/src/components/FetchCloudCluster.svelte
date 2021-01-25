@@ -5,6 +5,7 @@
     export let heads: number[] = [];
     export let labels: number[] | string[] | null = null;
     export let importances: number[] = [];
+    export let offensiveNeurons: Set<number>
     export let hoveredHead: number;
     export let selectedHead: number = null;
 
@@ -48,6 +49,7 @@
             <FetchWordCloud
                 unit={head}
                 label={displayLabels[i]}
+                hideContent={offensiveNeurons ? offensiveNeurons.has(displayLabels[i]) : false}
                 {importances}
                 currIdx={i}
                 selected={head == selectedHead} />

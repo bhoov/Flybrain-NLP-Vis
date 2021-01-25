@@ -26,12 +26,13 @@
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
 	let searchResultHeight = 250; // How high to make the search result grid
 	let kNearest = 4; // Number of nearest cluster clouds to show
+	let offensiveNeurons = new Set([87, 96, 138, 153, 358])
+	// let offensiveNeurons = new Set([87, 96, 138, 153, 358, 180, 203, 235, 312])
 	let interestingExamples: string[] = [
 		// Default examples for selection
 		"Senate majority leader discussed the issue with the members of the committee",
 		"Entertainment industry shares rise following the premiere of the mass destruction weapon documentary",
 		"European Court of Human Rights most compelling cases",
-		"White supremacist protest in Washington DC",
 		"Apple latest IPhone has an improved apps connectivity",
 		"Representative Harris accused Facebook of bias and promoting hate speech",
 		"President Trump held campaign rally in Virginia",
@@ -63,6 +64,10 @@
 		});
 	}
 
+	$: getLabel = (idx: number) => {
+		return neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == idx) : idx
+	}
+
 	$: newConcepts($neuronIndex);
 
 	/**
@@ -92,12 +97,7 @@
 		return true;
 	}
 
-	$: topNeuronLabels = topNeuronClusters?.map((h) =>
-		neuronGridOrdering
-			? _.findIndex(neuronGridOrdering, (v) => v == +h)
-			: +h
-	);
-
+	$: topNeuronLabels = topNeuronClusters?.map(getLabel);
 	/**
 	 * Get phrase query from event
 	 */
@@ -253,6 +253,7 @@
 					<FetchCloudCluster
 						heads={topNeuronClusters}
 						labels={topNeuronLabels}
+						{offensiveNeurons}
 						importances={clusterImportance}
 						bind:hoveredHead={hoveredNeuronIdx}
 						bind:selectedHead={$neuronIndex} />
@@ -287,18 +288,19 @@
 						{activations}
 						loading={loadingActivations}
 						neuronLabels={neuronGridOrdering}
+						{offensiveNeurons}
 						bind:selectedCell={$neuronIndex}
 						bind:hoveredCell={hoveredNeuronIdx} />
 				</div>
 			{/if}
 		</div>
 		<div id="concept-exploration" class="my-4 justify-self-center max-cell">
-			{#if conceptList != null}
+			{#if conceptList != null && !offensiveNeurons.has(getLabel($neuronIndex))}
 				<div class="muted">
 					Concepts learned by
 					<span
 						class="font-bold unmuted"
-						style="color: coral;">selected KC</span>
+						style="color: coral;">Neuron {getLabel($neuronIndex)}</span>
 				</div>
 				<div class="max-cell">
 					<BarChart
@@ -311,7 +313,8 @@
 		<div class="hidden lg:block place-self-center w-full max-cell">
 			<FetchWordCloud
 				unit={$neuronIndex}
-				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : $neuronIndex}
+				label={getLabel($neuronIndex)}
+				hideContent={offensiveNeurons.has(getLabel($neuronIndex))}
 				selected={true} />
 		</div>
 	</div>

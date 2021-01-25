@@ -16,16 +16,20 @@
     export let maxOpacity: number = 1;
     export let allowInteraction: boolean = true;
     export let strokeWidth = 3;
+    export let offensiveNeurons: Set<number>
 
 
     function tippyProps(unit: number, label: number) {
         const width = 250,
             height = 250;
 
+        const imgContent = `<img data-src="wordclouds/cloud_unit_${unit}.png" alt="Concepts for neuron ${label}" width="${width}px" height="${height}px"/>`
+        const hiddenContent = `<div class="text-center text-l font-bold text-white m-auto">The concepts learned by this neuron are offensive and were manually masked</div>`
+        const isOffensiveNeuron = offensiveNeurons && offensiveNeurons.has(label)
         const content = `
             <div class="inner-tippy-content" flybrain-unit="${unit}">
                 <div class="w-full text-center m-0 p-0 text-2xl font-bold underline">Neuron ${label}</div>
-                <img data-src="wordclouds/cloud_unit_${unit}.png" alt="Concepts for neuron ${label}" width="${width}px" height="${height}px"/>
+                ${isOffensiveNeuron ? hiddenContent : imgContent}
             </div>
         `;
         return {
@@ -41,8 +45,10 @@
             theme: "translucent",
             distance: 1,
             onShow: function (instance) {
-                var img = instance.popper.querySelector("img");
-                img.setAttribute("src", img.getAttribute("data-src"));
+                if (!isOffensiveNeuron) {
+                    var img = instance.popper.querySelector("img");
+                    img.setAttribute("src", img.getAttribute("data-src"));
+                }
             },
         };
     }
