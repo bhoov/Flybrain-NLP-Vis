@@ -10,11 +10,37 @@
 	<title>Svelte app</title>
 
 	<link rel='icon' type='image/png' href='/favicon.png'>
+	<script defer src="https://use.fontawesome.com/releases/v5.15.2/js/all.js"
+		integrity="sha384-vuFJ2JiSdUpXLKGK+tDteQZBqNlMwAjhZ3TvPaDfN9QmbPb7Q8qUpbSNapQev3YF"
+		crossorigin="anonymous"></script>
 	<link rel='stylesheet' href='/global.css'>
 	<link rel='stylesheet' href='/build/vendor.css'>
 	<link rel='stylesheet' href='/build/bundle.css'>
 
 	<script defer src='/build/bundle.js'></script>
+
+	<style>
+		.token {
+			unicode-bidi: embed;
+			font-family: monospace;
+			color: #B91C1C;
+			padding: 0rem 0.2rem;
+		}
+
+		.token-chunk {
+			/* quotes: "“" "”" "‘" "’"; */
+			font-weight: 500;
+			/* font-style: italic; */
+		}
+
+		.token-chunk::before {
+			content: open-quote;
+		}
+
+		.token-chunk::after {
+			content: close-quote;
+		}
+	</style>
 </head>
 
 <body>
@@ -87,7 +113,7 @@
 
 
 	<d-title>
-		<h1>Can a Fruit Fly Learn Word Embeddings?</h1>
+		<h1 id="blog-title">Can a Fruit Fly Learn Word Embeddings?</h1>
 		<!-- <figure class="l-body" style="margin-top: 2vh; margin-bottom: 2vh;">
 			<img src="./assets/img/teaser.svg" style="width:100%;">
 		</figure> -->
@@ -101,14 +127,14 @@
 			on the network of <a href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon cells (KCs)</a> in the <a
 				href="https://en.wikipedia.org/wiki/Mushroom_bodies">mushroom body</a> of the fruit fly brain. This
 			network was trained on a large corpus of text and tested on common NLP tasks. Biologically, this network has
-			evolved to process sensory stimuli from olfaction, visual system, and other modalities and not to
-			<q>understand</q> language. It, however, uses a general purpose algorithm to embed inputs (from
-			different modalities) into a high dimensional space, so that these embeddings are locality sensitive <d-cite
-				key="dasgupta_neural_2017, BioHash"></d-cite>. This means that inputs that are similar to each other are
-			mapped to similar representations, and inputs that are different are mapped to distant representations.
-			Thus, our work illustrates a possibility to <strong>reprogram a biological general-purpose network</strong>
-			to solve a useful machine learning task that the biological organism does not necessarily naturally engage
-			in.
+			evolved to process sensory stimuli from olfaction, visual system, and other modalities and not to <span
+				class="token">understand</span> language. It, however, uses a general purpose algorithm to embed inputs
+			(from different modalities) into a high dimensional space, so that these embeddings are locality sensitive
+			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite>. This means that inputs that are similar to each other
+			are mapped to similar representations, and inputs that are different are mapped to distant representations.
+			Thus, our work illustrates a theoretical possibility to <strong>reprogram a biological general-purpose
+				network</strong> to solve a useful machine learning task that the biological organism does not
+			necessarily naturally engage in.
 		</p>
 
 		<p>
@@ -117,7 +143,7 @@
 			<!-- The pretrained model is available at (link). -->
 		</p>
 
-		<h2>
+		<h2 id="blog-biological-network">
 			Biological Network
 		</h2>
 
@@ -141,7 +167,7 @@
 		</p>
 
 		<d-figure>
-			<figure class="l-body">
+			<figure id="fig-network-architecture" class="l-body">
 				<img src="./img/architecture.001.png" style="width: 100%" />
 				<figcaption>
 					Network architecture. Several groups of PNs corresponding to different modalities send
@@ -151,37 +177,38 @@
 			</figure>
 		</d-figure>
 
-		<h2>
-			Training the Network.
+		<h2 id="blog-training">
+			Training the Network
 		</h2>
 
 
 		<p>
 			We decomposed each sentence from the training corpus into a collection of $w$-grams of consecutive words.
-			The input to the network is a vector that has two blocks: context and target. The target block is a one-hot
+			The input to the network is a vector that has two blocks: <strong>context</strong> and
+			<strong>target</strong>. The target block is a one-hot
 			encoding of the middle token in the $w$-gram. The context block encodes the remaining words in the $w$-gram
 			as a bag of tokens. An unsupervised learning algorithm <d-cite key="krotovHopfield2019"></d-cite> is used
 			for learning the weights of the neural network (see also <a
 				href="https://www.ibm.com/blogs/research/2019/04/biological-algorithm/">this blog post</a>). Mapping
 			this idea back to the fruit flies that this network is borrowed from, we can think about the context of a
-			word as for example an <q>olfactory</q> input to the network of KCs, while the target word as for
-			example a
-			<q>visual</q> input. An example of encoding is shown below.
+			word as for example an <em>olfactory</em> input to the network of KCs, while the target word
+			as for example a <em>visual</em> input. An example of encoding is shown below.
 		</p>
 
 		<d-figure>
 			<figure class="l-body">
-				<img src="./img/ENCODING.002.png" style="width: 100%" />
+				<img src="./img/ENCODING.003.png" style="width: 100%" />
 				<figcaption>
 					The encoding method. The input vector consists of two blocks separated by the (thick) blue
-					line. Assuming $w = 3$, a center word <q>stock</q> is the target word and the two flanking words form a
+					line. Assuming $w = 3$, a center word <span class="token">stock</span> is the target word and the
+					two flanking words form a
 					context. The $w$-gram is highlighted in light blue.
 				</figcaption>
 			</figure>
 		</d-figure>
 
-		<h2>
-			Individual KCs explorer.
+		<h2 id="blog-explorer">
+			Individual KCs Explorer
 		</h2>
 
 		<p>
@@ -210,7 +237,8 @@
 			not pure. For example, the 5-th strongest token here represents a number-token. Perhaps this is not
 			surprising given that a number token can easily appear in the training corpus quantifying, for example, a
 			number of law enforcement officers. Another sign of entanglement of concepts for this KC is the token
-			<q>news</q>. It is not an authority, but, at the same time, this word can easily appear in the
+			<span class="token">news</span>. It is not an authority, but, at the same time, this word can easily appear
+			in the
 			context of governmental authorities since they are often discussed in the news.
 		</p>
 
@@ -225,8 +253,8 @@
 			this neuron has learned.
 		</p> -->
 
-		<h2>
-			Response to a query sentence.
+		<h2 id="blog-query">
+			Response to a Query Sentence
 		</h2>
 
 		<p>
@@ -247,20 +275,66 @@
 		</p>
 
 		<p>
-			Consider the example sentence: <q>Entertainment industry shares rise following the premiere of the mass
-				destruction weapon documentary.</q> This query sentence activates several KCs. The demo shows the word
+			Consider the example sentence:
+		</p>
+
+		<blockquote class="">Entertainment industry shares rise following the premiere of the mass
+			destruction weapon documentary.</blockquote>
+
+		<d-figure>
+			<figure>
+				<div id="fig-entertainment-cloud"
+					class="grid grid-cols-2 lg:grid-flow-row lg:grid-cols-4 place-items-center"></div>
+				<figcaption>
+					The top results for the word clouds of tokens learned by the four highest activated KCs. In the
+					inset of each word cloud, one can see the strength of activation for that specific KC (highlighted
+					in red) compared to the activations of the remaining KCs (shown in gray).
+				</figcaption>
+			</figure>
+		</d-figure>
+
+		<p>
+			This query sentence activates several KCs. The demo shows the word
 			clouds of tokens learned by the four highest-activated KCs. In the inset of each word cloud one can see the
 			strength of the activation of that specific KC (highlighted in red) compared to the activations of the
-			remaining KCs (shown in gray). The top activated KC has the largest weights for the words <q>weapon</q>,
-			<q>mass</q>, etc. The second-highest activated KC is sensitive to the words <q>market</q>, <q>stock</q>,
+			remaining KCs (shown in gray). The top activated KC has the largest weights for the words: <span
+				class="token">weapon</span>, <span class="token">mass</span>, etc. The second-highest activated KC is
+			sensitive to the words <span class="token">market</span>, <span class="token">stock</span>,
 			etc. This illustrates how the fruit fly network processes the queries. In this example the query refers to
-			several distinct combinations of concepts: <q>weapon of mass destruction</q>, <q>stock market</q>, <q>movie
-				industry</q>. Each of those concepts has a dedicated KC responsible for it. However, the responses are
-			not perfect. In this case, we would expect to have the KC which is responsible for the <q>movie industry</q>
-			concept to have a higher activation than the KC responsible for the types of <q>weapons of mass
-				destruction</q>. But, overall, all the concepts picked by the KCs are meaningful and related to the
+			several distinct combinations of concepts: <span class="token-chunk">weapon of mass destruction</span>,
+			<span class="token-chunk">stock market</span>, <span class="token-chunk">movie
+				industry</span>. Each of those concepts has a dedicated KC responsible for it. However, the responses
+			are
+			not perfect. In this case, we would expect to have the KC which is responsible for the <span
+				class="token-chunk">movie industry</span>
+			concept to have a higher activation than the KC responsible for the types of <span
+				class="token-chunk">weapons of mass
+				destruction</span>. But, overall, all the concepts picked by the KCs are meaningful and related to the
 			query.
 		</p>
+
+		<h2>Summary</h2>
+
+		<p>
+			In this work we asked the intriguing question whether the core computational algorithm of one of the best
+			studied networks in neuroscience &mdash; the network of KCs in the fruit fly brain &mdash; can be repurposed
+			for learning word embeddings from text,
+			a well defined machine learning task. We have shown that,
+			surprisingly, this network can learn correlations between words and their context while producing high
+			quality word embeddings. Our fruit fly network generates binary word embeddings &mdash; vectors of
+			<code>[0,1]</code> as opposed to continuous vectors like <a
+				href="https://nlp.stanford.edu/projects/glove/">GloVe</a>
+			<d-cite key="pennington2014glove"></d-cite> and <a
+				href="https://en.wikipedia.org/wiki/Word2vec">Word2vec</a>, which is useful from the perspective of
+			memory efficiency. The boolean nature of the FlyVec word embeddings also raises interesting questions
+			related to interpretability of the learned embeddings. As we have illustrated in this demo, some of the
+			individual KCs have learned semantically coherent concepts. For example, we could ask the question, “Does
+			the query sentence pertain to a medical condition?”. If the answer is positive, it is likely that the neuron
+			75, discussed above, will be in the ON state for that query. Thus, individual KCs may encode in a logical
+			way the presence or the absence of certain attributes of the words and the query sentences. We hope to
+			systematically investigate this intriguing aspect of interpretability of FlyVec embeddings in the future.
+		</p>
+
 
 	</d-article>
 

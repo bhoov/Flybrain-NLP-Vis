@@ -7,6 +7,7 @@
     import * as tp from "../types"
 
     export let neuron: number
+    export let offensiveNeurons: Set<number>
 
     let neuronLabels: number[]
     let conceptList: tp.Concept[]
@@ -48,7 +49,7 @@
     <div class="grid grid-cols-6 ">
         <div class="col-start-1 col-end-4 place-self-center px-3">
             {#if neuronLabels}
-                <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} neuronLabels={neuronLabels} maxOpacity={0.3} allowInteraction={false}/>
+                <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} {offensiveNeurons} neuronLabels={neuronLabels} maxOpacity={0.3} allowInteraction={false}/>
             {:else}
                 <p>Loading...</p>
             {/if}

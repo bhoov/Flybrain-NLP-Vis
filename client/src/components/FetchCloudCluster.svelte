@@ -8,6 +8,7 @@
     export let offensiveNeurons: Set<number>
     export let hoveredHead: number;
     export let selectedHead: number = null;
+    export let mouseable: boolean = true
 
     $: displayLabels = labels == null ? heads : labels
 </script>
@@ -41,10 +42,10 @@
         <div
             class:hovered={head == hoveredHead}
             class:selected={head == selectedHead}
-            class="cloud border-2 border-gray-800 place-self-center"
-            on:mouseover={() => (hoveredHead = head)}
-            on:mouseout={() => (hoveredHead = undefined)}
-            on:click={() => (selectedHead = head)}
+            class="cloud border-2 border-gray-800 place-self-center w-full"
+            on:mouseover={() => (mouseable && (hoveredHead = head))}
+            on:mouseout={() => (mouseable && (hoveredHead = undefined))}
+            on:click={() => (mouseable && (selectedHead = head))}
             >
             <FetchWordCloud
                 unit={head}

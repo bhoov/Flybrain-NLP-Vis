@@ -2,6 +2,9 @@
     import { createEventDispatcher } from "svelte";
     import FetchWordCloud from "./FetchWordCloud.svelte";
     import tippy from "../etc/mytippy";
+    import 'tippy.js/themes/light.css';
+    import 'tippy.js/themes/translucent.css';
+
     import * as d3 from "d3";
 
     const dispatch = createEventDispatcher();
@@ -42,7 +45,7 @@
             allowHTML: true,
             hideOnClick: false,
             arrow: true,
-            theme: "translucent",
+            theme: "light",
             distance: 1,
             onShow: function (instance) {
                 if (!isOffensiveNeuron) {
@@ -73,7 +76,7 @@
     $: placeY = (i: number) => strokeWidth + 2 * (cellRadius) * Math.floor(i / nCols) + cellRadius
 </script>
 
-<style>
+<style lang="postcss">
     .primary {
         fill: black;
         z-index: 1;

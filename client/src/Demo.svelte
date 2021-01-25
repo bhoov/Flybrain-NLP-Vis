@@ -6,7 +6,8 @@
 		queryPhrase,
 		showQueryResults,
 		allowCustomInput,
-	} from "./urlStore";
+		offensiveNeurons
+	} from "./store";
 	import type * as tp from "./types";
 	import Select from "svelte-select";
 	import Navbar from "./components/Navbar.svelte";
@@ -26,8 +27,6 @@
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
 	let searchResultHeight = 250; // How high to make the search result grid
 	let kNearest = 4; // Number of nearest cluster clouds to show
-	let offensiveNeurons = new Set([87, 96, 138, 153, 358])
-	// let offensiveNeurons = new Set([87, 96, 138, 153, 358, 180, 203, 235, 312])
 	let interestingExamples: string[] = [
 		// Default examples for selection
 		"Senate majority leader discussed the issue with the members of the committee",
@@ -149,9 +148,8 @@
 	}
 
 	a {
-		@apply text-blue-600 underline;
+		@apply underline;
 	}
-
 	main {
 		/* text-align: center; */
 		margin: auto;
@@ -182,11 +180,11 @@
 	}
 
 	.left-comment {
-		@apply col-start-1 col-end-3 align-middle place-self-center muted font-semibold my-2;
+		@apply col-start-1 col-end-3 align-middle muted font-semibold my-2;
 	}
 
 	.right-comment {
-		@apply col-start-11 col-end-13;
+		@apply col-start-11 col-end-13 muted font-semibold my-2 place-self-center align-middle;
 	}
 
 	.example-options {
@@ -197,6 +195,14 @@
 		max-width: 300px;
 		max-height: 300px;
 	}
+
+	.em-fly {
+		@apply text-blue-500 font-semibold;
+
+	}
+	.fly-perspective {
+		@apply font-thin;
+	}
 </style>
 
 <svelte:head>
@@ -205,84 +211,81 @@
 </svelte:head>
 
 <main class="lg:grid lg:grid-cols-12 lg:gap-4 px-4">
-    <div class="w-full text-center text-4xl font-bold my-4 main">
-        Fruit Fly Word Embeddings
-    </div>
-	<div class="left-comment">
-		<span class="em">Search for concepts</span>
-		by selecting a phrase dropdown
-		{#if $allowCustomInput}<span>or typing in your own sentence</span>{/if}
+	<div id="main-demo" class="h-full w-full leading-normal text-center text-5xl font-bold my-3 main">
+		Fruit Fly Word Embeddings
 	</div>
-	<div id="controls" class="w-full bg-gray-100 rounded-lg px-0 main">
+	<div class="left-comment">
 		<div>
-			<Select
-				items={selectExamples}
-				selectedValue={selectExamples[0]}
-				hideEmptyState={$allowCustomInput}
-				isCreatable={$allowCustomInput}
-				placeholder={'Select from the suggested' + ($allowCustomInput ? 'OR type your own short phrase' : '')}
-				getOptionLabel={(option, filterText) => {
-					return option.isCreator ? filterText : option.label;
-				}}
-				on:select={handleQuery} />
-
-			<div
-				class="flex flex-wrap mb-3 my-2 place-self-start pl-5 content-center">
-				<div class="mr-2 font-bold border-b-dashed align-middle">
-					Detected Keywords:
-				</div>
-				<SentenceTokens tokens={keywords} />
-			</div>
+			<span class="em">Select a query phrase</span> from the dropdown {#if $allowCustomInput}<span>or type in your own sentence</span>{/if} 
+			to search for most related concepts
+		</div>
+		<div class="fly-perspective mt-3">
+			This sentence corresponds to providing our fly-inspired model a <span class="em-fly">smell</span> or analogous sensory input. 
+			The displayed wordclouds represent the <a href="http://www.scholarpedia.org/article/Receptive_field">receptive fields</a> of the top activated 
+			<a href="https://en.wikipedia.org/wiki/Kenyon_cell"><span class="em-fly">Kenyon Cells</span></a> (KCs).
 		</div>
 	</div>
-
-	<div class="left-comment">
-		The
-		<span class="em">most activated neurons</span>
-		from the keywords above are shown as the concepts they learned.
-	</div>
-	<div class="top-results main">
-		{#if showQueryResults && topNeuronClusters != null}
-			<!-- <div class="muted">
-						The highest activated KCs from the query phrase. Each KC is
-						shown as a bar on the histogram, the height indicating how much
-						the selected phrase triggered that particular cell.
-					</div> -->
-			<div id="query-results"
-					class="sm:grid sm:grid-cols-2 lg:grid-flow-row lg:grid-cols-4 gap-x-0.5 place-items-center">
-					<FetchCloudCluster
-						heads={topNeuronClusters}
-						labels={topNeuronLabels}
-						{offensiveNeurons}
-						importances={clusterImportance}
-						bind:hoveredHead={hoveredNeuronIdx}
-						bind:selectedHead={$neuronIndex} />
+	<div class="w-full main">
+		<div class="w-full bg-gray-100 rounded-lg px-0">
+			<div>
+				<Select
+					items={selectExamples}
+					selectedValue={selectExamples[0]}
+					hideEmptyState={$allowCustomInput}
+					isCreatable={$allowCustomInput}
+					placeholder={'Select from the suggested' + ($allowCustomInput ? 'OR type your own short phrase' : '')}
+					getOptionLabel={(option, filterText) => {
+						return option.isCreator ? filterText : option.label;
+					}}
+					on:select={handleQuery} />
+				<div
+					class="flex flex-wrap mb-3 my-2 place-self-start pl-5 content-center">
+					<div class="mr-2 font-bold border-b-dashed align-middle">
+						Detected Keywords:
+					</div>
+					<SentenceTokens tokens={keywords} />
 				</div>
-		{:else}
-			<h2
-				class="text-gray-600 font-thin align-middle"
-				style={`height: ${searchResultHeight}`}>
-				Query by a keyword phrase above to see what KCs fire the most
-			</h2>
-		{/if}
-		<hr />
+			</div>
+		</div>
+		<div class="top-results">
+			{#if showQueryResults && topNeuronClusters != null}
+				<!-- <div class="muted">
+							The highest activated KCs from the query phrase. Each KC is
+							shown as a bar on the histogram, the height indicating how much
+							the selected phrase triggered that particular cell.
+						</div> -->
+				<div id="query-results"
+						class="sm:grid sm:grid-cols-2 lg:grid-flow-row lg:grid-cols-4 gap-x-0.5 place-items-center">
+						<FetchCloudCluster
+							heads={topNeuronClusters}
+							labels={topNeuronLabels}
+							{offensiveNeurons}
+							importances={clusterImportance}
+							bind:hoveredHead={hoveredNeuronIdx}
+							bind:selectedHead={$neuronIndex} />
+					</div>
+			{:else}
+				<h2
+					class="text-gray-600 font-thin align-middle"
+					style={`height: ${searchResultHeight}`}>
+					Query by a keyword phrase above to see what KCs fire the most
+				</h2>
+			{/if}
+			<hr />
+		</div>
 	</div>
-
 	<div class="left-comment">
-		<span class="em">Explore every neuron</span>
-		of our model by
-		<span class="action">clicking</span>
-		around the grid.
+		<div>
+			<span class="action">Click</span> and <span class="action">hover</span> over the grid to <span class="em">explore every concept</span>
+			learned by our model
+		</div>
+		<div class="my-4 fly-perspective">
+			Each circle on the grid represents a KC with its corresponding receptive field (optimal stimulus that leads to the KC’s activation).
+		</div>
 	</div>
 	<div class="explorer lg:grid lg:grid-cols-3 gap-6 main place-items-center">
 		<div id="the-brain" class="justify-self-center">
 			{#if neuronGridOrdering != undefined && activations != undefined}
-				<div class="muted mb-2 mx-2">
-					All 400
-					<a href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon
-						Cells (KCs)</a>
-					are represented as circles in the 20x20 grid below.
-				</div>
 				<div class="w-full text-center max-cell">
 					<MemoryGrid
 						{activations}
@@ -318,4 +321,10 @@
 				selected={true} />
 		</div>
 	</div>
+		<div class="right-comment">
+			<a href="#blog-title" class="no-underline text-center muted">
+				<div class="text-xl my-4">See blog post below </div>
+				<div class="text-center"><i class="fas fa-angle-double-down fa-3x"></i></div>
+			</a>
+		</div>
 </main>
