@@ -5,8 +5,6 @@
     export let heads: number[] = [];
     export let labels: number[] | string[] | null = null;
     export let importances: number[] = [];
-    export let cloudWidth: number = 250;
-    export let cloudHeight: number = 250;
     export let hoveredHead: number;
     export let selectedHead: number = null;
 

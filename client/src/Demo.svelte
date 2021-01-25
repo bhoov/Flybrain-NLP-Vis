@@ -23,7 +23,6 @@
 	let loadingActivations: boolean = false; // Are we waiting for real activations?
 	let neuronGridOrdering: number[] = undefined; // What order to display the neurons on the grid
 	let topNeuronClusters: number[] | null = null; // Cloud clusters to show
-	let topNeuronLabels: number[] | null = null; // Names of each cloud cluster
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
 	let searchResultHeight = 250; // How high to make the search result grid
 	let kNearest = 4; // Number of nearest cluster clouds to show
@@ -84,11 +83,6 @@
 			topNeuronClusters = r.head_info
 				.slice(0, kNearest)
 				.map((c) => c.head);
-			topNeuronLabels = topNeuronClusters.map((h) =>
-				neuronGridOrdering
-					? _.findIndex(neuronGridOrdering, (v) => v == +h)
-					: +h
-			);
 			clusterImportance = r.head_info
 				.slice(0, kNearest)
 				.map((c) => c.activation);
@@ -97,6 +91,12 @@
 		});
 		return true;
 	}
+
+	$: topNeuronLabels = topNeuronClusters?.map((h) =>
+		neuronGridOrdering
+			? _.findIndex(neuronGridOrdering, (v) => v == +h)
+			: +h
+	);
 
 	/**
 	 * Get phrase query from event
@@ -254,7 +254,6 @@
 						heads={topNeuronClusters}
 						labels={topNeuronLabels}
 						importances={clusterImportance}
-						cloudHeight={searchResultHeight}
 						bind:hoveredHead={hoveredNeuronIdx}
 						bind:selectedHead={$neuronIndex} />
 				</div>
@@ -312,7 +311,7 @@
 		<div class="hidden lg:block place-self-center w-full max-cell">
 			<FetchWordCloud
 				unit={$neuronIndex}
-				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : null}
+				label={neuronGridOrdering ? _.findIndex(neuronGridOrdering, (v) => v == $neuronIndex) : $neuronIndex}
 				selected={true} />
 		</div>
 	</div>
