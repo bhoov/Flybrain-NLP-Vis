@@ -6,7 +6,7 @@ from pathlib import Path
 from functools import cached_property
 from cachetools import cached, LRUCache
 from typing import *
-import path_fixes as pf
+import project_config as pc
 
 def softmax(x: np.array, beta=1.0):
     """Take the softmax of 1-D vector `x` according to inverse temperature `beta`. Returns a vector of the same length as x"""
@@ -88,7 +88,7 @@ class Biohasher:
     @cached_property
     def memory_grid(self):
         """Return the indices of all the heads as a grid ordered by a Kohonen map"""
-        return np.load(pf.MEM_ORDER)
+        return np.load(pc.MEM_ORDER)
 
     def make_sentence_vector(self, token_ids: Iterable[int], targ_idx=None, targ_coef=1, targ_coef_is_n_context=False, normalize_vector=True, return_n_context=False, ignore_unknown=True):
         """Create the input for the synapses given the token ids
@@ -242,18 +242,40 @@ class Biohasher:
         ind_sort = np.argsort(-orig_vocabulary)
         return self.tokenizer.ids2tokens(ind_sort[:k])
 
-    def get_mem_concepts(self, h: int, n_show: int=20, beta: float=800.0):
+    def get_mem_concepts(self, h: int, n_show: int=20, beta: float=800.0, no_masking=False):
         """Retrieve a ranked list of `n` concepts that head `h` learns, weighting them according to inverse temperature `beta`
         
         Right now, only supports target compartment retrievals
+
+        Args:
+            h: Which neuron to inspect
+            n_show: How many concepts to retrieve
+            beta: Inverse temperature used to calculate contributions
+            no_masking: If true, do not hide offensive concepts. 
         """
         # context = softmax(self.synapses[h][:self.n_vocab], beta)
         target = softmax(self.synapses[h][self.n_vocab:], beta)
-        return [
+        output = [
             {
             "token": self.tokenizer.id2token(ID),
             "contribution": float(target[ID])
-            } for ID in np.argsort(-target)[:n_show]]
+            } for ID in np.argsort(-target)[:n_show]
+        ]
+
+        if no_masking: return output
+
+        # IN PLACE
+        label = self.get_label_from_head(h)
+        def mask_bad_token_(t, mask="<MASK>"):
+            """Modify a token in place if it is bad"""
+            for bad_tok in pc.SENSITIVE_CONCEPTS[label]:
+                if bad_tok in t['token']:
+                    t['token'] = mask
+
+        if label in pc.SENSITIVE_CONCEPTS.keys(): [mask_bad_token_(t) for t in output]
+
+        return output
+
 
     @cached(cache=LRUCache(maxsize=8))
     def get_embeddings(self, hash_length: int):
@@ -268,6 +290,14 @@ class Biohasher:
         thr = (act_sort[hash_length - 1, :] + act_sort[hash_length, :]) / 2.0
         binary = (targets > thr).astype(np.int8)
         return binary
+
+    def get_head_by_labeled_index(self, idx):
+        """Convert the displayed label (assigned by memory_grid) into the logical index"""
+        return self.memory_grid[idx]
+
+    def get_label_from_head(self, head):
+        """Convert the head index to displayed label (assigned by memory_grid)"""
+        return np.where(self.memory_grid == head)[0][0]
 
 
 @cached(cache={})

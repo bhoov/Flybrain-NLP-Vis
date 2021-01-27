@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 import server.api as api
-import path_fixes as pf
+import project_config as pf
 from biohasher import get_project, softmax
 
 from cachetools import cached

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -121,16 +120,16 @@
 
 	<d-article>
 		<p>
-			In <a href="https://arxiv.org/abs/2101.06887">this work</a>, accepted to ICLR 2021, we study a
+			In <a href="https://arxiv.org/abs/2101.06887" target="_blank" rel="noopener noreferrer">this work</a>, accepted to ICLR 2021, we study a
 			well-established neurobiological network motif from the fruit fly brain and investigate the possibility of
 			reusing its architecture for solving common natural language processing (NLP) tasks. Specifically, we focus
-			on the network of <a href="https://en.wikipedia.org/wiki/Kenyon_cell">Kenyon cells (KCs)</a> in the <a
-				href="https://en.wikipedia.org/wiki/Mushroom_bodies">mushroom body</a> of the fruit fly brain. This
+			on the network of <a href="https://en.wikipedia.org/wiki/Kenyon_cell" target="_blank" rel="noopener noreferrer">Kenyon cells (KCs)</a> in the <a
+				href="https://en.wikipedia.org/wiki/Mushroom_bodies" target="_blank" rel="noopener noreferrer">mushroom body</a> of the fruit fly brain. This
 			network was trained on a large corpus of text and tested on common NLP tasks. Biologically, this network has
 			evolved to process sensory stimuli from olfaction, visual system, and other modalities and not to <span
 				class="token">understand</span> language. It, however, uses a general purpose algorithm to embed inputs
-			(from different modalities) into a high dimensional space, so that these embeddings are locality sensitive
-			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite>. This means that inputs that are similar to each other
+			(from different modalities) into a high dimensional space, so that these embeddings are locality sensitive.
+			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite> This means that inputs that are similar to each other
 			are mapped to similar representations, and inputs that are different are mapped to distant representations.
 			Thus, our work illustrates a theoretical possibility to <strong>reprogram a biological general-purpose
 				network</strong> to solve a useful machine learning task that the biological organism does not
@@ -151,24 +150,21 @@
 
 			The mushroom body is a major area of the brain responsible for processing sensory information in fruit
 			flies. It receives inputs from a set of projection neurons (PN) conveying information from several sensory
-			modalities. The major modality is olfaction <d-cite key="bates2020complete"></d-cite>, but there are also
-			inputs from the
-			PNs responsible for sensing temperature and humidity <d-cite key="marin2020connectomics"></d-cite>, as well
-			as visual
-			inputs <d-cite key="vogt2016direct, caron2020two"></d-cite>. The sensory signals are forwarded to a
-			population of Kenyon
-			cells through a set of synaptic weights. KCs are reciprocally connected through an anterior paired lateral
-			(APL) neuron, which sends a strong inhibitory signal back to KCs. This recurrent network implements a
-			winner-takes-all competition between the KCs, and silences all but a small fraction of top activated
-			neurons. The schematic of this architectural motif is shown in the figure below. In fruit flies,
-			KCs also send their outputs to mushroom body output neurons, but this part of the network is not included in
-			our mathematical model.
+			modalities. The major modality is olfaction,<d-cite key="bates2020complete"></d-cite> but there are also
+			inputs from the PNs responsible for sensing temperature and humidity,<d-cite key="marin2020connectomics">
+			</d-cite> as well as visual inputs.<d-cite key="vogt2016direct, caron2020two"></d-cite> The sensory signals
+			are forwarded to a population of Kenyon cells through a set of synaptic weights. KCs are reciprocally
+			connected through an anterior paired lateral (APL) neuron, which sends a strong inhibitory signal back to
+			KCs. This recurrent network implements a winner-takes-all competition between the KCs, and silences all but
+			a small fraction of top activated neurons. The schematic of this architectural motif is shown in the figure
+			below. In fruit flies, KCs also send their outputs to mushroom body output neurons, but this part of the
+			network is not included in our mathematical model.
 
 		</p>
 
 		<d-figure>
-			<figure id="fig-network-architecture" class="l-body">
-				<img src="./img/architecture.001.png" style="width: 100%" />
+			<figure id="fig-network-architecture" class="l-body-outset">
+				<img src="./img/architecture.001.png" style="width: 100%" class="mb-2" />
 				<figcaption>
 					Network architecture. Several groups of PNs corresponding to different modalities send
 					their activities to the layer of KCs, which are inhibited through the reciprocal connections to the
@@ -187,9 +183,9 @@
 			The input to the network is a vector that has two blocks: <strong>context</strong> and
 			<strong>target</strong>. The target block is a one-hot
 			encoding of the middle token in the $w$-gram. The context block encodes the remaining words in the $w$-gram
-			as a bag of tokens. An unsupervised learning algorithm <d-cite key="krotovHopfield2019"></d-cite> is used
+			as a bag of tokens. An unsupervised learning algorithm<d-cite key="krotovHopfield2019"></d-cite> is used
 			for learning the weights of the neural network (see also <a
-				href="https://www.ibm.com/blogs/research/2019/04/biological-algorithm/">this blog post</a>). Mapping
+				href="https://www.ibm.com/blogs/research/2019/04/biological-algorithm/" target="_blank" rel="noopener noreferrer">this blog post</a>). Mapping
 			this idea back to the fruit flies that this network is borrowed from, we can think about the context of a
 			word as for example an <em>olfactory</em> input to the network of KCs, while the target word
 			as for example a <em>visual</em> input. An example of encoding is shown below.
@@ -264,7 +260,7 @@
 			performs the calculation and outputs a pattern of excitations across KCs so that only a small number of KCs
 			are in the ON state, while the majority of them are in the OFF state. This pattern of excitations is the
 			hash code for the query sentence, which is used for the evaluations of our algorithm, see the <a
-				href="https://arxiv.org/abs/2101.06887">paper</a>.
+				href="https://arxiv.org/abs/2101.06887" target="_blank" rel="noopener noreferrer">paper</a>.
 		</p>
 
 		<p>
@@ -323,9 +319,10 @@
 			surprisingly, this network can learn correlations between words and their context while producing high
 			quality word embeddings. Our fruit fly network generates binary word embeddings &mdash; vectors of
 			<code>[0,1]</code> as opposed to continuous vectors like <a
-				href="https://nlp.stanford.edu/projects/glove/">GloVe</a>
+				href="https://nlp.stanford.edu/projects/glove/" target="_blank" rel="noopener noreferrer">GloVe</a>
 			<d-cite key="pennington2014glove"></d-cite> and <a
-				href="https://en.wikipedia.org/wiki/Word2vec">Word2vec</a>, which is useful from the perspective of
+				href="https://en.wikipedia.org/wiki/Word2vec" target="_blank" rel="noopener noreferrer">Word2vec</a>,
+			<d-cite key="mikolov2013efficient"></d-cite> which is useful from the perspective of
 			memory efficiency. The boolean nature of the FlyVec word embeddings also raises interesting questions
 			related to interpretability of the learned embeddings. As we have illustrated in this demo, some of the
 			individual KCs have learned semantically coherent concepts. For example, we could ask the question, “Does
