@@ -7,8 +7,8 @@
 	export let sidebar = false
 </script>
 
-<header class="flex justify-between bg-gray-200 p-4 items-center text-gray-600 border-b-2 h-8">
-	<nav class="flex h-full w-full items-center">
+<header class="flex justify-between z-40 bg-gray-200 p-4 items-center text-gray-600 border-b-2 h-8">
+	<nav class="flex h-full w-full items-center z-40">
 		<div class="md:hidden">
             <Hamburger bind:open={sidebar}/>
         </div>
