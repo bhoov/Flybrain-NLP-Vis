@@ -151,9 +151,9 @@
 		@apply underline;
 	}
 	main {
-		/* text-align: center; */
 		margin: auto;
 		max-width: 1560px;
+		padding-top: 3rem;
 	}
 
 	.muted {

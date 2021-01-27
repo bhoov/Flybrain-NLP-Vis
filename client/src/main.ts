@@ -1,8 +1,13 @@
 import App from './App.svelte';
 import PinnedNeuron from "./components/PinnedNeuron.svelte"
 import FetchCloudCluster from "./components/FetchCloudCluster.svelte"
+import Navigation from "./components/Navigation.svelte"
 import {offensiveNeurons} from "./store"
 import * as api from "./api"
+
+const navigation = new Navigation({
+	target: document.querySelector("#nav-container"),
+})
 
 const app = new App({
 	target: document.querySelector("#main-demo"),

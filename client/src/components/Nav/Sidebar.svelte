@@ -7,13 +7,14 @@
 <aside class="absolute w-full h-full bg-gray-200 bg-opacity-20 border-r-2 shadow-lg" class:open>
 	<nav class="p-12 text-xl mb-3">
 		{#each routes as route}
-			<a class="block py-2 my-2 text-2xl" href={route.url}>{route.name}</a>
+			<a class="block py-2 my-2 text-2xl" href={route.url} on:click={() => (open = false)}>{route.name}</a>
 		{/each}
 	</nav>
 </aside>
 
 <style>
 	aside {
+		position: fixed;
 		left: -100%;
 		transition: left 0.3s ease-in-out;
 		z-index: 10;
