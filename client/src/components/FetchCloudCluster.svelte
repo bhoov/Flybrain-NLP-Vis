@@ -30,11 +30,11 @@
 
     .hovered {
         transition: font-size 0.1s;
-        border-color: cyan;
+        border-color: var(--hovered);
     }
 
     .selected {
-        box-shadow: 0px 0px 1rem 5px coral;
+        box-shadow: 0px 0px 1rem 5px var(--selected);
     }
 </style>
 

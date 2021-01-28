@@ -38,6 +38,8 @@
         padding: 0.5rem 0rem;
         border-radius: 1rem;
         margin: 0.5rem 0;
+        min-height: 280px;
+        max-height: 380px;
     }
 </style>
 
@@ -46,15 +48,15 @@
         Neuron {neuron}
     </div>
     
-    <div class="grid grid-cols-6 ">
-        <div class="col-start-1 col-end-4 place-self-center px-3">
+    <div class="flex justify-between h-full items-center">
+        <div class="px-3 flex-1">
             {#if neuronLabels}
                 <MemoryGrid bind:selectedCell={selectedCell} activations={neuronLabels.map(x => 1)} {offensiveNeurons} neuronLabels={neuronLabels} maxOpacity={0.3} allowInteraction={false}/>
             {:else}
                 <p>Loading...</p>
             {/if}
         </div>
-        <div class="col-start-4 col-end-7">
+        <div class="flex-1">
             {#if barchartData}
                 <div class="">
                     <BarChart data={barchartData} />

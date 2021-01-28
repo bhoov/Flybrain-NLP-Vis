@@ -48,7 +48,7 @@
 
 <style lang="postcss">
     .hovered {
-        fill: cyan !important;
+        fill: var(--hovered) !important;
     }
 </style>
 

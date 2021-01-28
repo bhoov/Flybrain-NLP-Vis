@@ -19,6 +19,10 @@
 	<script defer src='/build/bundle.js'></script>
 
 	<style>
+		html {
+			scroll-padding-top: 80px;
+		}
+
 		.token {
 			unicode-bidi: embed;
 			font-family: monospace;
@@ -131,8 +135,8 @@
 			network was trained on a large corpus of text and tested on common NLP tasks. Biologically, this network has
 			evolved to process sensory stimuli from olfaction, visual system, and other modalities and not to <span
 				class="token">understand</span> language. It, however, uses a general purpose algorithm to embed inputs
-			(from different modalities) into a high dimensional space, so that these embeddings are locality sensitive.
-			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite> This means that inputs that are similar to each other
+			(from different modalities) into a high dimensional space, so that these embeddings are locality sensitive.<d-cite key="dasgupta_neural_2017, BioHash"></d-cite> 
+			This means that inputs that are similar to each other
 			are mapped to similar representations, and inputs that are different are mapped to distant representations.
 			Thus, our work illustrates a theoretical possibility to <strong>reprogram a biological general-purpose
 				network</strong> to solve a useful machine learning task that the biological organism does not
@@ -224,11 +228,9 @@
 			with medical conditions.
 		</p>
 
-		<d-figure>
-			<figure>
-				<div id="fig-neuron-disease"></div>
-			</figure>
-		</d-figure>
+		<figure>
+			<div id="fig-neuron-disease" style="height: 380px;"></div>
+		</figure>
 
 		<p>
 			Another example, the neuron number 353 has the top tokens: governments, authorities, state, as shown below.
@@ -243,7 +245,7 @@
 
 		<d-figure>
 			<figure>
-				<div id="fig-neuron-authority"></div>
+				<div id="fig-neuron-authority" style="height:380px;"></div>
 			</figure>
 		</d-figure>
 
@@ -283,7 +285,7 @@
 		<d-figure>
 			<figure>
 				<div id="fig-entertainment-cloud"
-					class="grid grid-cols-2 lg:grid-flow-row lg:grid-cols-4 place-items-center"></div>
+					class="grid grid-cols-2 lg:grid-flow-row lg:grid-cols-4 place-items-center" style="column-gap: 0.075rem"></div>
 				<figcaption>
 					The top results for the word clouds of tokens learned by the four highest activated KCs. In the
 					inset of each word cloud, one can see the strength of activation for that specific KC (highlighted

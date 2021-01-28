@@ -135,6 +135,16 @@
 	@tailwind components;
 	@tailwind utilities;
 
+	:root {
+		--selected: coral;
+		--hovered: cyan;
+		--emphasized: theme("colors.red.600");
+	}
+
+	.selected {
+		color: var(--selected);
+	}
+
 	h1 {
 		@apply text-3xl font-bold;
 	}
@@ -166,7 +176,7 @@
 	}
 
 	.em {
-		@apply text-red-700;
+		color: var(--emphasized);
 	}
 
 	.action {
@@ -180,7 +190,7 @@
 	}
 
 	.left-comment {
-		@apply col-start-1 col-end-3 align-middle muted font-semibold my-2;
+		@apply col-start-1 col-end-3 align-middle font-semibold my-2;
 	}
 
 	.right-comment {
@@ -192,16 +202,21 @@
 	}
 
 	.max-cell {
-		max-width: 300px;
-		max-height: 300px;
+		width: 300px;
+		height: 300px;
+		margin-bottom: 0.75rem;
 	}
 
 	.em-fly {
 		@apply text-blue-500 font-semibold;
-
 	}
+
 	.fly-perspective {
 		@apply font-thin;
+	}
+
+	.explorer {
+		min-height: 300px;
 	}
 </style>
 
@@ -216,8 +231,11 @@
 	</div>
 	<div class="left-comment">
 		<div>
-			<span class="em">Select a query phrase</span> from the dropdown {#if $allowCustomInput}<span>or type in your own sentence</span>{/if} 
-			to search for most related concepts
+			<span class="em">Select a query phrase</span>
+				<span class="muted">
+					from the dropdown {#if $allowCustomInput}or type in your own sentence{/if}
+					to search for most related concepts
+				</span>
 		</div>
 		<div class="fly-perspective mt-3">
 			This sentence corresponds to providing our fly-inspired model a <span class="em-fly">smell</span> or analogous sensory input. 
@@ -255,7 +273,7 @@
 							the selected phrase triggered that particular cell.
 						</div> -->
 				<div id="query-results"
-						class="sm:grid sm:grid-cols-2 lg:grid-flow-row lg:grid-cols-4 gap-x-0.5 place-items-center">
+						class="gap-x-0.5 sm:grid sm:grid-cols-2 lg:grid-flow-row lg:grid-cols-4 lg:gap-x-1 place-items-center">
 						<FetchCloudCluster
 							heads={topNeuronClusters}
 							labels={topNeuronLabels}
@@ -276,17 +294,19 @@
 	</div>
 	<div class="left-comment">
 		<div>
-			<span class="action">Click</span> and <span class="action">hover</span> over the grid to <span class="em">explore every concept</span>
-			learned by our model
+			<span class="muted"><span class="action">Click</span> and <span class="action">hover</span> over the grid to</span> <span class="em">explore every concept</span>
+			<span class="muted">learned by our model</span>
 		</div>
 		<div class="my-4 fly-perspective">
 			Each circle on the grid represents a KC with its corresponding receptive field (optimal stimulus that leads to the KC’s activation).
 		</div>
 	</div>
-	<div class="explorer lg:grid lg:grid-cols-3 gap-6 main place-items-center">
-		<div id="the-brain" class="justify-self-center">
+
+
+	<div class="explorer main flex flex-wrap justify-between items-center mb-4">
+		<div id="the-brain" class="max-cell">
 			{#if neuronGridOrdering != undefined && activations != undefined}
-				<div class="w-full text-center max-cell">
+				<div class="w-full text-center">
 					<MemoryGrid
 						{activations}
 						loading={loadingActivations}
@@ -297,13 +317,12 @@
 				</div>
 			{/if}
 		</div>
-		<div id="concept-exploration" class="my-4 justify-self-center max-cell">
+		<div id="concept-exploration" class="max-cell flex-none">
 			{#if conceptList != null && !offensiveNeurons.has(getLabel($neuronIndex))}
-				<div class="muted">
+				<div class="muted text-center">
 					Concepts learned by
 					<span
-						class="font-bold unmuted"
-						style="color: coral;">Neuron {getLabel($neuronIndex)}</span>
+						class="font-bold unmuted selected">Neuron {getLabel($neuronIndex)}</span>
 				</div>
 				<div class="max-cell">
 					<BarChart
@@ -313,7 +332,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="hidden lg:block place-self-center w-full max-cell">
+		<div class="hidden lg:block w-full max-cell flex-none">
 			<FetchWordCloud
 				unit={$neuronIndex}
 				label={getLabel($neuronIndex)}

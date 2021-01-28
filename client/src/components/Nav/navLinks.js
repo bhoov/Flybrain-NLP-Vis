@@ -9,10 +9,12 @@ export default [
     },
     {
         name: "Paper",
-        url: "https://arxiv.org/abs/2101.06887"
+        url: "https://arxiv.org/abs/2101.06887",
+        newTab: true,
     },
     {
         name: "Code",
-        url: "https://github.com/bhoov/flyvec"
+        url: "https://github.com/bhoov/flyvec",
+        newTab: true
     },
 ]

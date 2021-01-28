@@ -6,14 +6,14 @@
     export let importances: number[];
     export let currIdx: number;
     export let selected: boolean;
-    export let width: number | string = "100%";
-    export let height: number | string = "100%";
+    export let width: number | string | null = "100%";
+    export let height: number | string | null = null;
     export let hideContent: boolean = false; // Some neurons learn offensive concepts. Mask these wordclouds
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
-    let showClean = false;
+    let showClean = true;
 
-    $: displayName = showClean ? "&#35;" : "Neuron "
+    $: displayName = showClean ? "#" : "Neuron "
 
     $: filename = `wordclouds/cloud_unit_${unit}.png`;
     $: displayLabel = label == null ? unit : label
@@ -25,35 +25,33 @@
     }
 
     .selected {
-        text-decoration-color: coral;
-        color: coral;
+        text-decoration-color: var(--selected);
+        color: var(--selected);
     }
 </style>
 
 <div class="relative">
     <div>
-        <div class="grid grid-cols-6 gap-0">
             {#if importances}
-                <div class="unit-title col-start-1 col-end-6 lg:col-end-5" class:selected>
+            <div class="flex justify-between items-center h-8">
+                <div class="unit-title" class:selected>
                     {displayName}{displayLabel}
                 </div>
-                <div class="col-start-6 lg:col-start-5 col-end-7">
-                    <div class="">
+                <div class="mr-3">
                         <ImportanceContext
                             {importances}
                             {currIdx}
                             height={importanceIconHeight}
                             width={importanceIconWidth} />
-                    </div>
                 </div>
+            </div>
             {:else}
                 <div
-                    class="unit-title col-start-1 col-end-7 text-center"
+                    class="unit-title text-center"
                     class:selected>
                     {displayName}{displayLabel}
                 </div>
             {/if}
-        </div>
     </div>
 
     {#if hideContent}
@@ -62,8 +60,7 @@
     <img
         src={filename}
         alt={`Word Cloud for Neuron ${displayLabel}`}
-        {width}
-        {height}
+        width={width || ""}
         class="overflow-hidden" />
     {/if}
 </div>

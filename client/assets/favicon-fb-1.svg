@@ -7,7 +7,7 @@
     }
 
     .marked {
-        fill: cyan;
+        fill: var(--hovered);
         opacity: 1;
     }
 </style>

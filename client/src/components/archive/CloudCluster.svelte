@@ -35,12 +35,12 @@
     .hovered {
         @apply text-2xl border-2 border-gray-100;
         transition: font-size 0.1s;
-        border: 4px solid cyan;
+        border: 4px solid var(--hovered);
         border-radius: 1rem;
     }
 
     .selected {
-        box-shadow: 5px 5px 5px 5px coral;
+        box-shadow: 5px 5px 5px 5px var(--selected);
     }
 </style>
 

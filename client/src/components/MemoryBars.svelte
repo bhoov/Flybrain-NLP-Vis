@@ -44,12 +44,12 @@
 
 <style lang="postcss">
     .hovered {
-        stroke: cyan;
+        stroke: var(--hovered);
         stroke-width: 4px;
     }
 
     .selected {
-        fill: coral !important;
+        fill: var(--selected) !important;
     }
 </style>
 

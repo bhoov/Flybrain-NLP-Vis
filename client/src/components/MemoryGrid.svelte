@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
     import FetchWordCloud from "./FetchWordCloud.svelte";
+    import FloatWindow from "./FloatWindow.svelte"
     import tippy from "../etc/mytippy";
     import 'tippy.js/themes/light.css';
     import 'tippy.js/themes/translucent.css';
@@ -93,13 +94,13 @@
     }
 
     .selected {
-        stroke: coral;
+        stroke: var(--selected);
         z-index: 2;
         opacity: 1;
     }
 
     .hovered {
-        stroke: cyan;
+        stroke: var(--hovered);
         opacity: 1;
         z-index: 10;
     }
@@ -126,7 +127,7 @@
     }
 </style>
 
-<div class:loading>
+<div class:loading class="h-full">
     <svg width="100%" height="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
         <g>
             {#each neuronLabels as neuron, i}
@@ -158,4 +159,5 @@
             {/each}
         </g>
     </svg>
+    <!-- <FloatWindow/> -->
 </div>
