@@ -20,9 +20,11 @@
     })
 
     $: {
-        api.getNeuronConcepts(selectedCell).then(r => {
-            conceptList = r
-        })
+        if (selectedCell != undefined) {
+            api.getNeuronConcepts(selectedCell, 20).then(r => {
+                conceptList = r
+            })
+        }
     }
 
     $: barchartData = conceptList?.map(c => {

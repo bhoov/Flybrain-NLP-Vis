@@ -3,11 +3,10 @@
 
     export let unit: number;
     export let label: number | string | null = null;
-    export let importances: number[];
-    export let currIdx: number;
-    export let selected: boolean;
+    export let importances: number[] = null;
+    export let currIdx: number = null;
+    export let selected: boolean = false;
     export let width: number | string | null = "100%";
-    export let height: number | string | null = null;
     export let hideContent: boolean = false; // Some neurons learn offensive concepts. Mask these wordclouds
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height

@@ -62,6 +62,4 @@ const exposed: any = exposedFunctions.reduce((acc, f: any) => {
     return acc
 }, {})
 
-console.log("Exported from API as default: ", exposed)
-
 export default exposed

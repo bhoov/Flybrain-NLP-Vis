@@ -6,7 +6,7 @@
     export let labels: number[] | string[] | null = null;
     export let importances: number[] = [];
     export let offensiveNeurons: Set<number>
-    export let hoveredHead: number;
+    export let hoveredHead: number | null = null;
     export let selectedHead: number = null;
     export let mouseable: boolean = true
 
