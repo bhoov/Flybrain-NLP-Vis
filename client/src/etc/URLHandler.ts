@@ -20,7 +20,6 @@ export class URLHandler {
         // Adapted from:  http://stackoverflow.com/questions/2090551/parse-query-string-in-javascript
         const query = window.location.search.substring(1);
         const vars = query.split('&');
-        console.log(vars, "--- vars");
 
         const urlParameters = {};
 

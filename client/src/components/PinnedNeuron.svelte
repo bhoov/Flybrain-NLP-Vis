@@ -2,7 +2,7 @@
     import {onMount} from "svelte"
     import MemoryGrid from "./MemoryGrid.svelte"
 	import BarChart from "./HorizontalBarChart.svelte";
-    import {api} from "../api"
+    import api from "../staticApi"
     import * as _ from "lodash"
     import * as tp from "../types"
 
