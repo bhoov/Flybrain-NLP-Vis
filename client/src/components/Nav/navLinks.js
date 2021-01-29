@@ -17,4 +17,9 @@ export default [
         url: "https://github.com/bhoov/flyvec",
         newTab: true
     },
+    {
+        name: "Credits",
+        url: "#blog-authors",
+        newTab: false
+    },
 ]

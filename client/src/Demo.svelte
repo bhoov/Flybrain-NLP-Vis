@@ -10,12 +10,12 @@
 	} from "./store";
 	import type * as tp from "./types";
 	import Select from "svelte-select";
-	import Navbar from "./components/Navbar.svelte";
 	import BarChart from "./components/HorizontalBarChart.svelte";
 	import MemoryGrid from "./components/MemoryGrid.svelte";
 	import FetchCloudCluster from "./components/FetchCloudCluster.svelte";
 	import FetchWordCloud from "./components/FetchWordCloud.svelte";
 	import SentenceTokens from "./components/SentenceTokens.svelte";
+	import FaDblArrowDown from "./components/FaDblArwDown.svelte"
 	import interestingExamples from "./config/exampleSentences"
 	import {api} from "./staticApi";
 	import * as _ from "lodash";
@@ -234,8 +234,8 @@
 		</div>
 		<div class="fly-perspective mt-3">
 			This sentence corresponds to providing our fly-inspired model a <span class="em-fly">smell</span> or analogous sensory input. 
-			The displayed wordclouds represent the <a href="http://www.scholarpedia.org/article/Receptive_field">receptive fields</a> of the top activated 
-			<a href="https://en.wikipedia.org/wiki/Kenyon_cell"><span class="em-fly">Kenyon Cells</span></a> (KCs).
+			The displayed wordclouds represent the <a href="http://www.scholarpedia.org/article/Receptive_field" target="_blank"><span class="em-fly">receptive fields</span></a> of the top activated 
+			<a href="https://en.wikipedia.org/wiki/Kenyon_cell" target="_blank"><span class="em-fly">Kenyon Cells</span></a> (KCs).
 		</div>
 	</div>
 	<div class="w-full main">
@@ -337,8 +337,8 @@
 	</div>
 		<div class="right-comment">
 			<a href="#blog-title" class="no-underline text-center muted mt-8">
-				<div class="text-xl my-4">See blog post below </div>
-				<div class="text-center"><i class="fas fa-angle-double-down fa-3x"></i></div>
+				<div class="text-xl mt-4 mb-2">See blog post below </div>
+				 <div class="w-full m-auto"><FaDblArrowDown/></div>
 			</a>
 		</div>
 </main>
