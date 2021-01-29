@@ -12,8 +12,8 @@ import typescript from '@rollup/plugin-typescript';
 const production = !process.env.ROLLUP_WATCH;
 
 const purgecss = require('@fullhuman/postcss-purgecss')({
-  content: ['./src/**/*.svelte'],
-  whitelistPatterns: [/svelte-/],
+  content: ['./src/**/*.svelte', './node_modules/**/*.svelte'],
+  whitelistPatterns: [/svelte-/, "selectContainer"],
   defaultExtractor: (content) => content.match(/[A-Za-z0-9-_:/]+/g) || [],
 });
 
@@ -96,7 +96,9 @@ export default {
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
-		production && terser()
+
+		// Unfortunately, this breaks my API imports for some reason?
+		production && terser({mangle: {reserved: ['api']}})
 	],
 	watch: {
 		clearScreen: false

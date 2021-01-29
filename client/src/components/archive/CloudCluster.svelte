@@ -1,6 +1,6 @@
 <script lang="ts">
     import WordCloud from "./archive/WordCloud.svelte";
-    import api from "../../staticApi";
+    import {api} from "../../staticApi";
     import type * as tp from "../../types";
     import { toggle } from "../../etc/Util";
 

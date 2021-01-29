@@ -17,8 +17,10 @@
 	import FetchWordCloud from "./components/FetchWordCloud.svelte";
 	import SentenceTokens from "./components/SentenceTokens.svelte";
 	import interestingExamples from "./config/exampleSentences"
-	import api from "./staticApi";
+	import {api} from "./staticApi";
 	import * as _ from "lodash";
+
+	console.log("API object: ", api)
 
 	let conceptList: tp.Concept[] | null = null; // Tokens and contributions for the selected neuron
 	let activations: number[] = undefined; // How much each neuron was activated by the query
@@ -42,6 +44,7 @@
 	 * @param neuron -- Neuron index to search for
 	 */
 	function newConcepts(neuron: number) {
+		console.log("API object: ", api)
 		api.getNeuronConcepts(neuron).then((r) => {
 			conceptList = r;
 		});
@@ -146,7 +149,7 @@
 	main {
 		margin: auto;
 		max-width: 1560px;
-		padding-top: 3rem;
+		padding-top: 4rem;
 	}
 
 	.muted {
@@ -172,6 +175,15 @@
 		@apply col-start-3 col-end-11;
 	}
 
+	main {
+		@apply px-4;
+	}
+
+	@screen xl {
+		main {
+			@apply grid grid-cols-12 gap-4;
+		}
+	}
 	.left-comment {
 		@apply col-start-1 col-end-3 align-middle font-semibold my-2;
 	}
@@ -208,8 +220,8 @@
 	<link rel="stylesheet" href="https://unpkg.com/tippy.js/dist/tippy.css" />
 </svelte:head>
 
-<main class="lg:grid lg:grid-cols-12 lg:gap-4 px-4">
-	<div id="demo-title" class="w-full leading-normal text-center text-5xl font-bold my-3 main">
+<main class="">
+	<div id="demo-title" class="w-full leading-normal text-center text-5xl font-bold my-4 main">
 		Fruit Fly Word Embeddings
 	</div>
 	<div class="left-comment">
@@ -227,7 +239,7 @@
 		</div>
 	</div>
 	<div class="w-full main">
-		<div class="w-full bg-gray-100 rounded-lg px-0">
+		<div class="w-full bg-gray-100 rounded-lg px-0 my-4">
 			<div>
 				<Select
 					items={selectExamples}
@@ -324,7 +336,7 @@
 		</div>
 	</div>
 		<div class="right-comment">
-			<a href="#blog-title" class="no-underline text-center muted">
+			<a href="#blog-title" class="no-underline text-center muted mt-8">
 				<div class="text-xl my-4">See blog post below </div>
 				<div class="text-center"><i class="fas fa-angle-double-down fa-3x"></i></div>
 			</a>

@@ -48,18 +48,28 @@ function queryTopNeuronsByPhrase(phrase: string, beta:number=10.0): Promise<tp.T
     return d3.json(fname)
 }
 
-const exposedFunctions = [
-    findResponseJson,
-    sentenceToKeywords,
-    getNNeurons,
-    getNeuronConcepts,
-    getNeuronOrdering,
-    queryTopNeuronsByPhrase,
-]
+export const api = {
+    findResponseJson: memoize(findResponseJson),
+    sentenceToKeywords: memoize(sentenceToKeywords),
+    getNNeurons: memoize(getNNeurons),
+    getNeuronConcepts: memoize(getNeuronConcepts),
+    getNeuronOrdering: memoize(getNeuronOrdering),
+    queryTopNeuronsByPhrase: memoize(queryTopNeuronsByPhrase)
+}
 
-const exposed: any = exposedFunctions.reduce((acc, f: any) => {
-    acc[f.name] = memoize(f)
-    return acc
-}, {})
+/**
+ * I tried to automate the above, but the minification (uglification done by rollup-terser) does not detect these exports
+ */
+// const exposedFunctions = [
+//     findResponseJson,
+//     sentenceToKeywords,
+//     getNNeurons,
+//     getNeuronConcepts,
+//     getNeuronOrdering,
+//     queryTopNeuronsByPhrase,
+// ]
 
-export default exposed
+// export const api: any = exposedFunctions.reduce((acc, f: any) => {
+//     acc[f.name] = memoize(f)
+//     return acc
+// }, {})
