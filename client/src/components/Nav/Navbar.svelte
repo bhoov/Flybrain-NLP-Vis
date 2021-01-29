@@ -11,8 +11,6 @@
 	let lastY = 0;
 	let lastDirection = "up";
 
-	$: console.log("Scrolling? ", scrollY)
-
 	function changeClass(y) {
 		let result = headerClass;
 		const scrolledPxs = lastY - y;
