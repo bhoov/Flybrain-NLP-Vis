@@ -5,24 +5,67 @@
 	import Menu from './Menu.svelte'
 	
 	export let sidebar = false
+
+	let headerClass = "pin"
+	let scrollY = 0;
+	let lastY = 0;
+	let lastDirection = "up";
+
+	$: console.log("Scrolling? ", scrollY)
+
+	function changeClass(y) {
+		let result = headerClass;
+		const scrolledPxs = lastY - y;
+		const scrollDirection = scrolledPxs < 0 ? "down" : "up";
+		const changedDirection = scrollDirection !== lastDirection;
+		if (changedDirection) {
+			result = scrollDirection === "down" ? "unpin" : "pin";
+			lastDirection = scrollDirection;
+		}
+		lastY = y;
+		return result;
+	}
+
+	$: headerClass = changeClass(scrollY)
 </script>
 
-<style>
+<svelte:window bind:scrollY={scrollY}/>
+
+<style lang="postcss">
 	header {
+		@apply flex justify-between z-40 bg-gray-300 p-4 items-center text-gray-800 h-8;
+	}
+
+	.fixtop {
 		position: fixed;
 		left: 0;
 		top: 0;
 		right: 0;
+		z-index: 40;
+	}
+
+	.pin {
+		top: 0;
+	}
+
+	.unpin {
+		top: -50px !important;
+	}
+
+	.smooth {
+		transition: 0.4s;
 	}
 </style>
 
-<header class="flex justify-between z-40 bg-blue-200 p-4 items-center text-gray-600 border-b-2 h-8">
-	<nav class="flex h-full w-full items-center z-40">
-		<div class="md:hidden">
-            <Hamburger bind:open={sidebar}/>
-        </div>
-        <div class="text-3xl font-semibold mx-3">FlyVec</div>
-	</nav>
+<div class={`fixtop ${headerClass} smooth`}>
+	<header>
+		<nav class="flex h-full w-full items-center">
+			<div class="md:hidden">
+				<Hamburger bind:open={sidebar}/>
+			</div>
+			<div class="text-3xl font-semibold mx-3">FlyVec</div>
+		</nav>
 	
-	<Menu/>
-</header>
+		<Menu/>
+	</header>
+</div>

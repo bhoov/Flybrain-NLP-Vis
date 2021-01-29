@@ -20,8 +20,6 @@
 	import {api} from "./staticApi";
 	import * as _ from "lodash";
 
-	console.log("API object: ", api)
-
 	let conceptList: tp.Concept[] | null = null; // Tokens and contributions for the selected neuron
 	let activations: number[] = undefined; // How much each neuron was activated by the query
 	let loadingActivations: boolean = false; // Are we waiting for real activations?
@@ -44,7 +42,6 @@
 	 * @param neuron -- Neuron index to search for
 	 */
 	function newConcepts(neuron: number) {
-		console.log("API object: ", api)
 		api.getNeuronConcepts(neuron).then((r) => {
 			conceptList = r;
 		});

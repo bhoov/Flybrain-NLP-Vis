@@ -4,19 +4,25 @@
     import routes from "./navLinks"
 </script>
 
-<style>
+<style lang="postcss">
     a {
+        @apply text-xl mx-2 no-underline;
         color: black;
         text-decoration: none;
+        border-bottom: none;
+    }
+
+    a:hover {
+        @apply text-gray-600;
     }
 </style>
 
-<nav class="hidden text-gray-500 text-bold sm:block">
+<nav class="hidden text-gray-500 text-bold sm:block font-semibold">
     {#each routes as route}
         {#if route.newTab}
-        <a href={route.url} class="hover:text-gray-700 text-xl mx-2 hover:no-underline" target="_blank" rel="noopener noreferrer">{route.name}</a>
+        <a href={route.url} class="" target="_blank" rel="noopener noreferrer">{route.name}</a>
         {:else}
-        <a href={route.url} class="hover:text-gray-700 text-xl mx-2 hover:no-underline">{route.name}</a>
+        <a href={route.url} class="">{route.name}</a>
         {/if}
     {/each}
 </nav>

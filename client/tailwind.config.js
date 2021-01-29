@@ -9,7 +9,10 @@ module.exports = {
   purge: [],
   theme: {
     extend: {
-      colors: {}
+      colors: {},
+      screens: {
+        "xl": "1410px"
+      }
     },
   },
   variants: {},

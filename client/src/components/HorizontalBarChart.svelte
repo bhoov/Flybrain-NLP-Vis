@@ -64,7 +64,7 @@
 <svg width="100%" height="100%" viewBox={`0 0 ${maxWidth} ${maxHeight}`}>
     <g transform={`translate(${margin.left}, ${margin.top})`}>
         <g bind:this={leftAxis} class="axis"/>
-        {#each data as d, i (d.name)}
+        {#each data as d,i}
             <rect
                 class="bar"
                 y={yScale(d.name)}
