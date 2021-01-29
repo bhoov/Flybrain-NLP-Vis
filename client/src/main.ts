@@ -2,10 +2,15 @@ import App from './App.svelte';
 import PinnedNeuron from "./components/PinnedNeuron.svelte"
 import FetchCloudCluster from "./components/FetchCloudCluster.svelte"
 import Navigation from "./components/Navigation.svelte"
+import Authors from "./components/AuthorAffiliations.svelte";
 import {offensiveNeurons} from "./store"
 
 const navigation = new Navigation({
 	target: document.querySelector("#nav-container"),
+})
+
+const authors = new Authors({
+	target: document.querySelector("#blog-authors"),
 })
 
 const app = new App({

@@ -85,7 +85,6 @@
 	 * Get phrase query from event
 	 */
 	function handleQuery(event) {
-		console.log("EVENT ", event);
 		$queryPhrase = event.detail.value;
 	}
 

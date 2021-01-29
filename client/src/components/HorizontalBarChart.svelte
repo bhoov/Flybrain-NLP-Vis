@@ -71,9 +71,6 @@
                 height={yScale.bandwidth()}
                 x={0}
                 width={xScale(d.value)} 
-                on:mouseover={() => {
-                    console.log("My value: ", d.value)
-                }}
                 />
         {/each}
     </g>
