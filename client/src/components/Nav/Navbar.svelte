@@ -34,6 +34,11 @@
 		@apply flex justify-between z-40 bg-gray-300 p-4 items-center text-gray-800 h-8;
 	}
 
+	a {
+		@apply text-gray-800;
+		text-decoration: none;
+		border-bottom: 0;
+	}
 	.fixtop {
 		position: fixed;
 		left: 0;
