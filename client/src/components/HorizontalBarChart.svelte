@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import {scaleLinear, scaleBand} from "d3-scale"
     import * as d3 from "d3";
     export let maxWidth: number = 350;
     export let maxHeight: number = 350;
@@ -19,8 +20,7 @@
     $: width = maxWidth - margin.left - margin.right;
     $: height = maxHeight - margin.top - margin.bottom;
 
-    $: xScale = d3
-        .scaleLinear()
+    $: xScale = scaleLinear()
         .range([0, width])
         .domain([
             0,
@@ -29,8 +29,7 @@
             }),
         ]);
 
-    $: yScale = d3
-        .scaleBand()
+    $: yScale = scaleBand()
         .range([0, height])
         .padding(0.1)
         .domain(data.map((d) => d.name));

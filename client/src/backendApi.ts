@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import {json} from 'd3';
 import { makeUrl, toPayload } from './etc/apiHelpers'
 import { URLHandler } from './etc/URLHandler';
 import * as tp from "./types"
@@ -18,7 +18,7 @@ export class API {
         let toSend = { sentence }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
-        return d3.json(url)
+        return json(url)
     }
 
     sentenceToTokens(sentence: string): Promise<string[]> {
@@ -26,14 +26,14 @@ export class API {
         let toSend = { sentence }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
-        return d3.json(url)
+        return json(url)
     }
 
     getNNeurons(): Promise<number> {
         const route = "/n-heads"
         const url = makeUrl(this.baseURL + route, {})
         console.log("--- GET " + url)
-        return d3.json(url)
+        return json(url)
     }
 
     // Don't let user choose beta
@@ -43,14 +43,14 @@ export class API {
         let toSend = { head_index:neuron_idx, n_show }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
-        return d3.json(url)
+        return json(url)
     }
 
     getNeuronOrdering(): Promise<number[]> {
         const route = "/mem-order"
         const url = makeUrl(this.baseURL + route, {})
         console.log("--- GET " + url);
-        return d3.json(url)
+        return json(url)
     }
 
     queryTopNeuronsByPhrase(phrase: string, beta:number=10.0): Promise<tp.TopMemResponse> {
@@ -58,7 +58,7 @@ export class API {
         let toSend = { phrase, beta }
         const url = makeUrl(this.baseURL + route, toSend)
         console.log("--- GET " + url);
-        return d3.json(url)
+        return json(url)
     }
 };
 

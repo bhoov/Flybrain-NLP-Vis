@@ -45,8 +45,17 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js'
+		file: 'public/build/bundle.js',
+		globals: {
+			'd3': 'd3',
+			 'lodash': '_'
+		},
+		paths: {
+			'd3': "https://unpkg.com/d3@5.15.0/dist/d3.min.js",
+			'lodash': "https://unpkg.com/lodash@1.0.2/dist/lodash.min.js"
+		},
 	},
+	external: ['d3', '_'],
 	plugins: [
 		css({ output: 'public/build/vendor.css' }),
 		svelte({
@@ -97,8 +106,8 @@ export default {
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
 
-		// Unfortunately, this breaks my API imports for some reason?
-		production && terser({mangle: {reserved: ['api']}})
+		// Unfortunately, this breaks my API imports if you don't mark it as "reserved"
+		production && terser({mangle: {reserved: ['api', '_', 'd3', 'lodash']}})
 	],
 	watch: {
 		clearScreen: false
