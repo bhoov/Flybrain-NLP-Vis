@@ -17,7 +17,8 @@
 	import SentenceTokens from "./components/SentenceTokens.svelte";
 	import FaDblArrowDown from "./components/FaDblArwDown.svelte"
 	import interestingExamples from "./config/exampleSentences"
-	import {api} from "./staticApi";
+	import {api as staticApi} from "./staticApi";
+	import {api as liveAPI} from "./backendApi";
 	import * as _ from "lodash";
 
 	let conceptList: tp.Concept[] | null = null; // Tokens and contributions for the selected neuron
@@ -28,6 +29,16 @@
 	let clusterImportance: number[] | null = null; // Activations corresponding to topNeuronClusters
 	let searchResultHeight = 250; // How high to make the search result grid
 	let kNearest = 4; // Number of nearest cluster clouds to show
+
+	let api = staticApi
+
+	$: {
+		if ($allowCustomInput) {
+			//@ts-ignore
+			api = liveAPI
+		}
+	}
+
 	$: selectExamples = interestingExamples.map((s) => {
 		return {
 			value: s,
@@ -240,7 +251,7 @@
 			<div>
 				<Select
 					items={selectExamples}
-					selectedValue={selectExamples[0]}
+					selectedValue={$queryPhrase.length ? $queryPhrase : selectExamples[0]}
 					hideEmptyState={$allowCustomInput}
 					isCreatable={$allowCustomInput}
 					placeholder={'Select from the suggested' + ($allowCustomInput ? 'OR type your own short phrase' : '')}
@@ -248,6 +259,8 @@
 						return option.isCreator ? filterText : option.label;
 					}}
 					on:select={handleQuery} />
+
+				{#if $allowCustomInput}
 				<div
 					class="flex flex-wrap mb-3 my-2 place-self-start pl-5 content-center">
 					<div class="mr-2 font-bold border-b-dashed align-middle">
@@ -255,6 +268,7 @@
 					</div>
 					<SentenceTokens tokens={keywords} />
 				</div>
+				{/if}
 			</div>
 		</div>
 		<div class="top-results">
@@ -311,7 +325,7 @@
 		</div>
 		<div id="concept-exploration" class="max-cell flex-none">
 			{#if conceptList != null && !offensiveNeurons.has(getLabel($neuronIndex))}
-				<div class="muted text-center">
+				<div class="muted text-center lg:hidden">
 					Concepts learned by
 					<span
 						class="font-bold unmuted selected">Neuron {getLabel($neuronIndex)}</span>

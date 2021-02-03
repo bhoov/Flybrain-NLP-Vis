@@ -10,7 +10,7 @@
     export let hideContent: boolean = false; // Some neurons learn offensive concepts. Mask these wordclouds
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
-    let showClean = true;
+    let showClean = false;
 
     $: displayName = showClean ? "#" : "Neuron "
 

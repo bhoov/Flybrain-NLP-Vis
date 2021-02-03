@@ -4,8 +4,21 @@ import { URLHandler } from "./etc/URLHandler"
 /** Parameters to store in URL */
 const init = URLHandler.parameters
 
+function createQueryPhrase(maxLength=250) {
+    const {subscribe, set, update} = writable(init['showQueryResults'] || false)
+
+    return {
+        subscribe, update,
+        set: x => {
+            console.log("Setting X with: ", x)
+            console.log("Of length", x.length)
+            set(x.slice(0, maxLength))
+        }
+    }
+}
+
 export const neuronIndex = writable(init['neuronIndex'] || 0);
-export const queryPhrase = writable(init['queryPhrase'] || "");
+export const queryPhrase = createQueryPhrase(300)
 export const showQueryResults = writable(init['showQueryResults'] || false)
 export const allowCustomInput = writable(init['allowCustomInput'] == "true" ? true : false)
 
