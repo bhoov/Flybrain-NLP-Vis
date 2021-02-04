@@ -41,8 +41,8 @@
 
 	$: selectExamples = interestingExamples.map((s) => {
 		return {
-			value: s,
-			label: s,
+			value: s.phrase,
+			label: (s.label ? "✅ " : "❌ ") + s.phrase,
 		};
 	});
 	let keywords: string[] = []; // Extracted keywords from the query
@@ -118,7 +118,7 @@
 			});
 		});
 
-		$queryPhrase = interestingExamples[0];
+		$queryPhrase = interestingExamples[0].phrase;
 
 		keywordifySentence();
 	});

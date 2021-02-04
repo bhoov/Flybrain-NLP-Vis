@@ -46,16 +46,16 @@ export default {
 		format: 'iife',
 		name: 'app',
 		file: 'public/build/bundle.js',
-		globals: {
+		globals: production ? {
 			'd3': 'd3',
 			 'lodash': '_'
-		},
-		paths: {
+		} : {},
+		paths: production ? {
 			'd3': "https://unpkg.com/d3@5.15.0/dist/d3.min.js",
 			'lodash': "https://unpkg.com/lodash@1.0.2/dist/lodash.min.js"
-		},
+		} : {},
 	},
-	external: ['d3', '_'],
+	external: production ? ['d3', '_'] : [],
 	plugins: [
 		css({ output: 'public/build/vendor.css' }),
 		svelte({

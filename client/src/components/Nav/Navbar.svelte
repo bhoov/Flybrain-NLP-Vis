@@ -55,6 +55,10 @@
 		top: -50px !important;
 	}
 
+	.flyvec {
+		font-variant: small-caps;
+	}
+
 	.smooth {
 		transition: 0.4s;
 	}
@@ -66,7 +70,7 @@
 			<div class="md:hidden">
 				<Hamburger bind:open={sidebar}/>
 			</div>
-			<div class="text-3xl font-semibold mx-3"><a href="https://arxiv.org/abs/2101.06887">FlyVec</a></div>
+			<div class="text-3xl font-semibold mx-3 flyvec"><a href="https://arxiv.org/abs/2101.06887" target="_blank">FlyVec</a></div>
 		</nav>
 	
 		<Menu/>

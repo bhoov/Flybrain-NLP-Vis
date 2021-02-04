@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * Run with `node --experimental-modules generateStaticApi.js
+ * Run with `node --experimental-modules generateStaticApi.js`
+ * 
+ * Note that you may need to add "type": "module" to package.json just to run this script and then remove it to run the application
  */
 import _ from "lodash";
 import fs from "fs";
@@ -9,6 +11,7 @@ import path from "path";
 import hash from "object-hash";
 import fetch from "node-fetch";
 import exampleSentences from "../src/config/exampleSentences.js"
+
 
 /**
  * Let's write some helper functions to fetch information from the backend.
@@ -62,7 +65,8 @@ const [,, ...args] = process.argv
 /**
  * Configure the cache we want to save
  */
-const outputDir = "../public/routeInfo/"
+const outputDir = path.resolve() + "/../public/routeInfo/"
+console.log("Saving all endpoints to: ", outputDir)
 const baseUrl = "http://127.0.0.1:8000/api/"
 const nNeurons = 400 // Should be the same as the backend's response to the `n-heads` query below
 const nShow = 20
@@ -71,7 +75,7 @@ const toCache = [
     {
         routeName: "sentence-to-keywords",
         method: "GET",
-        queries: exampleSentences.map(s => ({sentence: s})),
+        queries: exampleSentences.map(s => ({sentence: s.phrase})),
     },
     {
         routeName: "n-heads",
@@ -95,7 +99,7 @@ const toCache = [
         routeName: "query-top-mems-by-phrase",
         method: "GET",
         queries: exampleSentences.map(s => ({
-            phrase: s,
+            phrase: s.phrase,
             beta: 10.0
         }))
     },
