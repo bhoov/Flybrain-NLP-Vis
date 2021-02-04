@@ -148,8 +148,8 @@
 			network was trained on a large corpus of text and tested on common NLP tasks. Biologically, this network
 			evolved to process sensory stimuli from olfaction, vision, and other modalities and not to understand
 			language. It, however, uses a general-purpose algorithm to embed inputs
-			(from different modalities) into a high dimensional space so that these embeddings are locality sensitive.
-			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite>
+			(from different modalities) into a high dimensional space so that these embeddings are locality sensitive
+			<d-cite key="dasgupta_neural_2017, BioHash"></d-cite>.
 			This means that similar inputs are mapped to similar representations, and different inputs are mapped to
 			distant representations.
 			Thus, our work illustrates a theoretical possibility to <strong>reprogram a biological, general-purpose
@@ -165,11 +165,9 @@
 			word embeddings, which we call <span class="flyvec font-bold">FlyVec</span>, are represented by boolean,
 			logical
 			vectors, in contrast to conventional continuous word embeddings like <a
-				href="https://en.wikipedia.org/wiki/Word2vec" target="_blank" rel="noopener noreferrer">Word2vec</a>
-			<d-cite key="mikolov2013efficient"></d-cite> or <a href="https://nlp.stanford.edu/projects/glove/"
-				target="_blank" rel="noopener noreferrer">GloVe</a>.<d-cite key="pennington2014glove"></d-cite> In this
-			blogpost, we explore the concepts learned by the
-			individual neurons in this network. We also study patterns of a neuron’s excitations in response to a query
+				href="https://en.wikipedia.org/wiki/Word2vec" target="_blank" rel="noopener noreferrer">Word2vec</a><d-cite key="mikolov2013efficient"></d-cite> or <a href="https://nlp.stanford.edu/projects/glove/"
+				target="_blank" rel="noopener noreferrer">GloVe</a><d-cite key="pennington2014glove"></d-cite>. In this
+			blogpost, we explore the concepts learned by the individual neurons in this network. We also study patterns of a neuron’s excitations in response to a query
 			sentence.
 		</p>
 
@@ -181,9 +179,9 @@
 			The mushroom body is a major area of the brain that is responsible for processing sensory information in
 			fruit
 			flies. It receives inputs from a set of projection neurons (PN) conveying information from several sensory
-			modalities. The major modality is olfaction,<d-cite key="bates2020complete"></d-cite> but there are also
-			inputs from the PNs that send temperature, humidity,<d-cite key="marin2020connectomics">
-			</d-cite> and visual inputs.<d-cite key="vogt2016direct, caron2020two"></d-cite> The sensory signals
+			modalities. The major modality is olfaction<d-cite key="bates2020complete"></d-cite>, but there are also
+			inputs from the PNs that send temperature, humidity<d-cite key="marin2020connectomics">
+			</d-cite>, and visual inputs<d-cite key="vogt2016direct, caron2020two"></d-cite>. The sensory signals
 			are forwarded to a population of Kenyon cells through a set of synaptic weights. KCs are reciprocally
 			connected through an anterior paired lateral (APL) neuron, which sends a strong inhibitory signal back to
 			KCs. This recurrent network implements a winner-takes-all competition between the KCs, and silences all but
@@ -266,7 +264,8 @@
 				class="token">governments</span>, <span class="token">authorities</span>, <span
 				class="token">state</span>, as shown below. Thus, it has learned
 			a concept of authorities of various levels. It is clear, however, that this concept is not pure. For
-			example, the fifth strongest token here is <span class="token"><code>&lt;NUM&gt;</code></span> which represents
+			example, the fifth strongest token here is <span class="token"><code>&lt;NUM&gt;</code></span> which
+			represents
 			a number-token. Perhaps this is not surprising given that a number token can easily
 			appear in the training corpus quantifying, for example, a number of law enforcement officers. Another sign
 			of entanglement of concepts for this KC is the token <span class="token">news</span>. While it is not a
