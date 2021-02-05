@@ -10,9 +10,11 @@
     export let hideContent: boolean = false; // Some neurons learn offensive concepts. Mask these wordclouds
     export let importanceIconWidth = 30; // Px. Ignored if no imporances given. Used for width and height
     export let importanceIconHeight = 40; // Px. Ignored if no imporances given. Used for width and height
+    export let smallTitle = false // If true, don't format title as large text
     let showClean = false;
 
     $: displayName = showClean ? "#" : "Neuron "
+    $: titleClass = `unit-title ${smallTitle ? "text-xs" : "text-lg"}`
 
     $: filename = `wordclouds/cloud_unit_${unit}.png`;
     $: displayLabel = label == null ? unit : label
@@ -20,7 +22,7 @@
 
 <style lang="postcss">
     .unit-title {
-        @apply m-0 p-2 text-lg font-bold underline;
+        @apply m-0 p-2 font-bold underline;
     }
 
     .selected {
@@ -33,7 +35,7 @@
     <div>
             {#if importances}
             <div class="flex justify-between items-center h-8">
-                <div class="unit-title" class:selected>
+                <div class={titleClass} class:selected>
                     {displayName}{displayLabel}
                 </div>
                 <div class="mr-3">
@@ -46,7 +48,7 @@
             </div>
             {:else}
                 <div
-                    class="unit-title text-center"
+                    class={titleClass}
                     class:selected>
                     {displayName}{displayLabel}
                 </div>

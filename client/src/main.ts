@@ -50,7 +50,7 @@ const result = {
 
 const fig3 = new FetchCloudCluster({
 	target: document.querySelector("#fig-entertainment-cloud"),
-	props: {...result, mouseable: false},
+	props: {...result, mouseable: false, smallTitle: true},
 })
 
 export default app;

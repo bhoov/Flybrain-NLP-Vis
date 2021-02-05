@@ -26,7 +26,7 @@
 			unicode-bidi: embed;
 			font-family: monospace;
 			/* color: #B91C1C; */
-			color: #D97706;
+			color: #cf7a19;
 			padding: 0rem 0.2rem;
 		}
 
@@ -165,10 +165,12 @@
 			word embeddings, which we call <span class="flyvec font-bold">FlyVec</span>, are represented by boolean,
 			logical
 			vectors, in contrast to conventional continuous word embeddings like <a
-				href="https://en.wikipedia.org/wiki/Word2vec" target="_blank" rel="noopener noreferrer">Word2vec</a><d-cite key="mikolov2013efficient"></d-cite> or <a href="https://nlp.stanford.edu/projects/glove/"
-				target="_blank" rel="noopener noreferrer">GloVe</a><d-cite key="pennington2014glove"></d-cite>. In this
-			blogpost, we explore the concepts learned by the individual neurons in this network. We also study patterns of a neuron’s excitations in response to a query
-			sentence.
+				href="https://en.wikipedia.org/wiki/Word2vec" target="_blank" rel="noopener noreferrer">Word2vec</a>
+			<d-cite key="mikolov2013efficient"></d-cite> or <a href="https://nlp.stanford.edu/projects/glove/"
+				target="_blank" rel="noopener noreferrer">GloVe</a>
+			<d-cite key="pennington2014glove"></d-cite>. In this
+			blogpost, we explore the concepts learned by the individual neurons in this network. We also study patterns
+			of a neuron’s excitations in response to a query sentence.
 		</p>
 
 		<h2 id="blog-biological-network">
@@ -218,9 +220,10 @@
 			to learn the weights of the neural network (see also <a
 				href="https://www.ibm.com/blogs/research/2019/04/biological-algorithm/" target="_blank"
 				rel="noopener noreferrer">this blog post</a>). Mapping
-			this idea back to the network's biological inspiration in fruit flies, we can think about the context as an
-			olfactory input to the network of KCs and the target word
-			as a visual input. An example of the $w$-gram encoding is shown below.
+			this idea back to the network's biological origin in fruit flies, we can think about the context as, for
+			example, an
+			olfactory input to the network of KCs and the target word as a visual input. An example of the $w$-gram
+			encoding is shown below.
 		</p>
 
 		<d-figure>
@@ -249,7 +252,7 @@
 		</p>
 
 		<p>
-			Consider <span class="neuron">Neuron 75</span>. The top three tokens activating this KC correspond to the
+			Consider, for example, <span class="neuron">Neuron 75</span>. The top three tokens activating this KC correspond to the
 			words: <span class="token">disease</span>, <span class="token">disorder</span>, <span
 				class="token">patients</span>.
 			It is clear that this neuron has learned a concept associated with medical conditions.
@@ -293,7 +296,7 @@
 			response to an input sentence. Our model encodes the query sentence as a bag of words and interprets it as
 			the activity of PNs. The recurrent network of KCs coupled to the APL neuron performs the calculation and
 			outputs a pattern of excitations across KCs so that only a small number of KCs are in the ON state, while
-			the majority of them are in the OFF state. This pattern of excitations is the hash code for the query
+			the majority of them are in the OFF state. This pattern of excitations can be converted to the hash code for the query
 			sentence, which is used for the evaluations of our algorithm (see the <a
 				href="https://arxiv.org/abs/2101.06887" target="_blank" rel="noopener noreferrer">paper</a>).
 		</p>
@@ -354,7 +357,7 @@
 
 		<p>
 			In this work, we asked the intriguing question of whether the core computational algorithm of the network of
-			KCS in the fruit fly brain &mdash; one of the best studied networks in neuroscience &mdash; can be
+			KCs in the fruit fly brain &mdash; one of the best studied networks in neuroscience &mdash; can be
 			repurposed for learning word embeddings from text, which is a well defined machine learning task. We have
 			shown that, surprisingly, this network can learn correlations between words and their context while
 			producing high quality word embeddings. Our fruit fly network generates binary word embeddings &mdash;
@@ -367,7 +370,7 @@
 				class="neuron">Neuron 75</span>,
 			discussed above, will be in the ON state for that query. Thus, individual KCs may encode a logical way to
 			detect the presence or the absence of certain attributes of the words and query sentences. We hope to
-			systematically investigate the intriguing interpretability of <span class="flyvec">FlyVec</span> embeddings
+			systematically investigate this intriguing aspect of interpretability <span class="flyvec">FlyVec</span> embeddings
 			in the future.
 		</p>
 

@@ -9,6 +9,7 @@
     export let hoveredHead: number | null = null;
     export let selectedHead: number = null;
     export let mouseable: boolean = true
+    export let smallTitle: boolean = false // If true, display wordclouds with small titles
 
     $: displayLabels = labels == null ? heads : labels
 </script>
@@ -53,6 +54,7 @@
                 hideContent={offensiveNeurons ? offensiveNeurons.has(displayLabels[i]) : false}
                 {importances}
                 currIdx={i}
+                {smallTitle}
                 selected={head == selectedHead} />
         </div>
 {/each}
