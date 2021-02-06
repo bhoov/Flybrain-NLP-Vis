@@ -22,7 +22,7 @@
 
 <style lang="postcss">
     .unit-title {
-        @apply m-0 p-2 font-bold underline;
+        @apply m-0 font-bold underline;
     }
 
     .selected {
