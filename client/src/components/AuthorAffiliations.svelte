@@ -20,7 +20,7 @@
 					},
 					{
 						"author":"Leopold Grinberg",
-						"authorURL":"http://www.dam.brown.edu/people/lgrinb/",
+						"authorURL": "https://scholar.google.com/citations?user=P6TJ-L8AAAAJ&hl=en",
 						"affiliations": [{"name": "IBM Research", "url": "https://www.draco.res.ibm.com/"}]
 					},
 					{
