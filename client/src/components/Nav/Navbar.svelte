@@ -52,7 +52,7 @@
 	}
 
 	.unpin {
-		top: -50px !important;
+		top: -60px !important;
 	}
 
 	.flyvec {

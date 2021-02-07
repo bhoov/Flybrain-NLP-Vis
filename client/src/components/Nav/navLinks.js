@@ -18,11 +18,6 @@ export default [
         newTab: true
     },
     {
-        name: "Package",
-        url: "https://pypi.org/project/flyvec/",
-        newTab: true
-    },
-    {
         name: "Authors",
         url: "#blog-authors",
         newTab: false
