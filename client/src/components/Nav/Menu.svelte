@@ -30,6 +30,10 @@
         margin-top: -7px;
     }
 
+    .pypi-link:hover a {
+        @apply text-gray-800;
+    }
+
     a {
         @apply text-gray-600;
         text-decoration: none;

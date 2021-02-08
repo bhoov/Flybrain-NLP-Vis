@@ -338,7 +338,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="hidden lg:block w-full max-cell flex-none">
+		<div class="hidden lg:block w-full max-cell flex-none gap-2">
 			<FetchWordCloud
 				unit={$neuronIndex}
 				label={getLabel($neuronIndex)}

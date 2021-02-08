@@ -20,7 +20,8 @@ function createQueryPhrase(maxLength=250) {
 export const neuronIndex = writable(init['neuronIndex'] || 0);
 export const queryPhrase = createQueryPhrase(300)
 export const showQueryResults = writable(init['showQueryResults'] || false)
-export const allowCustomInput = writable(init['allowCustomInput'] == "true" ? true : false)
+// export const allowCustomInput = writable(init['allowCustomInput'] == "true" ? true : false)
+export const allowCustomInput = writable(false)
 
 neuronIndex.subscribe(value => {
     URLHandler.updateURLParam("neuronIndex", value)
@@ -34,9 +35,9 @@ showQueryResults.subscribe(value => {
     URLHandler.updateURLParam("showQueryResults", value)
 })
 
-allowCustomInput.subscribe(value => {
-    URLHandler.updateURLParam("allowCustomInput", value)
-})
+// allowCustomInput.subscribe(value => {
+//     URLHandler.updateURLParam("allowCustomInput", value)
+// })
 
 /**Additional parameters */
 export const offensiveNeurons = new Set([87, 96, 138, 153, 358])
