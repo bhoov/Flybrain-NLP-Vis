@@ -48,7 +48,7 @@
             </div>
             {:else}
                 <div
-                    class={titleClass}
+                    class={titleClass + " text-center"}
                     class:selected>
                     {displayName}{displayLabel}
                 </div>
