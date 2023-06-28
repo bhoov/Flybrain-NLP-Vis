@@ -1,4 +1,5 @@
 # Personal choices
+_*.sh
 _archive
 
 # Projects
@@ -68,5 +69,6 @@ Temporary Items
 .apdisk
 
 data
+data_old/
 client/public/wordclouds
 # TODO add wordclouds to DVC? Git?

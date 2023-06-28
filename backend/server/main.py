@@ -82,4 +82,4 @@ async def query_top_mems_by_phrase(phrase: str, beta:float=10.0):
 if __name__ == "__main__":
     # This file is not run as __main__ in the uvicorn environment
     args, _ = parser.parse_known_args()
-    uvicorn.run("server:app", host='127.0.0.1', port=args.port)
+    uvicorn.run("server:app", host='127.0.0.1', port=int(args.port))
