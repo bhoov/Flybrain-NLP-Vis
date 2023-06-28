@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flyvec-frontend
+  namespace: visdemos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: flyvec-frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      name: flyvec-frontend
+      namespace: visdemos
+      labels:
+        run: flyvec-frontend
+    spec:
+      containers:
+        - name: flyvec-frontend
+          image: us.icr.io/research3/visdemos/hoo/flyvec-frontend:v0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          # volumeMounts:
+          #   - mountPath: "/app/server/data"
+          #     name: cos-data
+          resources:
+            requests:
+              cpu: 1
+              memory: 4G
+              nvidia.com/gpu: 0
+            limits:
+              cpu: 1
+              memory: 4G
+              nvidia.com/gpu: 0
+          # env:
+          #   - name: PYTORCH_PRETRAINED_BERT_CACHE
+          #     value: /app/server/data/models/
+      imagePullSecrets:
+        - name: all-icr-io
+      # volumes:
+      #   - name: cos-data
+      #     persistentVolumeClaim:
+      #       claimName: cos-exbert-osc
