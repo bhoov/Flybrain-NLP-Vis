@@ -1,0 +1,29 @@
+{
+    "title": "Can a Fruit Fly Learn Word Embeddings?",
+    "description": "Creating sparse and binary word vectors, inspired by the fruit fly's olfactory circuit.",
+    "authors": [
+        {
+            "author":"Dmitry Krotov",
+            "authorURL":"https://mitibmwatsonailab.mit.edu/people/dmitry-krotov/",
+            "affiliations": [{"name": "MIT-IBM Watson AI Lab", "url": "https://mitibmwatsonailab.mit.edu/"}]
+        },
+        {
+            "author":"Benjamin Hoover",
+            "authorURL":"https://bhoov.com",
+            "affiliations": [{"name": "IBM Research", "url": "https://www.draco.res.ibm.com/"}]
+        },
+        {
+            "author":"Hendrik Strobelt",
+            "authorURL":"http://hendrik.strobelt.com/",
+            "affiliations": [
+                {"name": "MIT-IBM Watson AI Lab", "url": "https://mitibmwatsonailab.mit.edu/"},
+                {"name": "IBM Research", "url": "https://www.draco.res.ibm.com/"}
+            ]
+        }
+    ],
+    "katex": {
+        "delimiters": [
+            {"left": "$$", "right": "$$", "display": false}
+        ]
+    }
+  }
