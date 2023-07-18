@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flyvec-frontend
+  name: flyvec
   namespace: visdemos
 spec:
   replicas: 1
   selector:
     matchLabels:
-      run: flyvec-frontend
+      run: flyvec
   strategy:
     type: Recreate
   template:
     metadata:
-      name: flyvec-frontend
+      name: flyvec
       namespace: visdemos
       labels:
-        run: flyvec-frontend
+        run: flyvec
     spec:
       containers:
-        - name: flyvec-frontend
-          image: us.icr.io/research3/visdemos/hoo/flyvec-frontend:v0.1
+        - name: flyvec
+          image: us.icr.io/research3/visdemos/hoo/flyvec:v0.1
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -44,3 +44,19 @@ spec:
       #   - name: cos-data
       #     persistentVolumeClaim:
       #       claimName: cos-exbert-osc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: flyvec
+  name: flyvec
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: flyvec

@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: flyvec-backend
-          image: us.icr.io/research3/visdemos/hoo/flyvec-backend:v0.1
+          image: us.icr.io/research3/visdemos/hoo/flyvec-backend:
           imagePullPolicy: Always
           ports:
             - containerPort: 8000

@@ -1,4 +1,4 @@
-APPNAME=flyvec-frontend
+APPNAME=flyvec
 VERSION=
 BASETAG=hoo/$(APPNAME)
 REGISTRY=us.icr.io/research3/visdemos
